@@ -1,0 +1,49 @@
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+      <div class="flex gap-2 mb-4">
+        <input
+          type="text"
+          [value]="terminoBusqueda"
+          (input)="terminoBusqueda = $any($event.target).value"
+          (keyup.enter)="cargarProductos()"
+          placeholder="Buscar productos..."
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+        />
+        <button (click)="cargarProductos()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition">
+          Buscar
+        </button>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button (click)="filtrarPorCategoria('Todas')" [class.bg-green-600]="categoriaSeleccionada === 'Todas'" [class.text-white]="categoriaSeleccionada === 'Todas'" class="px-4 py-2 rounded-lg transition hover:bg-green-500">
+          Todas
+        </button>
+        <button *ngFor="let cat of categorias" (click)="filtrarPorCategoria(cat.nombre_categoria)" [class.bg-green-600]="categoriaSeleccionada === cat.nombre_categoria" [class.text-white]="categoriaSeleccionada === cat.nombre_categoria" class="px-4 py-2 rounded-lg transition hover:bg-green-500">
+          {{ cat.nombre_categoria }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
+    </div>
+
+    <div *ngIf="!cargando && productos.length === 0" class="text-center py-12 text-gray-500">
+      <p>No se encontraron productos</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div *ngFor="let producto of productos" class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition">
+        <div class="h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+          <span class="text-4xl icon-placeholder"></span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">{{ producto.nombre }}</h3>
+        <p class="text-sm text-gray-600 mb-2">{{ producto.descripcion }}</p>
+        <p class="text-xl font-bold text-green-600 mb-4">${{ producto.precio }}</p>
+        <button (click)="agregarAlCarrito(producto)" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition">
+          Agregar al Carrito
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

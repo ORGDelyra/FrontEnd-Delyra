@@ -1,0 +1,38 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] flex items-center justify-center py-10 px-4">
+  <div class="max-w-2xl w-full">
+    <!-- Título -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
+      <p class="text-[#a5b4fc] text-lg">Elige cómo quieres comenzar</p>
+      <p class="text-[#9aa2c7] text-sm mt-2">Accede y deja que redirijamos tu experiencia</p>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="bg-[#0b1020] rounded-[30px] p-10 shadow-2xl border border-[#1f2847] text-center">
+      <div class="text-6xl mb-6">🔐</div>
+      <p class="text-[#c7d2fe] mb-8">
+        Entra con tu cuenta Delyra y te enviaremos a la sección correcta según tu rol.
+      </p>
+
+      <button
+        (click)="iniciarSesion()"
+        class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 text-lg mb-6 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+        Ir a Inicio de Sesión
+      </button>
+
+      <p class="text-[#9aa2c7] text-sm mb-4">
+        ¿No tienes cuenta?
+      </p>
+      <a routerLink="/seleccionar-registro" class="text-[#7dff7a] hover:text-[#c084fc] text-sm font-medium transition">
+        Regístrate aquí
+      </a>
+    </div>
+
+    <!-- Botón volver -->
+    <div class="text-center mt-6">
+      <button (click)="volver()" class="text-[#9aa2c7] hover:text-[#7dff7a] text-sm font-medium transition">
+        ← Volver
+      </button>
+    </div>
+  </div>
+</div>

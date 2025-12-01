@@ -1,0 +1,242 @@
+<!-- Barra superior con logo y menú desplegable -->
+<header class="bg-[#04060f] border-b border-[#1f2847] shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <!-- Logo y título -->
+    <div class="flex items-center space-x-2">
+      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" />
+      <span class="text-2xl font-bold text-[#7dff7a] font-[Poppins]">Delyra</span>
+    </div>
+
+      <!-- Menú desplegable en móvil -->
+      <div class="relative md:hidden">
+        <button
+          (click)="toggleMenu()"
+          class="text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 text-2xl">
+          <span class="icon-placeholder"></span>
+        </button>      <!-- Dropdown Menu -->
+      <div *ngIf="menuAbierto" class="absolute right-0 mt-2 w-48 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50">
+        <a routerLink="/cliente/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+          <span class="icon-placeholder"></span> Mi Perfil
+        </a>
+        <a routerLink="/carrito" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+          <span class="icon-placeholder"></span> Carrito
+        </a>
+        <a routerLink="/cliente/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+          <span class="icon-placeholder"></span> Mis Pedidos
+        </a>
+        <hr class="my-2 border-[#1f2847]">
+        <button (click)="cerrarSesion(); cerrarMenu()" class="w-full text-left px-4 py-2 text-red-400 hover:bg-[#2f1518] transition">
+          <span class="icon-placeholder"></span> Cerrar Sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- Menú en escritorio -->
+    <div class="hidden md:flex items-center space-x-4">
+      <a routerLink="/cliente/perfil" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium transition">Mi Perfil</a>
+      <a routerLink="/carrito" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium flex items-center gap-2 transition">
+        Carrito
+      </a>
+      <a routerLink="/cliente/pedidos" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium flex items-center gap-2 transition">
+        Pedidos
+      </a>
+      <button (click)="cerrarSesion()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200">
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex gap-6">
+      <!-- Menú lateral desplegable -->
+      <aside
+        [class.w-64]="menuLateralAbierto"
+        [class.w-20]="!menuLateralAbierto"
+        class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 h-fit sticky top-24 transition-all duration-300">
+
+        <!-- Botón toggle -->
+        <button
+          (click)="toggleMenuLateral()"
+          class="w-full flex justify-between items-center mb-4 text-[#7dff7a] hover:text-[#f3f5ff] transition">
+          <h3 *ngIf="menuLateralAbierto" class="text-xl font-bold">Menú Principal</h3>
+          <span class="text-2xl">{{ menuLateralAbierto ? '◀' : '▶' }}</span>
+        </button>
+
+        <!-- Menú items -->
+        <ul class="space-y-3">
+          <li>
+            <a routerLink="/cliente/perfil" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Mi Perfil' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Mi Perfil</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/carrito" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Carrito de Compras' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Carrito de Compras</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/cliente/pedidos" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Mis Pedidos' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Mis Pedidos</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Favoritos' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Favoritos</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Chat' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Chat</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Configuración' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Configuración</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Ayuda' : ''">
+              <span class="text-xl icon-placeholder"></span>
+              <span *ngIf="menuLateralAbierto">Ayuda</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Sección central -->
+      <main class="flex-1 w-full">
+        <!-- Buscador y categorías -->
+        <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
+          <div class="mb-4">
+            <div class="flex gap-2">
+              <input
+                type="text"
+                [(ngModel)]="terminoBusqueda"
+                (keyup.enter)="buscar()"
+                placeholder="Buscar negocios..."
+                class="flex-1 px-4 py-3 bg-[#0f162d] border border-[#1e2644] rounded-lg focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent text-[#f3f5ff] placeholder-[#9aa2c7]"
+              />
+              <button
+                (click)="buscar()"
+                class="bg-[#7dff7a] hover:bg-[#6ae66a] text-[#05060c] px-6 py-3 rounded-lg transition duration-200 font-semibold">
+                Buscar
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              (click)="seleccionarCategoria('Todas')"
+              [class.bg-[#7dff7a]]="categoriaSeleccionada === 'Todas'"
+              [class.text-[#05060c]]="categoriaSeleccionada === 'Todas'"
+              [class.bg-[#1f2847]]="categoriaSeleccionada !== 'Todas'"
+              [class.text-[#9aa2c7]]="categoriaSeleccionada !== 'Todas'"
+              class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#7dff7a]">
+              Todas
+            </button>
+            <button
+              *ngFor="let cat of categorias"
+              (click)="seleccionarCategoria(cat.nombre_categoria)"
+              [class.bg-[#7dff7a]]="categoriaSeleccionada === cat.nombre_categoria"
+              [class.text-[#04060f]]="categoriaSeleccionada === cat.nombre_categoria"
+              [class.bg-[#1f2847]]="categoriaSeleccionada !== cat.nombre_categoria"
+              [class.text-[#9aa2c7]]="categoriaSeleccionada !== cat.nombre_categoria"
+              class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#7dff7a]">
+              {{ cat.nombre_categoria }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Carrusel de ofertas -->
+        <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
+          <div class="bg-linear-to-r from-[#7dff7a] to-[#5dd565] rounded-lg p-8 text-[#04060f] flex items-center justify-between">
+            <div class="flex-1">
+              <div class="flex items-center space-x-2 mb-3">
+                <span class="text-3xl icon-placeholder"></span>
+                <b class="text-2xl">OFERTA ESPECIAL</b>
+              </div>
+              <p class="text-lg mb-2">Hasta 50% de descuento en panaderías</p>
+              <p class="text-sm opacity-90">Válido hasta el 30 de noviembre</p>
+              <button routerLink="/productos/listar" class="mt-4 bg-[#04060f] text-[#7dff7a] font-bold px-6 py-2 rounded-lg hover:bg-[#0b1020] transition">
+                Ver Ofertas
+              </button>
+            </div>
+            <div class="text-right">
+              <div class="bg-[#04060f] text-[#7dff7a] rounded-full w-24 h-24 flex flex-col items-center justify-center font-bold">
+                <span class="text-3xl">50%</span>
+                <span class="text-sm">OFF</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mapa de Negocios integrado -->
+        <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
+          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Mapa de Negocios</h3>
+          <app-mapa-usuarios></app-mapa-usuarios>
+        </div>
+
+        <!-- Recomendaciones -->
+        <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
+          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Recomendaciones para ti</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border border-[#1f2847] rounded-lg p-4 flex gap-4 bg-[#0f162d]">
+              <div class="w-24 h-24 bg-[#1f2847] rounded-lg flex items-center justify-center">
+                <span class="text-4xl icon-placeholder"></span>
+              </div>
+              <div class="flex-1">
+                <b class="text-lg block mb-1 text-[#f3f5ff]">Panadería La Delicia</b>
+                <p class="text-[#9aa2c7] text-sm mb-2">Pan fresco y almojábanas todos los días</p>
+                <button routerLink="/productos/listar" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg text-sm transition font-semibold">
+                  Ver Negocio
+                </button>
+              </div>
+            </div>
+            <div class="border border-[#1f2847] rounded-lg p-4 flex gap-4 bg-[#0f162d]">
+              <div class="w-24 h-24 bg-[#1f2847] rounded-lg flex items-center justify-center">
+                <span class="text-4xl icon-placeholder"></span>
+              </div>
+              <div class="flex-1">
+                <b class="text-lg block mb-1 text-[#f3f5ff]">Café Aroma</b>
+                <p class="text-[#9aa2c7] text-sm mb-2">Café especial y postres artesanales</p>
+                <button routerLink="/productos/listar" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg text-sm transition font-semibold">
+                  Ver Negocio
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Categorías populares -->
+        <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6">
+          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Categorías Populares</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
+              <span class="text-3xl block mb-2 icon-placeholder"></span>
+              <span class="font-semibold text-[#f3f5ff]">Panaderías</span>
+            </button>
+            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
+              <span class="text-3xl block mb-2 icon-placeholder"></span>
+              <span class="font-semibold text-[#f3f5ff]">Comidas rápidas</span>
+            </button>
+            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
+              <span class="text-3xl block mb-2 icon-placeholder"></span>
+              <span class="font-semibold text-[#f3f5ff]">Cafeterías</span>
+            </button>
+            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
+              <span class="text-3xl block mb-2 icon-placeholder"></span>
+              <span class="font-semibold text-[#f3f5ff]">Ferreterías</span>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>

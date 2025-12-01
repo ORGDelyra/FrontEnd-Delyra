@@ -1,0 +1,187 @@
+<!-- Barra superior -->
+<header class="bg-[#04060f] border-b border-[#1f2847] shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" />
+      <span class="text-2xl font-bold text-[#7dff7a] font-[Poppins]">Delyra - Domiciliario</span>
+    </div>
+
+    <!-- Menú desplegable en móvil -->
+    <div class="relative md:hidden">
+      <button
+        (click)="toggleMenu()"
+        class="text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 text-2xl">
+        ☰
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div *ngIf="menuAbierto" class="absolute right-0 mt-2 w-48 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50">
+        <a routerLink="/domiciliario/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+          👤 Mi Perfil
+        </a>
+        <a routerLink="/domiciliario/vehiculo" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+          🚗 Mi Vehículo
+        </a>
+        <a routerLink="/domiciliario/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+          📦 Mis Pedidos
+        </a>
+        <hr class="my-2 border-[#1f2847]">
+        <button (click)="cerrarSesion(); cerrarMenu()" class="w-full text-left px-4 py-2 text-red-400 hover:bg-[#2f1518] transition">
+          🚪 Cerrar Sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- Menú en escritorio -->
+    <div class="hidden md:flex items-center space-x-4">
+      <a routerLink="/domiciliario/perfil" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium transition">Mi Perfil</a>
+      <a routerLink="/domiciliario/vehiculo" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium transition">Mi Vehículo</a>
+      <button (click)="cerrarSesion()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200">
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] flex">
+  <!-- Sidebar collapsible -->
+  <aside
+    [class.w-64]="menuLateralAbierto"
+    [class.w-20]="!menuLateralAbierto"
+    class="bg-[#0b1020] border-r border-[#1f2847] shadow-lg transition-all duration-300 flex flex-col">
+
+    <!-- Botón toggle -->
+    <button
+      (click)="toggleMenuLateral()"
+      class="flex justify-center items-center h-16 text-[#7dff7a] hover:bg-[#1f2847] transition duration-200 border-b border-[#1f2847]">
+      <span class="text-xl">{{ menuLateralAbierto ? '◀' : '▶' }}</span>
+    </button>
+
+    <!-- Menú items -->
+    <ul class="flex-1 space-y-3 p-4 overflow-y-auto">
+      <li>
+        <a
+          routerLink="/domiciliario/perfil"
+          [title]="!menuLateralAbierto ? 'Mi Perfil' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+          <span class="text-xl min-w-6">👤</span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Mi Perfil</span>
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/domiciliario/vehiculo"
+          [title]="!menuLateralAbierto ? 'Mi Vehículo' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+          <span class="text-xl min-w-6">🚗</span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Mi Vehículo</span>
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/domiciliario/pedidos"
+          [title]="!menuLateralAbierto ? 'Mis Pedidos' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+          <span class="text-xl min-w-6">📦</span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Mis Pedidos</span>
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/domiciliario/chat"
+          [title]="!menuLateralAbierto ? 'Chat' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+          <span class="text-xl min-w-6">💬</span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Chat</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Botón cerrar sesión -->
+    <div class="border-t border-[#1f2847] p-4">
+      <button
+        (click)="cerrarSesion()"
+        [title]="!menuLateralAbierto ? 'Cerrar Sesión' : ''"
+        class="w-full flex items-center space-x-3 text-red-400 hover:text-red-300 hover:bg-[#2f1518] px-3 py-2 rounded-lg transition duration-200">
+        <span class="text-xl min-w-6">🚪</span>
+        <span *ngIf="menuLateralAbierto" class="truncate">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="flex-1 overflow-auto">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+      <!-- Estado de disponibilidad -->
+      <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-lg font-bold text-[#7dff7a] mb-1">Estado de Disponibilidad</h3>
+            <p class="text-[#9aa2c7] text-sm">Estado actual: <span class="font-semibold text-[#7dff7a]">{{ estadoDispo }}</span></p>
+          </div>
+          <button
+            (click)="cambiarEstado()"
+            [class.bg-[#7dff7a]]="estadoDispo === 'activo'"
+            [class.text-[#05060c]]="estadoDispo === 'activo'"
+            [class.bg-[#1f2847]]="estadoDispo !== 'activo'"
+            [class.text-[#9aa2c7]]="estadoDispo !== 'activo'"
+            class="px-6 py-2 rounded-lg transition duration-200 font-semibold">
+            {{ estadoDispo === 'activo' ? 'Desactivar' : 'Activar' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Pedidos Disponibles -->
+        <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6">
+          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Pedidos Disponibles</h3>
+          <div *ngIf="cargando" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#7dff7a]"></div>
+          </div>
+          <div *ngIf="!cargando && pedidosDisponibles.length === 0" class="text-center py-8 text-[#9aa2c7]">
+            <p>No hay pedidos disponibles en este momento</p>
+          </div>
+          <div *ngFor="let pedido of pedidosDisponibles" class="border border-[#1f2847] rounded-lg p-4 mb-4 bg-[#0f162d]">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <p class="font-semibold text-[#f3f5ff]">Pedido #{{ pedido.id }}</p>
+                <p class="text-sm text-[#9aa2c7]">Total: ${{ pedido.total }}</p>
+              </div>
+              <button
+                (click)="aceptarPedido(pedido.id!)"
+                class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg text-sm transition font-semibold">
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mis Pedidos -->
+        <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6">
+          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Mis Pedidos en Curso</h3>
+          <div *ngIf="cargando" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#7dff7a]"></div>
+          </div>
+          <div *ngIf="!cargando && misPedidos.length === 0" class="text-center py-8 text-[#9aa2c7]">
+            <p>No tienes pedidos en curso</p>
+          </div>
+          <div *ngFor="let pedido of misPedidos" class="border border-[#1f2847] rounded-lg p-4 mb-4 bg-[#0f162d]">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <p class="font-semibold text-[#f3f5ff]">Pedido #{{ pedido.id }}</p>
+                <p class="text-sm text-[#9aa2c7]">Estado: <span class="font-semibold text-[#7dff7a]">{{ pedido.estado }}</span></p>
+                <p class="text-sm text-[#9aa2c7]">Total: ${{ pedido.total }}</p>
+              </div>
+              <button
+                *ngIf="pedido.estado === 'en_camino'"
+                (click)="completarPedido(pedido.id!)"
+                class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg text-sm transition font-semibold">
+                Completar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,165 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-10 px-4">
+  <div class="max-w-5xl mx-auto space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <p class="text-sm uppercase tracking-wide text-[#9aa2c7]">Panel del comercio</p>
+        <h1 class="text-3xl font-semibold">Pedidos de la tienda</h1>
+      </div>
+      <button routerLink="/vendedor/inicio" class="self-start md:self-auto px-4 py-2 rounded-2xl border border-[#1f2847] text-sm font-semibold hover:text-[#7dff7a] transition">
+        &larr; Volver al panel
+      </button>
+    </div>
+
+    <!-- Mensajes -->
+    <div *ngIf="mensajeError" class="p-4 rounded-2xl bg-[#2f1518] border border-red-500 text-[#fecaca]">
+      {{ mensajeError }}
+    </div>
+    <div *ngIf="mensajeExito" class="p-4 rounded-2xl bg-[#10291b] border border-[#22c55e] text-[#bbf7d0]">
+      {{ mensajeExito }}
+    </div>
+
+    <!-- Filtros -->
+    <div class="card-surface">
+      <div class="flex flex-wrap gap-3">
+        <button
+          (click)="filtrarPorEstado('todos')"
+          class="px-4 py-2 rounded-2xl text-sm font-semibold border border-[#1f2847] transition"
+          [ngClass]="{
+            'bg-[#7dff7a] text-[#05060c] border-transparent': filtroEstado === 'todos'
+          }"
+        >
+          Todos
+        </button>
+        <button
+          (click)="filtrarPorEstado('pendiente')"
+          class="px-4 py-2 rounded-2xl text-sm font-semibold border border-[#1f2847] transition"
+          [ngClass]="{
+            'bg-[#7dff7a] text-[#05060c] border-transparent': filtroEstado === 'pendiente'
+          }"
+        >
+          Pendientes
+        </button>
+        <button
+          (click)="filtrarPorEstado('confirmado')"
+          class="px-4 py-2 rounded-2xl text-sm font-semibold border border-[#1f2847] transition"
+          [ngClass]="{
+            'bg-[#7dff7a] text-[#05060c] border-transparent': filtroEstado === 'confirmado'
+          }"
+        >
+          Confirmados
+        </button>
+        <button
+          (click)="filtrarPorEstado('en_preparacion')"
+          class="px-4 py-2 rounded-2xl text-sm font-semibold border border-[#1f2847] transition"
+          [ngClass]="{
+            'bg-[#7dff7a] text-[#05060c] border-transparent': filtroEstado === 'en_preparacion'
+          }"
+        >
+          En preparacion
+        </button>
+        <button
+          (click)="filtrarPorEstado('listo')"
+          class="px-4 py-2 rounded-2xl text-sm font-semibold border border-[#1f2847] transition"
+          [ngClass]="{
+            'bg-[#7dff7a] text-[#05060c] border-transparent': filtroEstado === 'listo'
+          }"
+        >
+          Listos
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7dff7a]"></div>
+    </div>
+
+    <div *ngIf="!cargando && pedidos.length === 0" class="card-surface text-center py-12">
+      <div class="text-6xl mb-4">&#128230;</div>
+      <p class="text-[#9aa2c7] text-lg mb-2">No tienes pedidos aun</p>
+      <p class="text-sm text-[#6b739c]">Cuando recibas compras, cada pedido aparecera aqui.</p>
+    </div>
+
+    <div *ngIf="!cargando && pedidos.length > 0" class="space-y-6">
+      <div *ngFor="let pedido of pedidos" class="card-surface">
+        <div class="flex flex-col gap-4 md:flex-row md:justify-between">
+          <div class="flex-1">
+            <p class="text-sm text-[#9aa2c7]">Pedido #{{ pedido.id }}</p>
+            <p class="text-lg font-semibold">Total: ${{ pedido.total | number:'1.0-0' }}</p>
+            <p class="text-sm text-[#6b739c]">Fecha: {{ formatearFecha(pedido.created_at) }}</p>
+
+            <div *ngIf="pedido.usuario" class="mt-3 text-sm text-[#9aa2c7]">
+              Cliente: {{ pedido.usuario.primer_nombre }} {{ pedido.usuario.primer_apellido }} - {{ pedido.usuario.telefono }}
+            </div>
+
+            <div class="mt-3">
+              <span
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#0f162d] border border-[#1f2847]"
+              >
+                {{ pedido.tipo_entrega === 'domicilio' ? 'Domicilio' : 'Recoger en tienda' }}
+              </span>
+            </div>
+
+            <div *ngIf="pedido.tipo_entrega === 'domicilio' && pedido.direccion_entrega" class="mt-2 text-sm text-[#9aa2c7]">
+              Direccion: {{ pedido.direccion_entrega }}
+            </div>
+
+            <div *ngIf="pedido.domiciliario" class="mt-2 text-sm text-[#9aa2c7]">
+              Domiciliario: {{ pedido.domiciliario.nombre_completo }} - {{ pedido.domiciliario.telefono }}
+            </div>
+          </div>
+
+          <span [ngClass]="obtenerEstadoColor(pedido.estado_pedido)" class="self-start px-3 py-1 rounded-full text-xs font-bold">
+            {{ obtenerEstadoTexto(pedido.estado_pedido) }}
+          </span>
+        </div>
+
+        <div *ngIf="pedido.productos && pedido.productos.length > 0" class="border-t border-[#1f2847] pt-4 mt-4 text-sm text-[#c7d2fe] space-y-2">
+          <p class="font-semibold">Productos</p>
+          <div *ngFor="let producto of pedido.productos" class="flex justify-between">
+            <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
+            <span class="font-semibold">${{ producto.subtotal | number:'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <div class="border-t border-[#1f2847] pt-4 mt-4 flex flex-wrap gap-2">
+          <button *ngIf="pedido.estado_pedido === 'pendiente'" (click)="actualizarEstadoPedido(pedido.id!, 'confirmado')" class="px-4 py-2 rounded-2xl text-sm font-semibold bg-[#4c82ff] text-white">
+            Confirmar
+          </button>
+          <button *ngIf="pedido.estado_pedido === 'confirmado'" (click)="actualizarEstadoPedido(pedido.id!, 'en_preparacion')" class="px-4 py-2 rounded-2xl text-sm font-semibold bg-[#fbbf24] text-[#05060c]">
+            En preparacion
+          </button>
+          <button *ngIf="pedido.estado_pedido === 'en_preparacion'" (click)="actualizarEstadoPedido(pedido.id!, 'listo')" class="px-4 py-2 rounded-2xl text-sm font-semibold bg-[#7dff7a] text-[#05060c]">
+            Marcar listo
+          </button>
+          <button *ngIf="puedeAsignarDomiciliario(pedido)" (click)="abrirModalAsignar(pedido.id!)" class="px-4 py-2 rounded-2xl text-sm font-semibold border border-[#1f2847] hover:text-[#7dff7a]">
+            Asignar domiciliario
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para asignar domiciliario -->
+  <div *ngIf="pedidoSeleccionado" class="fixed inset-0 bg-black/70 backdrop-blur flex items-center justify-center z-50 px-4">
+    <div class="card-surface max-w-md w-full">
+      <h3 class="text-xl font-semibold mb-4">Asignar domiciliario</h3>
+      <p class="text-[#9aa2c7] text-sm mb-4">Selecciona un domiciliario para el pedido #{{ pedidoSeleccionado }}.</p>
+
+      <select [(ngModel)]="domiciliarioSeleccionado" class="w-full mb-4 px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644]">
+        <option [ngValue]="null">Selecciona un domiciliario</option>
+        <option *ngFor="let dom of domiciliarios" [ngValue]="dom.id">
+          {{ dom.primer_nombre }} {{ dom.primer_apellido }} - {{ dom.telefono }}
+        </option>
+      </select>
+
+      <div class="flex gap-3">
+        <button (click)="asignarDomiciliario()" [disabled]="!domiciliarioSeleccionado" class="flex-1 px-4 py-3 rounded-2xl font-semibold bg-[#7dff7a] text-[#05060c] disabled:bg-gray-500 disabled:text-gray-800">
+          Asignar
+        </button>
+        <button (click)="pedidoSeleccionado = null" class="flex-1 px-4 py-3 rounded-2xl border border-[#1f2847] hover:text-[#7dff7a]">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

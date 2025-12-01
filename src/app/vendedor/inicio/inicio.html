@@ -1,0 +1,196 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] flex">
+  <!-- Sidebar collapsible -->
+  <aside [class.w-64]="menuLateralAbierto" [class.w-20]="!menuLateralAbierto"
+    class="bg-[#0b1020] border-r border-[#1f2847] shadow-lg transition-all duration-300 flex flex-col">
+
+    <!-- Botón toggle -->
+    <button (click)="toggleMenuLateral()"
+      class="flex justify-center items-center h-16 text-[#7dff7a] hover:bg-[#1f2847] transition duration-200 border-b border-[#1f2847]">
+      <span class="text-xl">{{ menuLateralAbierto ? '◀' : '▶' }}</span>
+    </button>
+
+    <!-- Menú items -->
+    <ul class="flex-1 space-y-3 p-4 overflow-y-auto">
+      <li>
+        <a routerLink="/vendedor/perfil" [title]="!menuLateralAbierto ? 'Mi Perfil' : ''"
+          class="flex items-center space-x-3 text-[#e65744] hover:text-[#e4513d] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+            <span class="text-xl min-w-6 icon-placeholder"></span>
+          <span *ngIf="menuLateralAbierto" class="truncate ">Mi Perfil</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/vendedor/sucursal" [title]="!menuLateralAbierto ? 'Mi Sucursal' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+            <span class="text-xl min-w-6 icon-placeholder"></span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Mi Sucursal</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/vendedor/productos" [title]="!menuLateralAbierto ? 'Mis Productos' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+            <span class="text-xl min-w-6 icon-placeholder"></span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Mis Productos</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/vendedor/pedidos" [title]="!menuLateralAbierto ? 'Pedidos' : ''"
+          class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] hover:bg-[#1f2847] px-3 py-2 rounded-lg transition duration-200">
+            <span class="text-xl min-w-6 icon-placeholder"></span>
+          <span *ngIf="menuLateralAbierto" class="truncate">Pedidos</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Botón cerrar sesión -->
+    <div class="border-t border-[#1f2847] p-4">
+      <button (click)="cerrarSesion()" [title]="!menuLateralAbierto ? 'Cerrar Sesión' : ''"
+        class="w-full flex items-center space-x-3 text-red-400 hover:text-red-300 hover:bg-[#2f1518] px-3 py-2 rounded-lg transition duration-200">
+          <span class="text-xl min-w-6 icon-placeholder"></span>
+        <span *ngIf="menuLateralAbierto" class="truncate">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="flex-1 overflow-auto">
+    <!-- Barra superior -->
+    <header class="border-b border-[#1f2847] bg-[#04060f] sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <img src="/assets/logo.png" alt="Delyra" class="h-12 w-auto rounded-md object-contain" />
+          <div class="hidden sm:block">
+            <h1
+              class="text-6xl font-bold bg-gradient-to-tr from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent">
+                Delyra
+            </h1>
+          </div>
+        </div>
+
+        <!-- Menú desplegable en móvil -->
+        <div class="relative md:hidden">
+          <button (click)="toggleMenu()" class="text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 text-2xl">
+            <span class="icon-placeholder"></span>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div *ngIf="menuAbierto"
+            class="absolute right-0 mt-2 w-48 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50">
+            <a routerLink="/vendedor/perfil" (click)="cerrarMenu()"
+              class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+                <span class="icon-placeholder">perfil</span> Mi Perfil
+            </a>
+            <a routerLink="/vendedor/sucursal" (click)="cerrarMenu()"
+              class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+                <span class="icon-placeholder"></span> Mi Sucursal
+            </a>
+            <a routerLink="/vendedor/productos" (click)="cerrarMenu()"
+              class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+                <span class="icon-placeholder"></span> Mis Productos
+            </a>
+            <a routerLink="/vendedor/pedidos" (click)="cerrarMenu()"
+              class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
+                <span class="icon-placeholder"></span> Pedidos
+            </a>
+            <hr class="my-2 border-[#1f2847]">
+            <button (click)="cerrarSesion(); cerrarMenu()"
+              class="w-full text-left px-4 py-2 text-red-400 hover:bg-[#2f1518] transition">
+                <span class="icon-placeholder"></span> Cerrar Sesión
+            </button>
+          </div>
+        </div>
+
+        <!-- Menú en escritorio -->
+        <div class="hidden md:flex gap-3 items-center">
+          <button routerLink="/vendedor/perfil"
+            class="px-4 py-2 rounded-2xl border text-[#e75757]  border-[#1f2847] hover:text-[#7dff7a] transition text-sm font-medium">
+            Mi Perfil
+          </button>
+          <button routerLink="/vendedor/sucursal"
+            class="px-4 py-2 rounded-2xl border border-[#1f2847] hover:text-[#7dff7a] transition text-sm font-medium">
+            Mi Sucursal
+          </button>
+          <button (click)="cerrarSesion()"
+            class="px-5 py-2 rounded-2xl bg-[#ff5f5f] text-[#05060c] font-semibold hover:bg-[#ff7373] transition">
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-10 space-y-10">
+      <!-- Tarjetas de metricas -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <article class="card-surface">
+          <div class="flex items-center justify-between text-sm text-[#9aa2c7] mb-3">
+            <span>Pedidos hoy</span>
+            <span class="text-2xl icon-placeholder metric-icon"></span>
+          </div>
+          <p class="text-4xl font-extrabold text-[#7dff7a]">{{ estadisticas.pedidosHoy }}</p>
+        </article>
+
+        <article class="card-surface">
+          <div class="flex items-center justify-between text-sm text-[#9aa2c7] mb-3">
+            <span>Ventas del mes</span>
+            <span class="text-2xl icon-placeholder metric-icon"></span>
+          </div>
+          <p class="text-4xl font-extrabold text-[#7dff7a]">${{ estadisticas.ventasMes }}</p>
+        </article>
+
+        <article class="card-surface">
+          <div class="flex items-center justify-between text-sm text-[#9aa2c7] mb-3">
+            <span>Productos activos</span>
+            <span class="text-2xl icon-placeholder metric-icon"></span>
+          </div>
+          <p class="text-4xl font-extrabold text-[#7dff7a]">{{ estadisticas.productos }}</p>
+        </article>
+
+        <article class="card-surface">
+          <div class="flex items-center justify-between text-sm text-[#9aa2c7] mb-3">
+            <span>Pedidos pendientes</span>
+            <span class="text-2xl icon-placeholder metric-icon"></span>
+          </div>
+          <p class="text-4xl font-extrabold text-[#fbbf24]">{{ estadisticas.pedidosPendientes }}</p>
+        </article>
+      </section>
+
+      <!-- Accesos rapidos -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <button routerLink="/vendedor/productos" class="card-surface text-left hover:-translate-y-1 transition">
+          <span class="text-4xl block mb-4 icon-placeholder metric-icon"></span>
+          <h3 class="text-xl font-semibold mb-2">Mis Productos</h3>
+          <p class="text-[#9aa2c7] text-sm">Administra tu catalogo y mantiene actualizado el stock.</p>
+        </button>
+
+        <button routerLink="/vendedor/pedidos" class="card-surface text-left hover:-translate-y-1 transition">
+          <span class="text-4xl block mb-4 icon-placeholder metric-icon"></span>
+          <h3 class="text-xl font-semibold mb-2">Pedidos</h3>
+          <p class="text-[#9aa2c7] text-sm">Sigue el estado de cada pedido en tiempo real.</p>
+        </button>
+
+        <button routerLink="/vendedor/sucursal" class="card-surface text-left hover:-translate-y-1 transition">
+          <span class="text-4xl block mb-4 icon-placeholder metric-icon"></span>
+          <h3 class="text-xl font-semibold mb-2">Mi Sucursal</h3>
+          <p class="text-[#9aa2c7] text-sm">Actualiza la información pública de tu comercio.</p>
+        </button>
+      </section>
+
+      <!-- Pedidos recientes -->
+      <section class="card-surface">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <p class="text-sm uppercase tracking-wide text-[#9aa2c7]">Actividad</p>
+            <h3 class="text-2xl font-semibold">Pedidos recientes</h3>
+          </div>
+          <button routerLink="/vendedor/pedidos"
+            class="px-5 py-2 rounded-2xl border border-[#1f2847] hover:text-[#7dff7a] transition text-sm font-semibold">
+            Ver todos →
+          </button>
+        </div>
+        <div class="text-center py-12 text-[#9aa2c7]">
+          <p class="text-lg font-medium">Aun no tienes pedidos registrados.</p>
+          <p class="text-sm mt-2">Cuando los clientes confirmen compras los veras aqui.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

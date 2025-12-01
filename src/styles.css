@@ -1,1 +1,174 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap");
+@import "tailwindcss";
+@import 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+
+:root {
+  --bg-body: #ffffff;
+  --bg-card: #f8fafc;
+  --bg-input: #ffffff;
+  --border-color: #e6e9ef;
+  --accent-primary: #0b6bff;
+  --accent-secondary: #475569;
+  --text-base: #0b1020;
+  --text-muted: #6b7280;
+  --danger: #ef4444;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  background-color: var(--bg-body);
+  background-image: none;
+  font-family: "Poppins", "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: var(--text-base);
+  margin: 0;
+}
+
+body {
+  padding: 12px 12px;
+}
+
+/* Hacer que el contenedor principal ocupe todo el ancho para evitar franjas blancas laterales */
+app-root {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--accent-secondary);
+}
+
+
+/* Botones: estilos mínimos para no interferir con Tailwind/estilos inline */
+button,
+input[type="button"],
+input[type="submit"] {
+  border: none;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+  font-weight: 600;
+}
+
+.btn-primary,
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  min-height: 38px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--accent-primary), #4f46e5);
+  color: #f3f5ff;
+  box-shadow: 0 8px 20px rgba(11, 107, 255, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-primary:disabled,
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-image: none;
+  background-color: #4b5563;
+  color: rgba(243, 245, 255, 0.6);
+  box-shadow: none;
+}
+
+button:not(:disabled):hover,
+input[type="button"]:not(:disabled):hover,
+input[type="submit"]:not(:disabled):hover,
+.btn-primary:not(:disabled):hover,
+.btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-base);
+  padding: 12px 16px;
+  font: inherit;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+/* Brand and small icon placeholders to replace emojis */
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  display:inline-block;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent-primary), #7dd3fc);
+}
+.icon-placeholder, .metric-icon {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #eef2ff;
+  border: 1px solid var(--border-color);
+}
+.metric-icon { width:48px; height:48px }
+
+/* Helpful overrides to adapt any hardcoded dark utility classes used across templates.
+  Use attribute selectors because Tailwind emits classes like `bg-[#04060f]` which
+  contain characters that need escaping in plain class selectors. */
+[class*="bg-[#04060f]"] { background-color: var(--bg-body) !important; }
+[class*="bg-[#0b1020]"] { background-color: var(--bg-card) !important; }
+[class*="text-[#f3f5ff]"] { color: var(--text-base) !important; }
+[class*="text-[#7dff7a]"] { color: var(--accent-primary) !important; }
+[class*="border-[#1f2847]"] { border-color: var(--border-color) !important; }
+[class*="bg-[#1f2847]"] { background-color: var(--border-color) !important; }
+[class*="text-[#9aa2c7]"] { color: var(--text-muted) !important; }
+[class*="bg-[#0f162d]"] { background-color: var(--bg-card) !important; }
+[class*="text-[#04060f]"] { color: var(--text-base) !important; }
+[class*="bg-[#7dff7a]"] { background: linear-gradient(90deg, var(--accent-primary), #4f46e5) !important; color: white !important; }
+[class*="text-[#05060c]"] { color: #071028 !important; }
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+.card-surface {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(11, 16, 32, 0.06);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-danger {
+  color: var(--danger);
+}

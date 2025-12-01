@@ -1,0 +1,159 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-8 px-4">
+  <div class="max-w-3xl mx-auto">
+    <!-- Título principal -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-[#7dff7a] mb-2">Gestión de Sucursal</h1>
+      <p class="text-[#9aa2c7]">{{ modoEdicion ? 'Actualiza la información de tu sucursal' : 'Completa la información de tu sucursal' }}</p>
+    </div>
+
+    <!-- Mensajes de estado -->
+    <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-900/30 border border-red-500 text-red-300 rounded-lg flex items-center gap-3">
+      <span class="text-2xl">[X]</span>
+      <span>{{ mensajeError }}</span>
+    </div>
+
+    <div *ngIf="mensajeExito" class="mb-6 p-4 bg-green-900/30 border border-[#7dff7a] text-[#7dff7a] rounded-lg flex items-center gap-3">
+      <span class="text-2xl">[OK]</span>
+      <span>{{ mensajeExito }}</span>
+    </div>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando && !sucursal" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7dff7a]"></div>
+      <p class="mt-4 text-[#9aa2c7]">Cargando información...</p>
+    </div>
+
+    <!-- Formulario -->
+    <div *ngIf="!cargando || sucursal" class="bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl p-8">
+
+      <!-- Sección Logo -->
+      <div class="mb-8 pb-8 border-b border-[#1f2847]">
+        <h2 class="text-xl font-bold text-[#7dff7a] mb-4">Logo del Comercio</h2>
+        <div class="flex flex-col items-center gap-4">
+            <div class="w-40 h-40 rounded-lg bg-[#1f2847] border-4 border-[#7dff7a] flex items-center justify-center overflow-hidden">
+            <img *ngIf="logoComercio" [src]="logoComercio" alt="Logo del comercio" class="w-full h-full object-cover">
+            <span *ngIf="!logoComercio" class="text-5xl icon-placeholder"></span>
+          </div>
+
+          <label *ngIf="modoEdicion" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
+            <span class="icon-placeholder"></span> Cambiar Logo
+            <input type="file" accept="image/*" (change)="onLogoSeleccionado($event)" class="hidden">
+          </label>
+
+          <div *ngIf="cargandoLogo" class="text-[#7dff7a] text-sm flex items-center gap-2">
+            <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-[#7dff7a]"></div>
+            Subiendo logo...
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="guardarSucursal()">
+        <!-- Nombre y NIT -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-[#9aa2c7] font-medium mb-2">
+              Nombre de la Sucursal <span class="text-red-400">*</span>
+            </label>
+            <input
+              formControlName="nombre_sucursal"
+              type="text"
+              placeholder="Ej: Panadería La Delicia"
+              [disabled]="!modoEdicion"
+              class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+              [class.border-red-500]="f['nombre_sucursal'].invalid && f['nombre_sucursal'].touched"
+            >
+            <span *ngIf="f['nombre_sucursal'].invalid && f['nombre_sucursal'].touched"
+                  class="text-red-400 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+
+          <div>
+            <label class="block text-[#9aa2c7] font-medium mb-2">
+              NIT <span class="text-red-400">*</span>
+            </label>
+            <input
+              formControlName="nit"
+              type="text"
+              placeholder="Ej: 123456789-1"
+              [disabled]="!modoEdicion"
+              class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+              [class.border-red-500]="f['nit'].invalid && f['nit'].touched"
+            >
+            <span *ngIf="f['nit'].invalid && f['nit'].touched"
+                  class="text-red-400 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+        </div>
+        <!-- Imagen NIT -->
+        <div class="mb-6">
+          <label class="block text-[#9aa2c7] font-medium mb-2">
+            URL de Imagen del NIT <span class="text-red-400">*</span>
+          </label>
+          <input
+            formControlName="img_nit"
+            type="text"
+            placeholder="https://ejemplo.com/imagen-nit.jpg"
+            [disabled]="!modoEdicion"
+            class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+            [class.border-red-500]="f['img_nit'].invalid && f['img_nit'].touched"
+          >
+          <span *ngIf="f['img_nit'].invalid && f['img_nit'].touched"
+                class="text-red-400 text-sm mt-1 block">Este campo es requerido</span>
+        </div>
+
+        <!-- Dirección -->
+        <div class="mb-6">
+          <label class="block text-[#9aa2c7] font-medium mb-2">Dirección</label>
+          <input
+            formControlName="direccion"
+            type="text"
+            placeholder="Calle 123 #45-67"
+            [disabled]="!modoEdicion"
+            class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+        </div>
+
+        <!-- Coordenadas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-[#9aa2c7] font-medium mb-2">Latitud</label>
+            <input
+              formControlName="latitud"
+              type="text"
+              placeholder="Ej: 4.6097"
+              [disabled]="!modoEdicion"
+              class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+          </div>
+
+          <div>
+            <label class="block text-[#9aa2c7] font-medium mb-2">Longitud</label>
+            <input
+              formControlName="longitud"
+              type="text"
+              placeholder="Ej: -74.0817"
+              [disabled]="!modoEdicion"
+              class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-4 mt-8">
+          <button
+            type="button"
+            routerLink="/vendedor/inicio"
+            class="flex-1 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] font-bold py-3 px-6 rounded-lg transition duration-200">
+            Volver
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="cargando"
+            class="flex-1 bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] font-bold py-3 px-6 rounded-lg transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            <span *ngIf="!cargando">{{ modoEdicion ? 'Actualizar Sucursal' : 'Crear Sucursal' }}</span>
+            <span *ngIf="cargando">Guardando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

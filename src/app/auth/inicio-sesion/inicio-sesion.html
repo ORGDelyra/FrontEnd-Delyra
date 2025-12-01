@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-[#04060f] flex items-center justify-center py-10 px-4 text-[#f3f5ff]">
+  <div class="max-w-md w-full">
+    <!-- Tarjeta principal -->
+    <div class="bg-[#0b1020] rounded-[30px] p-8 shadow-2xl border border-[#1f2847]">
+      <!-- Título -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Nexus DL</h1>
+        <p class="text-[#a5b4fc]">Inicia sesión para continuar</p>
+      </div>
+
+      <!-- Mensaje de error -->
+      @if (mensajeError) {
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {{ mensajeError }}
+        </div>
+      }
+
+      <!-- Formulario -->
+      <form [formGroup]="form" (ngSubmit)="iniciarSesion()">
+        <!-- Correo -->
+        <div class="mb-6">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+            Correo Electrónico <span class="text-red-500">*</span>
+          </label>
+          <input
+            formControlName="correo"
+            type="email"
+            placeholder=""
+            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent text-[#f3f5ff]"
+            [class.border-red-500]="f['correo'].invalid && f['correo'].touched"
+          >
+          @if (f['correo'].invalid && f['correo'].touched) {
+            <span class="text-red-500 text-sm mt-1 block">
+              @if (f['correo'].errors?.['required']) {
+                <span>Este campo es requerido</span>
+              }
+              @if (f['correo'].errors?.['email']) {
+                <span>Correo inválido</span>
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-6">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+            Contraseña <span class="text-red-500">*</span>
+          </label>
+          <input
+            formControlName="password"
+            type="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent text-[#f3f5ff]"
+            [class.border-red-500]="f['password'].invalid && f['password'].touched"
+          >
+          @if (f['password'].invalid && f['password'].touched) {
+            <span class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          }
+        </div>
+
+        <!-- Botón de inicio de sesión -->
+        <button
+          type="submit"
+          [disabled]="cargando"
+          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed mb-4 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+          @if (!cargando) {
+            <span>Iniciar sesión</span>
+          }
+          @if (cargando) {
+            <span>Iniciando...</span>
+          }
+        </button>
+
+        <!-- Enlaces adicionales -->
+        <div class="text-center space-y-2">
+          <a href="#" class="text-[#7dff7a] hover:text-[#c084fc] text-sm font-medium block transition">
+            ¿Olvidaste tu contraseña?
+          </a>
+          <a routerLink="/seleccionar-registro" class="text-[#7dff7a] hover:text-[#c084fc] text-sm font-medium block transition">
+            ¿No tienes cuenta? Regístrate aquí
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Volver -->
+    <div class="text-center mt-6">
+      <a routerLink="/seleccionar-inicio" class="text-[#9aa2c7] hover:text-[#7dff7a] text-sm transition">
+        ← Volver a selección de inicio
+      </a>
+    </div>
+  </div>
+</div>
+

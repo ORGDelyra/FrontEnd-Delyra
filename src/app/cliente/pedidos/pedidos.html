@@ -1,0 +1,158 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-8 px-4">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-[#7dff7a]">Mis Pedidos</h1>
+      <button routerLink="/cliente/inicio" class="text-[#9aa2c7] hover:text-[#7dff7a] transition">← Volver</button>
+    </div>
+
+    <!-- Mensajes -->
+    <div *ngIf="mensajeError" class="mb-4 p-4 bg-red-900/50 border border-red-500 text-red-300 rounded">
+      {{ mensajeError }}
+    </div>
+    <div *ngIf="mensajeExito" class="mb-4 p-4 bg-green-900/50 border border-green-500 text-green-300 rounded">
+      {{ mensajeExito }}
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-4 mb-6">
+      <div class="flex flex-wrap gap-2">
+        <button (click)="filtrarPorEstado('todos')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'todos'"
+                [class.text-[#04060f]]="filtroEstado === 'todos'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'todos'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'todos'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          Todos
+        </button>
+        <button (click)="filtrarPorEstado('pendiente')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'pendiente'"
+                [class.text-[#04060f]]="filtroEstado === 'pendiente'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'pendiente'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'pendiente'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          Pendientes
+        </button>
+        <button (click)="filtrarPorEstado('confirmado')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'confirmado'"
+                [class.text-[#04060f]]="filtroEstado === 'confirmado'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'confirmado'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'confirmado'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          Confirmados
+        </button>
+        <button (click)="filtrarPorEstado('en_preparacion')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'en_preparacion'"
+                [class.text-[#04060f]]="filtroEstado === 'en_preparacion'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'en_preparacion'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'en_preparacion'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          En Preparación
+        </button>
+        <button (click)="filtrarPorEstado('listo')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'listo'"
+                [class.text-[#04060f]]="filtroEstado === 'listo'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'listo'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'listo'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          Listos
+        </button>
+        <button (click)="filtrarPorEstado('entregado')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'entregado'"
+                [class.text-[#04060f]]="filtroEstado === 'entregado'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'entregado'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'entregado'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          Entregados
+        </button>
+        <button (click)="filtrarPorEstado('recogido')"
+                [class.bg-[#7dff7a]]="filtroEstado === 'recogido'"
+                [class.text-[#04060f]]="filtroEstado === 'recogido'"
+                [class.bg-[#1f2847]]="filtroEstado !== 'recogido'"
+                [class.text-[#9aa2c7]]="filtroEstado !== 'recogido'"
+                class="px-4 py-2 rounded-lg transition font-semibold">
+          Recogidos
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7dff7a]"></div>
+    </div>
+
+    <div *ngIf="!cargando && pedidos.length === 0" class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-12 text-center">
+      <div class="text-6xl mb-4">📋</div>
+      <p class="text-[#9aa2c7] text-lg mb-4">No tienes pedidos aún</p>
+      <button routerLink="/productos/listar" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-6 py-3 rounded-lg transition font-semibold">
+        Explorar Productos
+      </button>
+    </div>
+
+    <div *ngIf="!cargando && pedidos.length > 0" class="space-y-6">
+      <div *ngFor="let pedido of pedidos" class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6">
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h3 class="font-bold text-[#f3f5ff] mb-1 text-lg">Pedido #{{ pedido.id }}</h3>
+            <p class="text-[#9aa2c7] text-sm">Fecha: {{ formatearFecha(pedido.created_at) }}</p>
+            <p class="text-[#7dff7a] font-bold mt-2 text-xl">Total: ${{ pedido.total | number:'1.0-0' }}</p>
+
+            <!-- Tipo de entrega -->
+            <div class="mt-2">
+              <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold"
+                    [class.bg-blue-900/50]="pedido.tipo_entrega === 'domicilio'"
+                    [class.text-blue-300]="pedido.tipo_entrega === 'domicilio'"
+                    [class.bg-purple-900/50]="pedido.tipo_entrega === 'recogida'"
+                    [class.text-purple-300]="pedido.tipo_entrega === 'recogida'">
+                {{ pedido.tipo_entrega === 'domicilio' ? 'A Domicilio' : 'Recoger en Tienda' }}
+              </span>
+            </div>
+
+            <!-- Dirección si es domicilio -->
+            <div *ngIf="pedido.tipo_entrega === 'domicilio' && pedido.direccion_entrega" class="mt-2 text-sm text-[#9aa2c7]">
+              📍 {{ pedido.direccion_entrega }}
+            </div>
+
+            <!-- Domiciliario asignado -->
+            <div *ngIf="pedido.domiciliario" class="mt-2 text-sm text-[#9aa2c7]">
+              📍 {{ pedido.direccion_entrega }}
+            </div>
+          </div>
+          <span [ngClass]="obtenerEstadoColor(pedido.estado_pedido)"
+                class="px-3 py-1 rounded-full text-sm font-bold">
+            {{ obtenerEstadoTexto(pedido.estado_pedido) }}
+          </span>
+        </div>
+
+        <!-- Productos -->
+        <div *ngIf="pedido.productos && pedido.productos.length > 0" class="border-t border-[#1f2847] pt-4 mt-4">
+          <h4 class="font-semibold text-[#f3f5ff] mb-2">Productos:</h4>
+          <div class="space-y-2">
+            <div *ngFor="let producto of pedido.productos" class="flex justify-between text-sm text-[#9aa2c7]">
+              <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
+              <span class="font-semibold text-[#7dff7a]">${{ producto.subtotal | number:'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="border-t border-[#1f2847] pt-4 mt-4">
+          <div class="flex gap-4">
+            <button *ngIf="puedeMarcarRecogido(pedido)"
+                    (click)="marcarComoRecogido(pedido.id!)"
+                    class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg transition text-sm font-semibold">
+              Marcar como Recogido
+            </button>
+            <button *ngIf="pedido.tipo_entrega === 'domicilio' && pedido.estado_pedido === 'en_preparacion'"
+                    routerLink="/cliente/pedidos"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold">
+              Rastrear
+            </button>
+            <button *ngIf="pedido.estado_pedido === 'entregado' || pedido.estado_pedido === 'recogido'"
+                    class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg transition text-sm font-semibold">
+              Calificar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,293 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-10 px-4">
+  <div class="max-w-3xl mx-auto">
+    <!-- Título principal -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
+      <p class="text-[#a5b4fc] text-lg">Registro de Domiciliario</p>
+      <p class="text-[#9aa2c7] text-sm mt-2">Únete y comienza a generar ingresos con entregas inteligentes</p>
+    </div>
+
+    <!-- Indicador de pasos -->
+    <div class="mb-10 flex flex-col sm:flex-row items-center justify-center gap-6">
+      <div class="flex items-center gap-3">
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center font-bold transition"
+          [ngClass]="pasoActual >= 1 ? 'bg-[#7dff7a] text-[#05060c]' : 'bg-[#0f162d] text-[#9aa2c7]'"
+        >
+          1
+        </div>
+        <span class="text-sm font-medium text-[#9aa2c7]">Datos personales</span>
+      </div>
+      <div class="hidden sm:block h-px w-20 bg-[#1f2847]"></div>
+      <div class="flex items-center gap-3">
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center font-bold transition"
+          [ngClass]="pasoActual >= 2 ? 'bg-[#7dff7a] text-[#05060c]' : 'bg-[#0f162d] text-[#9aa2c7]'"
+        >
+          2
+        </div>
+        <span class="text-sm font-medium text-[#9aa2c7]">Datos del vehículo</span>
+      </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="mensajeError" class="mb-6 p-4 bg-[#2f1518] border border-red-500 text-[#fecaca] rounded">
+      {{ mensajeError }}
+    </div>
+
+    <!-- Paso 1: Datos del Usuario -->
+    <div *ngIf="pasoActual === 1" class="bg-[#0b1020] shadow-2xl rounded-[30px] p-10 border border-[#1f2847]">
+      <h2 class="text-2xl font-semibold mb-6">Información personal</h2>
+
+      <form [formGroup]="formUsuario" (ngSubmit)="siguientePaso()">
+        <!-- Nombres -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Primer Nombre <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="primer_nombre"
+              type="text"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fUsuario['primer_nombre'].invalid && fUsuario['primer_nombre'].touched"
+            >
+            <span *ngIf="fUsuario['primer_nombre'].invalid && fUsuario['primer_nombre'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">Segundo Nombre</label>
+            <input
+              formControlName="segundo_nombre"
+              type="text"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+            >
+          </div>
+        </div>
+
+        <!-- Apellidos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Primer Apellido <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="primer_apellido"
+              type="text"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fUsuario['primer_apellido'].invalid && fUsuario['primer_apellido'].touched"
+            >
+            <span *ngIf="fUsuario['primer_apellido'].invalid && fUsuario['primer_apellido'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">Segundo Apellido</label>
+            <input
+              formControlName="segundo_apellido"
+              type="text"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+            >
+          </div>
+        </div>
+
+        <!-- Teléfono y Correo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Teléfono <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="telefono"
+              type="text"
+              placeholder="10 dígitos"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fUsuario['telefono'].invalid && fUsuario['telefono'].touched"
+            >
+            <span *ngIf="fUsuario['telefono'].invalid && fUsuario['telefono'].touched"
+                  class="text-red-500 text-sm mt-1 block">Teléfono inválido (10 dígitos)</span>
+          </div>
+
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Correo Electrónico <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="correo"
+              type="email"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fUsuario['correo'].invalid && fUsuario['correo'].touched"
+            >
+            <span *ngIf="fUsuario['correo'].invalid && fUsuario['correo'].touched"
+                  class="text-red-500 text-sm mt-1 block">Correo inválido</span>
+          </div>
+        </div>
+
+        <!-- Contraseña y Cuenta Bancaria -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Contraseña <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="password"
+              type="password"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fUsuario['password'].invalid && fUsuario['password'].touched"
+            >
+            <span *ngIf="fUsuario['password'].invalid && fUsuario['password'].touched"
+                  class="text-red-500 text-sm mt-1 block">Mínimo 6 caracteres</span>
+          </div>
+
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Cuenta Bancaria <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="cuenta_bancaria"
+              type="text"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fUsuario['cuenta_bancaria'].invalid && fUsuario['cuenta_bancaria'].touched"
+            >
+            <span *ngIf="fUsuario['cuenta_bancaria'].invalid && fUsuario['cuenta_bancaria'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+        </div>
+
+        <!-- Foto de Perfil (Opcional) -->
+        <div class="mb-8 p-6 bg-[#0f162d] border border-[#1e2644] rounded-2xl">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-4">
+            Foto de Perfil <span class="text-[#a5b4fc]">(Opcional)</span>
+          </label>
+          <div class="flex items-center gap-4">
+            <div class="flex-1">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                (change)="onFotoPerfilSelect($event)"
+                [disabled]="cargandoFoto"
+                class="w-full px-4 py-3 rounded-2xl bg-[#1f2847] border border-[#2a3a5a] text-[#9aa2c7] cursor-pointer"
+              >
+              <p class="text-xs text-[#9aa2c7] mt-2">JPG, PNG o WEBP • Max 2MB • 100x100px mínimo</p>
+            </div>
+          </div>
+
+          <div *ngIf="cargandoFoto" class="mt-4 text-[#7dff7a]">
+            ⏳ Cargando foto...
+          </div>
+
+          <div *ngIf="fotoPerfil" class="mt-4">
+            <p class="text-[#7dff7a] text-sm mb-2">✓ Foto de perfil cargada</p>
+            <img [src]="fotoPerfil" alt="Preview" class="w-24 h-24 rounded-xl object-cover border border-[#7dff7a]">
+          </div>
+        </div>
+
+        <!-- Botón siguiente -->
+        <button
+          type="submit"
+          [disabled]="cargando"
+          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed mb-2 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30"
+        >
+          <span *ngIf="!cargando">Siguiente: Datos del vehículo</span>
+          <span *ngIf="cargando">Procesando...</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Paso 2: Datos del Vehículo -->
+    <div *ngIf="pasoActual === 2" class="bg-[#0b1020] shadow-2xl rounded-[30px] p-10 border border-[#1f2847]">
+      <h2 class="text-2xl font-semibold mb-6">Información del vehículo</h2>
+
+      <form [formGroup]="formVehiculo" (ngSubmit)="completarRegistro()">
+        <!-- Placa y Tipo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Placa <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="placa"
+              type="text"
+              placeholder="Ej: ABC123"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fVehiculo['placa'].invalid && fVehiculo['placa'].touched"
+            >
+            <span *ngIf="fVehiculo['placa'].invalid && fVehiculo['placa'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Tipo de Vehículo <span class="text-red-500">*</span>
+            </label>
+            <select
+              formControlName="tipo_vehiculo"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fVehiculo['tipo_vehiculo'].invalid && fVehiculo['tipo_vehiculo'].touched"
+            >
+              <option value="">Selecciona un tipo</option>
+              <option value="Moto">Moto</option>
+              <option value="Bicicleta">Bicicleta</option>
+              <option value="Carro">Carro</option>
+            </select>
+            <span *ngIf="fVehiculo['tipo_vehiculo'].invalid && fVehiculo['tipo_vehiculo'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+        </div>
+
+        <!-- Seguro y RUN vigentes -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Seguro Vigente hasta <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="seguro_vig"
+              type="date"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fVehiculo['seguro_vig'].invalid && fVehiculo['seguro_vig'].touched"
+            >
+            <span *ngIf="fVehiculo['seguro_vig'].invalid && fVehiculo['seguro_vig'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              RUN Vigente hasta <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="run_vig"
+              type="date"
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fVehiculo['run_vig'].invalid && fVehiculo['run_vig'].touched"
+            >
+            <span *ngIf="fVehiculo['run_vig'].invalid && fVehiculo['run_vig'].touched"
+                  class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <button
+            type="button"
+            (click)="pasoAnterior()"
+            [disabled]="cargando"
+            class="flex-1 border border-[#1f2847] text-[#9aa2c7] font-semibold py-3 px-6 rounded-2xl transition duration-200 hover:text-[#7dff7a]"
+          >
+            Volver
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="cargando"
+            class="flex-1 font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30"
+          >
+            <span *ngIf="!cargando">Completar registro</span>
+            <span *ngIf="cargando">Guardando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,242 @@
+<div class="min-h-screen bg-[#04060f] flex items-center justify-center py-10 px-4 text-[#f3f5ff]">
+  <div class="max-w-2xl w-full">
+    <!-- Tarjeta principal -->
+    <div class="bg-[#0b1020] shadow-2xl rounded-[30px] p-10 border border-[#1c2440]">
+      <!-- Título -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
+        <p class="text-[#a5b4fc]">Crea tu cuenta y empieza a vivir la experiencia Delyra</p>
+      </div>
+
+      <!-- Mensajes -->
+      @if (mensajeError) {
+        <div class="mb-6 p-4 bg-[#2f1518] border border-red-500 text-[#fecaca] rounded">
+          {{ mensajeError }}
+        </div>
+      }
+      @if (mensajeExito) {
+        <div class="mb-6 p-4 bg-[#10291b] border border-[#22c55e] text-[#bbf7d0] rounded">
+          {{ mensajeExito }}
+        </div>
+      }
+
+      <!-- Formulario -->
+      <form [formGroup]="form" (ngSubmit)="registrar()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Primer Nombre -->
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Primer Nombre <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="primer_nombre"
+              type="text"
+              placeholder=""
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="f['primer_nombre'].invalid && f['primer_nombre'].touched"
+            >
+            @if (f['primer_nombre'].invalid && f['primer_nombre'].touched) {
+              <span class="text-red-500 text-sm mt-1 block">
+                @if (f['primer_nombre'].errors?.['required']) {
+                  <span>Este campo es requerido</span>
+                }
+                @if (f['primer_nombre'].errors?.['maxlength']) {
+                  <span>Máximo 50 caracteres</span>
+                }
+              </span>
+            }
+          </div>
+
+          <!-- Segundo Nombre -->
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Segundo Nombre
+            </label>
+            <input
+              formControlName="segundo_nombre"
+              type="text"
+              placeholder=""
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="f['segundo_nombre'].invalid && f['segundo_nombre'].touched"
+            >
+            @if (f['segundo_nombre'].invalid && f['segundo_nombre'].touched) {
+              <span class="text-red-500 text-sm mt-1 block">
+                Máximo 50 caracteres
+              </span>
+            }
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Primer Apellido -->
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Primer Apellido <span class="text-red-500">*</span>
+            </label>
+            <input
+              formControlName="primer_apellido"
+              type="text"
+              placeholder=""
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="f['primer_apellido'].invalid && f['primer_apellido'].touched"
+            >
+            @if (f['primer_apellido'].invalid && f['primer_apellido'].touched) {
+              <span class="text-red-500 text-sm mt-1 block">
+                @if (f['primer_apellido'].errors?.['required']) {
+                  <span>Este campo es requerido</span>
+                }
+                @if (f['primer_apellido'].errors?.['maxlength']) {
+                  <span>Máximo 50 caracteres</span>
+                }
+              </span>
+            }
+          </div>
+
+          <!-- Segundo Apellido -->
+          <div>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Segundo Apellido
+            </label>
+            <input
+              formControlName="segundo_apellido"
+              type="text"
+              placeholder=""
+              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="f['segundo_apellido'].invalid && f['segundo_apellido'].touched"
+            >
+            @if (f['segundo_apellido'].invalid && f['segundo_apellido'].touched) {
+              <span class="text-red-500 text-sm mt-1 block">
+                Máximo 50 caracteres
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mb-6">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+            Teléfono <span class="text-red-500">*</span>
+          </label>
+          <input
+            formControlName="telefono"
+            type="text"
+            placeholder=""
+            maxlength="10"
+            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+            [class.border-red-500]="f['telefono'].invalid && f['telefono'].touched"
+          >
+          @if (f['telefono'].invalid && f['telefono'].touched) {
+            <span class="text-red-500 text-sm mt-1 block">
+              @if (f['telefono'].errors?.['required']) {
+                <span>Este campo es requerido</span>
+              }
+              @if (f['telefono'].errors?.['maxlength']) {
+                <span>Máximo 10 dígitos</span>
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Correo -->
+        <div class="mb-6">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+            Correo Electrónico <span class="text-red-500">*</span>
+          </label>
+          <input
+            formControlName="correo"
+            type="email"
+            placeholder=""
+            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+            [class.border-red-500]="f['correo'].invalid && f['correo'].touched"
+          >
+          @if (f['correo'].invalid && f['correo'].touched) {
+            <span class="text-red-500 text-sm mt-1 block">
+              @if (f['correo'].errors?.['required']) {
+                <span>Este campo es requerido</span>
+              }
+              @if (f['correo'].errors?.['email']) {
+                <span>Correo inválido</span>
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-6">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+            Contraseña <span class="text-red-500">*</span>
+          </label>
+          <input
+            formControlName="password"
+            type="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+            [class.border-red-500]="f['password'].invalid && f['password'].touched"
+          >
+          @if (f['password'].invalid && f['password'].touched) {
+            <span class="text-red-500 text-sm mt-1 block">
+              @if (f['password'].errors?.['required']) {
+                <span>Este campo es requerido</span>
+              }
+              @if (f['password'].errors?.['minlength']) {
+                <span>Mínimo 6 caracteres</span>
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Cuenta Bancaria -->
+        <div class="mb-8">
+          <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+            Cuenta Bancaria <span class="text-red-500">*</span>
+          </label>
+          <input
+            formControlName="cuenta_bancaria"
+            type="text"
+            placeholder="Número de cuenta"
+            maxlength="30"
+            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+            [class.border-red-500]="f['cuenta_bancaria'].invalid && f['cuenta_bancaria'].touched"
+          >
+          @if (f['cuenta_bancaria'].invalid && f['cuenta_bancaria'].touched) {
+            <span class="text-red-500 text-sm mt-1 block">
+              @if (f['cuenta_bancaria'].errors?.['required']) {
+                <span>Este campo es requerido</span>
+              }
+              @if (f['cuenta_bancaria'].errors?.['maxlength']) {
+                <span>Máximo 30 caracteres</span>
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Botón de registro -->
+        <button
+          type="submit"
+          [disabled]="cargando"
+          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed mb-4 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+          @if (!cargando) {
+            <span>Registrarse</span>
+          }
+          @if (cargando) {
+            <span>Registrando...</span>
+          }
+        </button>
+
+        <!-- Enlaces adicionales -->
+        <div class="text-center space-y-2">
+          <a routerLink="/cliente/inicio-sesion" class="text-[#7dff7a] hover:text-[#c084fc] text-sm font-medium block transition">
+            ¿Ya tienes cuenta? Inicia sesión aquí
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Volver -->
+    <div class="text-center mt-6">
+      <a routerLink="/seleccionar-registro" class="text-[#9aa2c7] hover:text-[#7dff7a] text-sm transition">
+        ← Volver a selección de registro
+      </a>
+    </div>
+  </div>
+</div>

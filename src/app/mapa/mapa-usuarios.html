@@ -1,0 +1,24 @@
+<div class="mapa-usuarios-wrapper">
+  <div class="controls">
+    <input type="text" placeholder="Buscar sucursal por nombre" [(ngModel)]="query" (input)="onQueryChange()" />
+    <button (click)="showAll()">Mostrar todas</button>
+    <button (click)="fitToQuilichao()">Mostrar Quilichao</button>
+    <button (click)="toggleBounds()">{{ boundsEnabled ? 'Desactivar restricción' : 'Activar restricción' }}</button>
+  </div>
+
+  <div class="layout">
+    <div class="list">
+      <div *ngIf="loading">Cargando sucursales...</div>
+      <div *ngIf="!loading && filteredBranches.length === 0">No hay resultados</div>
+      <ul>
+        <li *ngFor="let b of filteredBranches" (click)="selectBranch(b)">
+          <strong>{{ b.nombre_sucursal }}</strong>
+          <div class="dir">{{ b.direccion }}</div>
+        </li>
+      </ul>
+      <div class="mensaje">{{ mensaje }}</div>
+    </div>
+
+    <div id="mapa-usuarios-container" class="map-container"></div>
+  </div>
+</div>

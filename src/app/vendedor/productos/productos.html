@@ -1,0 +1,45 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-10 px-4">
+  <div class="max-w-7xl mx-auto space-y-8">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="text-sm uppercase tracking-wide text-[#9aa2c7]">Inventario</p>
+        <h1 class="text-3xl font-semibold">Mis productos</h1>
+      </div>
+      <button routerLink="/vendedor/productos/crear" class="px-6 py-3 rounded-2xl font-semibold bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+        + Crear producto
+      </button>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7dff7a]"></div>
+    </div>
+
+    <div *ngIf="!cargando && productos.length === 0" class="card-surface text-center py-12">
+      <div class="text-6xl mb-4">&#128717;</div>
+      <p class="text-[#9aa2c7] text-lg mb-2">No tienes productos registrados</p>
+      <p class="text-sm text-[#6b739c] mb-6">Crea tu primer producto para que los clientes puedan verlo en Delyra.</p>
+      <button routerLink="/vendedor/productos/crear" class="px-6 py-3 rounded-2xl font-semibold bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c]">
+        Crear producto
+      </button>
+    </div>
+
+    <div *ngIf="!cargando && productos.length > 0" class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div *ngFor="let producto of productos" class="card-surface flex flex-col">
+        <div class="h-32 rounded-2xl bg-[#0f162d] border border-[#1f2847] mb-4 flex items-center justify-center text-4xl">
+          &#128230;
+        </div>
+        <h3 class="font-semibold text-lg mb-1">{{ producto.nombre }}</h3>
+        <p class="text-sm text-[#9aa2c7] mb-1">Cantidad: {{ producto.cantidad }}</p>
+        <p class="text-2xl font-bold text-[#7dff7a] mb-4">${{ producto.precio }}</p>
+        <div class="mt-auto flex gap-2">
+          <button routerLink="/vendedor/productos/editar/{{ producto.id }}" class="flex-1 px-3 py-2 rounded-2xl border border-[#1f2847] text-sm font-semibold hover:text-[#7dff7a]">
+            Editar
+          </button>
+          <button (click)="eliminarProducto(producto.id!)" class="flex-1 px-3 py-2 rounded-2xl text-sm font-semibold bg-[#ff5f5f] text-[#05060c] hover:bg-[#ff7373]">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

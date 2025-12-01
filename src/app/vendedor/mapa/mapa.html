@@ -1,0 +1,16 @@
+<div class="mapa-wrapper">
+  <div class="mapa-controls">
+    <div class="coords">
+      <label>Latitud: <input type="text" [(ngModel)]="lat" /></label>
+      <label>Longitud: <input type="text" [(ngModel)]="lng" /></label>
+    </div>
+    <div class="actions">
+      <button (click)="guardarUbicacion()" [disabled]="cargando">Guardar ubicación</button>
+      <button (click)="fitToQuilichao()">Mostrar Quilichao</button>
+      <button (click)="toggleBounds()">{{ boundsEnabled ? 'Desactivar restricción' : 'Activar restricción' }}</button>
+      <span class="mensaje">{{ mensaje }}</span>
+    </div>
+  </div>
+
+  <div id="mapa-container" class="mapa-container"></div>
+</div>
