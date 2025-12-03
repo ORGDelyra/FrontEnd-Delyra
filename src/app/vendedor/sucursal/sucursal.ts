@@ -161,7 +161,7 @@ export class SucursalVendedor implements OnInit {
     }
 
     try {
-      const response = await this.imageUploadService.uploadImage(file, 'productos');
+      const response = await this.imageUploadService.uploadImage(file, 'producto');
       this.logoComercio = response.secure_url;
       if (this.sucursal) {
         this.sucursal.logo_comercio = response.secure_url;

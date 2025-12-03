@@ -193,8 +193,10 @@ export class RegistroVendedor {
     const dataSucursal = {
       ...this.formSucursal.value,
       img_nit: this.imagenNIT || null,  // NIT es opcional
-      logo_url: this.logoComercio || null  // Logo es opcional
+      logo_comercio: this.logoComercio || null  // Cambiar de logo_url a logo_comercio
     };
+
+    console.log('Datos a enviar al backend:', dataSucursal);
 
     // Crear la sucursal
     this.vendedorService.crearSucursal(dataSucursal).subscribe({

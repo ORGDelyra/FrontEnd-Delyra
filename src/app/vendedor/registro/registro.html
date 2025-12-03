@@ -205,17 +205,18 @@
         <!-- Imagen NIT -->
         <div class="mb-6">
           <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
-            URL de Imagen del NIT <span class="text-red-500">*</span>
+            Imagen del NIT (Opcional)
           </label>
-          <input
-            formControlName="img_nit"
-            type="text"
-            placeholder="imagen del NIT"
-            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
-            [class.border-red-500]="fSucursal['img_nit'].invalid && fSucursal['img_nit'].touched"
-          >
-          <span *ngIf="fSucursal['img_nit'].invalid && fSucursal['img_nit'].touched"
-                class="text-red-500 text-sm mt-1 block">Este campo es requerido</span>
+          <div class="flex flex-col items-center gap-4">
+            <div *ngIf="imagenNIT" class="w-full h-32 bg-[#0f162d] border-2 border-dashed border-[#7dff7a] rounded-lg flex items-center justify-center">
+              <img [src]="imagenNIT" alt="Vista previa NIT" class="max-h-full max-w-full object-contain">
+            </div>
+            <label class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
+              <span *ngIf="!cargandoNIT">{{ imagenNIT ? 'Cambiar imagen del NIT' : 'Seleccionar imagen del NIT' }}</span>
+              <span *ngIf="cargandoNIT">Subiendo...</span>
+              <input type="file" accept="image/*" (change)="onImagenNITSelect($event)" class="hidden" [disabled]="cargandoNIT">
+            </label>
+          </div>
         </div>
 
         <!-- Dirección -->
