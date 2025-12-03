@@ -1,0 +1,49 @@
+<div class="upload-container">
+  <h3>Sube las imágenes de tu producto</h3>
+  
+  <div class="upload-area">
+    <label for="file-input-products" class="upload-label">
+      <span class="icon-placeholder">🖼️</span> Selecciona múltiples imágenes
+      <input
+        type="file"
+        id="file-input-products"
+        accept="image/*"
+        multiple
+        (change)="onFileSelected($event)"
+        hidden
+      />
+    </label>
+  </div>
+
+  <div *ngIf="previewUrls.length > 0" class="preview-container">
+    <div class="preview-grid">
+      <div *ngFor="let url of previewUrls; let i = index" class="preview-item">
+        <img [src]="url" alt="Preview {{ i + 1 }}" />
+        <button class="remove-btn" (click)="removePreview(i)">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="uploading" class="progress-bar">
+    <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+    <span>{{ uploadProgress }}%</span>
+  </div>
+
+  <button
+    *ngIf="selectedFiles.length > 0 && !uploading"
+    (click)="uploadProducts()"
+    class="btn-upload"
+  >
+    Subir {{ selectedFiles.length }} {{ selectedFiles.length === 1 ? 'Imagen' : 'Imágenes' }}
+  </button>
+
+  <button
+    *ngIf="selectedFiles.length > 0 && !uploading"
+    (click)="clear()"
+    class="btn-cancel"
+  >
+    Cancelar
+  </button>
+
+  <div *ngIf="error" class="error">❌ {{ error }}</div>
+</div>

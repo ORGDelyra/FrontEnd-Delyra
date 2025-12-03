@@ -1,0 +1,43 @@
+<div class="upload-container">
+  <h3>Sube tu comprobante de pago</h3>
+  
+  <div class="upload-area">
+    <label for="file-input-comprobante" class="upload-label">
+      <span class="icon-placeholder">📋</span> Selecciona tu comprobante
+      <input
+        type="file"
+        id="file-input-comprobante"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        hidden
+      />
+    </label>
+  </div>
+
+  <div *ngIf="previewUrl" class="preview-container">
+    <img [src]="previewUrl" alt="Vista previa" class="preview-image" />
+  </div>
+
+  <div *ngIf="uploading" class="progress-bar">
+    <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+    <span>{{ uploadProgress }}%</span>
+  </div>
+
+  <button
+    *ngIf="selectedFile && !uploading"
+    (click)="uploadComprobante()"
+    class="btn-upload"
+  >
+    Subir Comprobante
+  </button>
+
+  <button
+    *ngIf="selectedFile && !uploading"
+    (click)="clear()"
+    class="btn-cancel"
+  >
+    Cancelar
+  </button>
+
+  <div *ngIf="error" class="error">❌ {{ error }}</div>
+</div>

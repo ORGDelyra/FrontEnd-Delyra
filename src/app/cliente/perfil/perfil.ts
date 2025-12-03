@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { ProfileUploadComponent } from '../../components/profile-upload/profile-upload';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, ProfileUploadComponent],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -58,6 +59,16 @@ export class PerfilCliente implements OnInit {
       this.cargarDatos();
       this.mensajeError = '';
     }
+  }
+
+  onProfileImageUploaded(imageUrl: string) {
+    this.fotoPerfil = imageUrl;
+    if (this.usuario) {
+      this.usuario.foto_perfil = imageUrl;
+      localStorage.setItem('user', JSON.stringify(this.usuario));
+    }
+    this.mensajeExito = 'Foto de perfil actualizada';
+    setTimeout(() => this.mensajeExito = '', 3000);
   }
 
   desactivarFormulario() {

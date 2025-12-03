@@ -45,6 +45,12 @@
         </div>
       </div>
 
+      <!-- Componente ProfileUploadComponent -->
+      <div *ngIf="modoEdicion" class="mt-8 pt-8 border-t border-[#1f2847]">
+        <h3 class="text-lg font-semibold text-[#7dff7a] mb-4">Subir Foto de Perfil</h3>
+        <app-profile-upload (imageUploaded)="onProfileImageUploaded($event)"></app-profile-upload>
+      </div>
+
       <!-- Botón Editar -->
       <div class="flex justify-end mb-6">
         <button

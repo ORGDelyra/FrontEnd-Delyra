@@ -4,11 +4,12 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { VendedorService } from '../../services/vendedor.service';
 import { Category } from '../../interfaces/product.interface';
+import { ProductUploadComponent } from '../../components/product-upload/product-upload';
 
 @Component({
   selector: 'app-productos-crear',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, ProductUploadComponent],
   templateUrl: './productos-crear.html',
   styleUrl: './productos-crear.css',
 })
@@ -18,6 +19,7 @@ export class CrearProductoVendedor implements OnInit {
   categorias: Category[] = [];
   mensajeError: string = '';
   cargando: boolean = false;
+  imagenesProduto: string[] = []; // URLs de las imágenes del producto
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +46,11 @@ export class CrearProductoVendedor implements OnInit {
       },
       error: (err) => console.error("Error al cargar categorías:", err)
     });
+  }
+
+  onProductImagesUploaded(imageUrls: string[]) {
+    this.imagenesProduto = imageUrls;
+    console.log('Imágenes del producto:', imageUrls);
   }
 
   crearProducto() {

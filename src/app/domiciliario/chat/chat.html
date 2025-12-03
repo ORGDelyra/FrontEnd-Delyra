@@ -1,0 +1,55 @@
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
+  <!-- Header -->
+  <header class="bg-[#0b1020] border-b border-[#1f2847] shadow-lg sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-[#7dff7a]">Chat</h1>
+      <button
+        (click)="volver()"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+        Volver
+      </button>
+    </div>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Área de mensajes -->
+    <div class="bg-[#0b1020] border border-[#1f2847] rounded-lg p-6 mb-4 h-96 overflow-y-auto">
+      <div *ngFor="let msg of mensajes" class="mb-4">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-[#7dff7a] flex items-center justify-center text-[#04060f] font-bold flex-shrink-0">
+            {{ msg.usuario.charAt(0) }}
+          </div>
+          <div>
+            <p class="font-semibold text-[#7dff7a]">{{ msg.usuario }}</p>
+            <p class="text-[#9aa2c7] text-sm">{{ msg.mensaje }}</p>
+            <p class="text-[#6b7280] text-xs mt-1">{{ msg.timestamp | date: 'short' }}</p>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="mensajes.length === 0" class="text-center py-12">
+        <p class="text-[#9aa2c7]">No hay mensajes aún</p>
+      </div>
+    </div>
+
+    <!-- Área de entrada -->
+    <div class="flex gap-2">
+      <input
+        type="text"
+        [(ngModel)]="nuevoMensaje"
+        (keyup.enter)="enviarMensaje()"
+        placeholder="Escribe un mensaje..."
+        class="flex-1 px-4 py-3 bg-[#0f162d] border border-[#1e2644] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:outline-none focus:ring-2 focus:ring-[#7dff7a]" />
+      <button
+        (click)="enviarMensaje()"
+        class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-6 py-3 rounded-lg transition duration-200 font-semibold">
+        Enviar
+      </button>
+    </div>
+
+    <!-- Componente ComprobanteUploadComponent -->
+    <div class="mt-6 pt-6 border-t border-[#1f2847]">
+      <h3 class="text-lg font-semibold text-[#7dff7a] mb-4">Enviar Comprobante de Pago</h3>
+      <app-comprobante-upload (imageUploaded)="onComprobanteUploaded($event)"></app-comprobante-upload>
+    </div>
+  </div>
+</div>

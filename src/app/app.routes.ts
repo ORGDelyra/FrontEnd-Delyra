@@ -46,6 +46,7 @@ import { InicioDomiciliario } from './domiciliario/inicio/inicio';
 import { PerfilDomiciliario } from './domiciliario/perfil/perfil';
 import { VehiculoDomiciliario } from './domiciliario/vehiculo/vehiculo';
 import { PedidosDomiciliario } from './domiciliario/pedidos/pedidos';
+import { ChatDomiciliario } from './domiciliario/chat/chat';
 
 /* ================================
    ADMINISTRADOR
@@ -97,11 +98,12 @@ export const routes: Routes = [
   { path: 'domiciliario/perfil', component: PerfilDomiciliario, canActivate: [AuthGuard] },
   { path: 'domiciliario/vehiculo', component: VehiculoDomiciliario, canActivate: [AuthGuard] },
   { path: 'domiciliario/pedidos', component: PedidosDomiciliario, canActivate: [AuthGuard] },
+  { path: 'domiciliario/chat', component: ChatDomiciliario },
 
   /* Admin */
-  { path: 'admin/inicio', component: InicioAdmin, canActivate: [AuthGuard] },
-  { path: 'admin/usuarios', component: UsuariosAdmin, canActivate: [AuthGuard] },
-  { path: 'admin/categorias', component: CategoriasAdmin, canActivate: [AuthGuard] },
+   { path: 'admin/inicio', component: InicioAdmin },
+   { path: 'admin/usuarios', component: UsuariosAdmin },
+   { path: 'admin/categorias', component: CategoriasAdmin },
 
   /* Default */
   { path: '', redirectTo: 'seleccionar-rol', pathMatch: 'full' }

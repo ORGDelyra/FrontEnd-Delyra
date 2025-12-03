@@ -1,34 +1,94 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+
+export type UploadType = 'perfil' | 'comprobante' | 'producto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageUploadService {
+  private cloudName = 'dtpg4uivr';
   private cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dtpg4uivr/image/upload';
 
-  // Upload Presets configurados en Cloudinary
-  private uploadPresets = {
-    productos: 'imegenes_productos',
-    perfil: 'perfil_usuarios',
-    comprobante: 'imegenes_comprobante_pago'
+  // Mapeo de tipos a presets
+  private presets: Record<UploadType, string> = {
+    'perfil': 'perfil_usuarios',
+    'comprobante': 'imegenes_comprobante_pago',
+    'producto': 'imegenes_productos'
   };
+
+  uploadProgress$ = new Subject<{ loaded: number; total: number }>();
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Sube una imagen directamente a Cloudinary (Unsigned Upload)
-   * @param file: Archivo seleccionado del input type="file"
-   * @param presetType: Tipo de preset ('productos', 'perfil', 'comprobante')
-   * @returns Observable con la respuesta de Cloudinary (contiene secure_url)
+   * Sube un archivo a Cloudinary según el tipo
+   * @param file Archivo a subir
+   * @param type Tipo: 'perfil' | 'comprobante' | 'producto'
+   * @param folder Carpeta en Cloudinary (opcional)
    */
-  uploadImage(file: File, presetType: 'productos' | 'perfil' | 'comprobante' = 'perfil'): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', this.uploadPresets[presetType]);
+  uploadImage(
+    file: File,
+    type: UploadType = 'perfil',
+    folder?: string
+  ): Promise<{ secure_url: string; public_id: string }> {
+    return new Promise((resolve, reject) => {
+      const uploadPreset = this.presets[type];
 
-    return this.http.post(this.cloudinaryUrl, formData);
+      if (!uploadPreset) {
+        reject(new Error(`Tipo de upload inválido: ${type}`));
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+
+      if (folder) {
+        formData.append('folder', folder);
+      }
+
+      const xhr = new XMLHttpRequest();
+
+      // Track progress
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          this.uploadProgress$.next({ loaded: e.loaded, total: e.total });
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          resolve({
+            secure_url: response.secure_url,
+            public_id: response.public_id
+          });
+        } else {
+          reject(new Error(`Error: ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error('Network error uploading to Cloudinary'));
+      });
+
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`);
+      xhr.send(formData);
+    });
+  }
+
+  /**
+   * Sube múltiples archivos del mismo tipo
+   */
+  uploadImages(
+    files: File[],
+    type: UploadType = 'perfil',
+    folder?: string
+  ): Promise<Array<{ secure_url: string; public_id: string }>> {
+    const uploads = files.map(file => this.uploadImage(file, type, folder));
+    return Promise.all(uploads);
   }
 
   /**

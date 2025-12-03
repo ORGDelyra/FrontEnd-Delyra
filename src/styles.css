@@ -12,6 +12,8 @@
   --text-base: #0b1020;
   --text-muted: #6b7280;
   --danger: #ef4444;
+  --primary-red: #d63c5c;
+  --primary-red-light: #e85575;
   color-scheme: light;
 }
 
