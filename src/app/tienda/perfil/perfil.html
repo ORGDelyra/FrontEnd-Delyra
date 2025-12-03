@@ -1,0 +1,86 @@
+<div class="perfil-tienda-container">
+  <!-- Header de la tienda -->
+  <div class="header-tienda" *ngIf="sucursal">
+    <div class="logo-tienda">
+      <img 
+        *ngIf="sucursal.logo_comercio" 
+        [src]="sucursal.logo_comercio" 
+        [alt]="sucursal.nombre_sucursal"
+        (error)="$any($event.target).src='https://via.placeholder.com/150x150?text=Logo'"
+      >
+      <div 
+        *ngIf="!sucursal.logo_comercio"
+        class="logo-placeholder"
+        style="width:100%;height:100%;display:flex;align-items:center;justify-center;background:#1f2847;border-radius:12px;font-size:48px;">
+        🏪
+      </div>
+    </div>
+    <div class="info-tienda">
+      <h1>{{ sucursal.nombre_sucursal }}</h1>
+      <p class="nit">NIT: {{ sucursal.nit }}</p>
+      <p class="direccion">📍 {{ sucursal.direccion }}</p>
+      <p class="coordenadas">📌 Lat: {{ sucursal.latitud }}, Lng: {{ sucursal.longitud }}</p>
+    </div>
+    <div class="acciones-tienda">
+      <button class="btn-chat" (click)="abrirChat()">
+        💬 Chatear con el vendedor
+      </button>
+      <button class="btn-carrito" (click)="verCarrito()">
+        🛒 Ver Carrito
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div class="mensaje-exito" *ngIf="mensajeExito">{{ mensajeExito }}</div>
+  <div class="mensaje-error" *ngIf="mensajeError">{{ mensajeError }}</div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="cargando">
+    <p>⏳ Cargando productos...</p>
+  </div>
+
+  <!-- Lista de productos -->
+  <div class="productos-grid" *ngIf="!cargando">
+    <h2>Productos disponibles ({{ productos.length }})</h2>
+
+    <div class="productos-lista" *ngIf="productos.length > 0">
+      <div class="producto-card" *ngFor="let producto of productos">
+        <div class="producto-imagen">
+          <img
+            *ngIf="producto.images && producto.images.length > 0"
+            [src]="producto.images[0].url"
+            [alt]="producto.nombre"
+            (error)="$any($event.target).src='https://via.placeholder.com/400x300?text=Sin+Imagen'"
+          >
+          <div *ngIf="!producto.images || producto.images.length === 0"
+               style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;color:#ccc;">
+            📦
+          </div>
+          <span class="badge-stock" [class.bajo-stock]="producto.cantidad < 10">
+            {{ producto.cantidad }} disponibles
+          </span>
+        </div>
+        <div class="producto-info">
+          <h3>{{ producto.nombre }}</h3>
+          <p class="descripcion">{{ producto.descripcion || 'Sin descripción' }}</p>
+          <p class="precio">${{ producto.precio | number:'1.0-0' }}</p>
+          <button class="btn-agregar" (click)="agregarAlCarrito(producto)" [disabled]="producto.cantidad === 0">
+            🛒 Agregar al carrito
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sin-productos" *ngIf="productos.length === 0">
+      <p>😔 Esta tienda aún no tiene productos disponibles</p>
+    </div>
+  </div>
+
+  <!-- Botón volver -->
+  <div class="footer-acciones">
+    <button class="btn-volver" routerLink="/cliente/inicio">
+      ← Volver al mapa
+    </button>
+  </div>
+</div>

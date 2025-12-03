@@ -12,10 +12,10 @@ export class SeleccionRol {
   constructor(private router: Router) {}
 
   irARegistro() {
-    this.router.navigate(['/seleccionar-registro']);
+    this.router.navigate(['/cliente/registro']);
   }
 
   irAInicio() {
-    this.router.navigate(['/seleccionar-inicio']);
+    this.router.navigate(['/inicio-sesion']);
   }
 }

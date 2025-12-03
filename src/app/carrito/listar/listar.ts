@@ -34,6 +34,7 @@ export class ListarCarrito implements OnInit {
   mensajeExito: string = '';
   comprobantePago: string = '';
   cargandoComprobante: boolean = false;
+  notificacion: { tipo: 'error' | 'exito' | 'info'; mensaje: string } | null = null;
 
   constructor(
     private carritoService: CarritoService,
@@ -47,84 +48,86 @@ export class ListarCarrito implements OnInit {
     this.cargarCarrito();
   }
 
+  mostrarNotificacion(tipo: 'error' | 'exito' | 'info', mensaje: string) {
+    this.notificacion = { tipo, mensaje };
+    setTimeout(() => {
+      this.notificacion = null;
+    }, 4000);
+  }
+
   cargarCarrito() {
     this.cargando = true;
-    // Usar el método especial de ProductController para obtener el carrito del usuario actual
-    this.carritoService.obtenerCarritoUsuarioActual().subscribe({
-      next: (cart: Cart) => {
-        if (cart && cart.id) {
-          this.carritoId = cart.id;
-          // El carrito viene con productos incluidos (si el backend lo permite)
-          if ((cart as any).products && Array.isArray((cart as any).products)) {
-            this.productos = (cart as any).products.map((p: any) => ({
+    
+    // Obtener todos los carritos del usuario y buscar el activo
+    this.carritoService.obtenerCarritos().subscribe({
+      next: (carts: Cart[]) => {
+        console.log('🛒 Carritos recibidos del backend:', carts);
+        
+        // Buscar el carrito activo sin estado_pedido
+        const carritoActivo = carts.find(c => (c.activo === true || c.activo === 1) && !c.estado_pedido);
+        
+        console.log('🎯 Carrito activo encontrado:', carritoActivo);
+        
+        if (carritoActivo && carritoActivo.id) {
+          this.carritoId = carritoActivo.id;
+          
+          // Si el carrito viene con productos incluidos
+          if ((carritoActivo as any).products && Array.isArray((carritoActivo as any).products)) {
+            console.log('📦 Productos en el carrito:', (carritoActivo as any).products);
+            this.productos = (carritoActivo as any).products.map((p: any) => ({
               ...p,
               cantidad: p.pivot?.cantidad || 1
             }));
             this.calcularTotal();
           } else {
-            this.cargarProductosDelCarrito();
+            console.warn('⚠️ El carrito no tiene productos o no vienen en la respuesta');
+            this.productos = [];
           }
         } else {
-          // Si no hay carrito, crear uno nuevo
-          this.crearCarrito();
+          // No hay carrito activo - El carrito se creará automáticamente cuando el usuario agregue un producto
+          console.log('ℹ️ No hay carrito activo');
+          this.carritoId = null;
+          this.productos = [];
         }
         this.cargando = false;
       },
       error: (err) => {
-        console.error("Error al cargar carrito:", err);
-        // Si no hay carrito activo, crear uno nuevo
-        this.crearCarrito();
-      }
-    });
-  }
-
-  crearCarrito() {
-    this.carritoService.crearCarrito().subscribe({
-      next: (cart: Cart) => {
-        this.carritoId = cart.id || null;
-        if (this.carritoId) {
-          localStorage.setItem('carritoId', this.carritoId.toString());
-        }
-      },
-      error: (err) => console.error("Error al crear carrito:", err)
-    });
-  }
-
-  cargarProductosDelCarrito() {
-    if (!this.carritoId) return;
-
-    // Nota: El backend debería devolver los productos en el carrito
-    // Si usa ProductController.viewCart, los productos vienen incluidos
-    // Por ahora intentamos obtenerlos directamente del carrito
-    this.carritoService.obtenerCarritoPorId(this.carritoId).subscribe({
-      next: (cart: Cart) => {
-        if ((cart as any).products) {
-          this.productos = (cart as any).products.map((p: any) => ({
-            ...p,
-            cantidad: p.pivot?.cantidad || 1
-          }));
-          this.calcularTotal();
-        }
-      },
-      error: (err) => {
-        console.error("Error al cargar productos del carrito:", err);
+        console.error("Error al cargar carritos:", err);
+        // No hay carritos - El carrito se creará automáticamente cuando el usuario agregue un producto
+        this.carritoId = null;
+        this.productos = [];
+        this.cargando = false;
       }
     });
   }
 
   actualizarCantidad(producto: Product & { cantidad: number }, nuevaCantidad: number) {
-    if (nuevaCantidad < 1) return;
+    if (nuevaCantidad < 1) {
+      this.mostrarNotificacion('error', 'La cantidad debe ser al menos 1');
+      return;
+    }
+    
     if (!this.carritoId || !producto.id) return;
 
+    const cantidadAnterior = producto.cantidad;
     producto.cantidad = nuevaCantidad;
+    
     this.carritoService.actualizarCantidadProducto(this.carritoId, producto.id, nuevaCantidad).subscribe({
-      next: () => {
+      next: (response) => {
         this.calcularTotal();
+        this.mostrarNotificacion('exito', 'Cantidad actualizada correctamente');
       },
       error: (err) => {
-        console.error("Error al actualizar cantidad:", err);
         // Revertir cantidad si falla
-        producto.cantidad = nuevaCantidad - (nuevaCantidad > producto.cantidad ? 1 : -1);
+        producto.cantidad = cantidadAnterior;
+        
+        if (err.status === 400 && err.error?.stock_disponible !== undefined) {
+          this.mostrarNotificacion('error', `Solo hay ${err.error.stock_disponible} unidades disponibles de ${producto.nombre}`);
+        } else if (err.error?.mensaje) {
+          this.mostrarNotificacion('error', err.error.mensaje);
+        } else {
+          this.mostrarNotificacion('error', 'Error al actualizar la cantidad. Intenta de nuevo.');
+        }
       }
     });
   }
@@ -226,7 +229,16 @@ export class ListarCarrito implements OnInit {
       },
       error: (err) => {
         console.error("Error al crear pedido:", err);
-        this.mensajeError = err.error?.mensaje || 'Error al crear el pedido. Por favor intenta de nuevo.';
+        // Extraer mensaje de error más limpio
+        let mensajeError = 'Error al crear el pedido. Por favor intenta de nuevo.';
+        if (err.error?.mensaje) {
+          mensajeError = err.error.mensaje;
+        } else if (err.error?.message) {
+          mensajeError = err.error.message;
+        } else if (err.message) {
+          mensajeError = err.message;
+        }
+        this.mensajeError = mensajeError;
         this.cargando = false;
       }
     });

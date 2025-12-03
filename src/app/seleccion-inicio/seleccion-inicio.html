@@ -2,9 +2,9 @@
   <div class="max-w-2xl w-full">
     <!-- Título -->
     <div class="text-center mb-10">
-      <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
-      <p class="text-[#a5b4fc] text-lg">Elige cómo quieres comenzar</p>
-      <p class="text-[#9aa2c7] text-sm mt-2">Accede y deja que redirijamos tu experiencia</p>
+      <h1 class="text-5xl font-extrabold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-3 font-[Poppins]">Delyra</h1>
+      <p class="text-[#d4a5b4] text-lg">Elige cómo quieres comenzar</p>
+      <p class="text-[#8b4a5a] text-sm mt-2">Accede y deja que redirijamos tu experiencia</p>
     </div>
 
     <!-- Tarjeta principal -->
@@ -16,7 +16,7 @@
 
       <button
         (click)="iniciarSesion()"
-        class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 text-lg mb-6 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+        class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 text-lg mb-6 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] text-white shadow-lg hover:shadow-xl">
         Ir a Inicio de Sesión
       </button>
 
@@ -30,8 +30,11 @@
 
     <!-- Botón volver -->
     <div class="text-center mt-6">
-      <button (click)="volver()" class="text-[#9aa2c7] hover:text-[#7dff7a] text-sm font-medium transition">
-        ← Volver
+      <button (click)="volver()" class="text-[#9aa2c7] hover:text-[#7dff7a] text-sm font-medium transition inline-flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Volver
       </button>
     </div>
   </div>

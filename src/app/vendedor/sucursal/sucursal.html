@@ -1,9 +1,56 @@
 <div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-8 px-4">
+  <!-- Notificación Toast (parte superior derecha) -->
+  <div *ngIf="notificacion" 
+       class="fixed top-6 right-6 z-50 animate-fade-in-down"
+       [ngClass]="{
+         'bg-red-900/95 border-red-500': notificacion.tipo === 'error',
+         'bg-green-900/95 border-[#7dff7a]': notificacion.tipo === 'exito',
+         'bg-yellow-900/95 border-yellow-500': notificacion.tipo === 'warning'
+       }"
+       style="max-width: 450px; animation: slideInRight 0.3s ease-out;">
+    <div class="p-4 border rounded-lg shadow-2xl flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <span *ngIf="notificacion.tipo === 'error'" class="text-2xl">⚠️</span>
+        <span *ngIf="notificacion.tipo === 'exito'" class="text-2xl">✅</span>
+        <span *ngIf="notificacion.tipo === 'warning'" class="text-2xl">⚡</span>
+      </div>
+      <div class="flex-1">
+        <p [ngClass]="{
+             'text-red-200': notificacion.tipo === 'error',
+             'text-[#7dff7a]': notificacion.tipo === 'exito',
+             'text-yellow-200': notificacion.tipo === 'warning'
+           }"
+           class="text-sm font-medium leading-relaxed">{{ notificacion.mensaje }}</p>
+      </div>
+      <button (click)="notificacion = null" class="flex-shrink-0 text-white/70 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <div class="max-w-3xl mx-auto">
     <!-- Título principal -->
     <div class="mb-8">
-      <h1 class="text-4xl font-bold text-[#7dff7a] mb-2">Gestión de Sucursal</h1>
-      <p class="text-[#9aa2c7]">{{ modoEdicion ? 'Actualiza la información de tu sucursal' : 'Completa la información de tu sucursal' }}</p>
+      <button routerLink="/vendedor/inicio" class="mb-4 px-4 py-2 rounded-xl bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] transition flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Volver al inicio
+      </button>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-4xl font-bold text-[#7dff7a] mb-2">Gestión de Sucursal</h1>
+          <p class="text-[#9aa2c7]">{{ modoEdicion && !editandoActivamente ? 'Información de tu sucursal' : modoEdicion ? 'Actualiza la información de tu sucursal' : 'Completa la información de tu sucursal' }}</p>
+        </div>
+        <button
+          *ngIf="modoEdicion && !editandoActivamente"
+          (click)="activarEdicion()"
+          class="px-6 py-3 rounded-xl bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] font-semibold transition flex items-center gap-2">
+          ✏️ Editar datos de sucursal
+        </button>
+      </div>
     </div>
 
     <!-- Mensajes de estado -->
@@ -35,7 +82,7 @@
             <span *ngIf="!logoComercio" class="text-3xl font-bold text-[#7dff7a]">Logo</span>
           </div>
 
-          <label *ngIf="modoEdicion" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
+          <label *ngIf="editandoActivamente" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
             Cambiar Logo
             <input type="file" accept="image/*" (change)="onLogoSeleccionado($event)" class="hidden">
           </label>
@@ -58,7 +105,6 @@
               formControlName="nombre_sucursal"
               type="text"
               placeholder="Ej: Panadería La Delicia"
-              [disabled]="!modoEdicion"
               class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
               [class.border-red-500]="f['nombre_sucursal'].invalid && f['nombre_sucursal'].touched"
             >
@@ -74,7 +120,6 @@
               formControlName="nit"
               type="text"
               placeholder="Ej: 123456789-1"
-              [disabled]="!modoEdicion"
               class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
               [class.border-red-500]="f['nit'].invalid && f['nit'].touched"
             >
@@ -87,15 +132,18 @@
           <label class="block text-[#9aa2c7] font-medium mb-2">
             Imagen del NIT
           </label>
-          <div *ngIf="!modoEdicion" class="text-[#9aa2c7] text-sm">
-            Haz clic en "Editar" para cambiar la imagen del NIT
+          <div *ngIf="!editandoActivamente && imagenNIT" class="w-full h-32 bg-[#1f2847] border-2 border-[#7dff7a] rounded-lg flex items-center justify-center">
+            <img [src]="imagenNIT" alt="Imagen NIT" class="max-h-full max-w-full object-contain">
           </div>
-          <div *ngIf="modoEdicion" class="flex flex-col items-center gap-4">
+          <div *ngIf="!editandoActivamente && !imagenNIT" class="text-[#9aa2c7] text-sm">
+            No se ha cargado imagen del NIT
+          </div>
+          <div *ngIf="editandoActivamente" class="flex flex-col items-center gap-4">
             <div class="w-full h-32 bg-[#1f2847] border-2 border-dashed border-[#7dff7a] rounded-lg flex items-center justify-center">
               <img *ngIf="imagenNIT" [src]="imagenNIT" alt="Imagen NIT" class="max-h-full max-w-full object-contain">
               <span *ngIf="!imagenNIT" class="text-[#9aa2c7]">Vista previa de imagen</span>
             </div>
-            <label *ngIf="modoEdicion" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
+            <label class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
               Seleccionar imagen del NIT
               <input type="file" accept="image/*" (change)="onImagenNITSeleccionada($event)" class="hidden" [disabled]="cargandoNIT">
             </label>
@@ -113,7 +161,6 @@
             formControlName="direccion"
             type="text"
             placeholder="Calle 123 #45-67"
-            [disabled]="!modoEdicion"
             class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
           >
         </div>
@@ -126,7 +173,6 @@
               formControlName="latitud"
               type="text"
               placeholder="Ej: 4.6097"
-              [disabled]="!modoEdicion"
               class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
             >
           </div>
@@ -137,7 +183,6 @@
               formControlName="longitud"
               type="text"
               placeholder="Ej: -74.0817"
-              [disabled]="!modoEdicion"
               class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
             >
           </div>
@@ -146,6 +191,15 @@
         <!-- Botones -->
         <div class="flex gap-4 mt-8">
           <button
+            *ngIf="editandoActivamente"
+            type="button"
+            (click)="cancelarEdicion()"
+            class="flex-1 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] font-bold py-3 px-6 rounded-lg transition duration-200">
+            Cancelar
+          </button>
+
+          <button
+            *ngIf="!editandoActivamente"
             type="button"
             routerLink="/vendedor/inicio"
             class="flex-1 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] font-bold py-3 px-6 rounded-lg transition duration-200">
@@ -153,6 +207,7 @@
           </button>
 
           <button
+            *ngIf="editandoActivamente"
             type="submit"
             [disabled]="cargando"
             class="flex-1 bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] font-bold py-3 px-6 rounded-lg transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">

@@ -20,10 +20,12 @@ import { RegistroCliente } from './cliente/registro/registro';
 import { InicioCliente } from './cliente/inicio/inicio';
 import { PerfilCliente } from './cliente/perfil/perfil';
 import { PedidosCliente } from './cliente/pedidos/pedidos';
+import { ChatCliente } from './cliente/chat/chat';
 
 /* Productos y carrito (compartidos) */
 import { ListarProductos } from './productos/listar/listar';
 import { ListarCarrito } from './carrito/listar/listar';
+import { PerfilTienda } from './tienda/perfil/perfil';
 
 /* ================================
    VENDEDOR (NEGOCIO)
@@ -76,10 +78,13 @@ export const routes: Routes = [
   { path: 'cliente/inicio', component: InicioCliente, canActivate: [AuthGuard] },
   { path: 'cliente/perfil', component: PerfilCliente, canActivate: [AuthGuard] },
   { path: 'cliente/pedidos', component: PedidosCliente, canActivate: [AuthGuard] },
+  { path: 'cliente/chat/:id', component: ChatCliente, canActivate: [AuthGuard] }, // Chat con vendedor
 
   /* Productos y carrito */
   { path: 'productos/listar', component: ListarProductos },
-  { path: 'carrito', component: ListarCarrito, canActivate: [AuthGuard] },
+  { path: 'carrito', redirectTo: '/carrito/listar', pathMatch: 'full' },
+  { path: 'carrito/listar', component: ListarCarrito, canActivate: [AuthGuard] },
+  { path: 'tienda/:id', component: PerfilTienda }, // Perfil público de tienda
 
   /* Vendedor */
   { path: 'vendedor/registro', component: RegistroVendedor },

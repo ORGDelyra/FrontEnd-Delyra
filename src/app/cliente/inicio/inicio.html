@@ -68,6 +68,12 @@
         <!-- Menú items -->
         <ul class="space-y-3">
           <li>
+            <a routerLink="/productos/listar" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Ver Productos' : ''">
+              <span class="text-xl">🛍️</span>
+              <span *ngIf="menuLateralAbierto">Productos</span>
+            </a>
+          </li>
+          <li>
             <a routerLink="/cliente/perfil" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Mi Perfil' : ''">
               <span class="text-xl">👤</span>
               <span *ngIf="menuLateralAbierto">Mi Perfil</span>

@@ -16,6 +16,7 @@ export class InicioSesion {
   form: FormGroup;
   mensajeError: string = '';
   cargando: boolean = false;
+  mostrarPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -125,6 +126,10 @@ export class InicioSesion {
         control.markAsTouched();
       }
     });
+  }
+
+  togglePassword() {
+    this.mostrarPassword = !this.mostrarPassword;
   }
 
   get f() { return this.form.controls; }

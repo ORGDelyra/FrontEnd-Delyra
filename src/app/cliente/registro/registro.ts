@@ -17,6 +17,7 @@ export class RegistroCliente {
   mensajeError: string = '';
   mensajeExito: string = '';
   cargando: boolean = false;
+  mostrarPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -83,6 +84,10 @@ export class RegistroCliente {
         control.markAsTouched();
       }
     });
+  }
+
+  togglePassword() {
+    this.mostrarPassword = !this.mostrarPassword;
   }
 
   get f() { return this.form.controls; }

@@ -44,19 +44,27 @@ export class EditarProductoVendedor implements OnInit {
   }
 
   cargarCategorias() {
+    console.log('🔄 Cargando categorías para edición...');
     this.vendedorService.obtenerCategorias().subscribe({
-      next: (cats: Category[]) => {
-        this.categorias = cats;
+      next: (response: any) => {
+        const cats = Array.isArray(response) ? response : (response?.data || []);
+        this.categorias = cats || [];
+        console.log(`✅ ${this.categorias.length} categorías cargadas`);
       },
-      error: (err) => console.error("Error al cargar categorías:", err)
+      error: (err) => {
+        console.error("❌ Error al cargar categorías:", err);
+        this.categorias = [];
+      }
     });
   }
 
   cargarProducto() {
     if (this.productoId) {
+      console.log('📦 Cargando producto ID:', this.productoId);
       this.cargando = true;
       this.vendedorService.obtenerProductoPorId(this.productoId).subscribe({
         next: (prod) => {
+          console.log('✅ Producto cargado:', prod);
           this.form.patchValue({
             nombre: prod.nombre,
             descripcion: prod.descripcion || '',
@@ -67,6 +75,9 @@ export class EditarProductoVendedor implements OnInit {
           this.cargando = false;
         },
         error: (err) => {
+          console.error('❌ Error al cargar producto:', err);
+          console.error('📋 Status:', err.status);
+          console.error('💬 Mensaje:', err.error);
           this.mensajeError = 'Error al cargar producto';
           this.cargando = false;
         }
@@ -77,17 +88,47 @@ export class EditarProductoVendedor implements OnInit {
   actualizarProducto() {
     if (this.form.invalid || !this.productoId) {
       this.mensajeError = 'Por favor completa todos los campos requeridos';
+      this.marcarCamposInvalidos();
       return;
     }
 
     this.cargando = true;
-    this.vendedorService.actualizarProducto(this.productoId, this.form.value).subscribe({
-      next: () => {
+    this.mensajeError = '';
+
+    const datosActualizar = this.form.value;
+
+    console.log('📝 Actualizando producto ID:', this.productoId);
+    console.log('📦 Datos a enviar:', datosActualizar);
+    console.log('🔑 Token en localStorage:', localStorage.getItem('token') ? 'Presente' : 'Ausente');
+
+    this.vendedorService.actualizarProducto(this.productoId, datosActualizar).subscribe({
+      next: (response) => {
+        console.log('✅ Producto actualizado exitosamente:', response);
         this.router.navigate(['/vendedor/productos']);
       },
       error: (err) => {
-        this.mensajeError = err.error?.message || 'Error al actualizar producto';
+        console.error('❌ Error al actualizar producto:', err);
+        console.error('📋 Status:', err.status);
+        console.error('💬 Mensaje:', err.error?.message);
+        console.error('📦 Error completo:', err.error);
+
+        // Mensaje de error específico
+        if (err.error?.message?.includes('fillable')) {
+          this.mensajeError = '⚠️ Error de configuración en el backend. El modelo Product necesita tener los campos actualizables en $fillable';
+        } else {
+          this.mensajeError = err.error?.message || 'Error al actualizar producto';
+        }
+
         this.cargando = false;
+      }
+    });
+  }
+
+  private marcarCamposInvalidos() {
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      if (control && control.invalid) {
+        control.markAsTouched();
       }
     });
   }

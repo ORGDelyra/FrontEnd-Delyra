@@ -4,8 +4,8 @@
     <div class="bg-[#0b1020] shadow-2xl rounded-[30px] p-10 border border-[#1c2440]">
       <!-- Título -->
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
-        <p class="text-[#a5b4fc]">Crea tu cuenta y empieza a vivir la experiencia Delyra</p>
+        <h1 class="text-5xl font-extrabold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-3 font-[Poppins]">Delyra</h1>
+        <p class="text-[#8b4a5a]">Crea tu cuenta y empieza a vivir la experiencia Delyra</p>
       </div>
 
       <!-- Mensajes -->
@@ -166,13 +166,22 @@
           <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
             Contraseña <span class="text-red-500">*</span>
           </label>
-          <input
-            formControlName="password"
-            type="password"
-            placeholder="••••••••"
-            class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
-            [class.border-red-500]="f['password'].invalid && f['password'].touched"
-          >
+          <div class="relative">
+            <input
+              formControlName="password"
+              [type]="mostrarPassword ? 'text' : 'password'"
+              placeholder="••••••••"
+              class="w-full px-4 py-3 pr-12 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="f['password'].invalid && f['password'].touched"
+            >
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9aa2c7] hover:text-[#7dff7a] transition"
+              title="{{ mostrarPassword ? 'Ocultar' : 'Mostrar' }} contraseña">
+              <span class="text-xl">{{ mostrarPassword ? '👁️' : '🔒' }}</span>
+            </button>
+          </div>
           @if (f['password'].invalid && f['password'].touched) {
             <span class="text-red-500 text-sm mt-1 block">
               @if (f['password'].errors?.['required']) {
@@ -214,7 +223,7 @@
         <button
           type="submit"
           [disabled]="cargando"
-          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed mb-4 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed mb-4 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] text-white shadow-lg hover:opacity-90">
           @if (!cargando) {
             <span>Registrarse</span>
           }
@@ -229,14 +238,20 @@
             ¿Ya tienes cuenta? Inicia sesión aquí
           </a>
         </div>
-      </form>
-    </div>
 
-    <!-- Volver -->
-    <div class="text-center mt-6">
-      <a routerLink="/seleccionar-registro" class="text-[#9aa2c7] hover:text-[#7dff7a] text-sm transition">
-        ← Volver a selección de registro
-      </a>
+        <!-- Sección para otros roles -->
+        <div class="text-center mt-6 pt-6 border-t border-[#1f2847]">
+          <p class="text-[#9aa2c7] text-sm mb-3">
+            💼 ¿Tienes un negocio o quieres hacer entregas?
+          </p>
+          <button
+            type="button"
+            routerLink="/seleccionar-registro"
+            class="text-[#7dff7a] hover:text-[#c084fc] text-sm font-medium transition hover:underline">
+            Registrarse como Vendedor o Domiciliario →
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

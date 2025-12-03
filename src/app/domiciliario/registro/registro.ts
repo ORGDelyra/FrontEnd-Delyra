@@ -23,6 +23,7 @@ export class RegistroDomiciliario {
   // Propiedades para imagen de perfil
   fotoPerfil: string | null = null;
   cargandoFoto: boolean = false;
+  mostrarPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -134,6 +135,10 @@ export class RegistroDomiciliario {
       const control = form.get(key);
       control?.markAsTouched();
     });
+  }
+
+  togglePassword() {
+    this.mostrarPassword = !this.mostrarPassword;
   }
 
   get fUsuario() { return this.formUsuario.controls; }

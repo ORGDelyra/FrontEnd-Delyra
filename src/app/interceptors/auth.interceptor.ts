@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -20,12 +20,22 @@ export class AuthInterceptor implements HttpInterceptor {
     // Si hay token, agregarlo al header de Authorization
     if (token) {
       const clonedRequest = req.clone({
-        setHeaders: { 
+        setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
       console.log(`  ✅ Header Authorization agregado`);
-      return next.handle(clonedRequest);
+
+      // Agregar tap para ver la respuesta
+      return next.handle(clonedRequest).pipe(
+        tap(event => {
+          if (event instanceof HttpResponse && req.url.includes('/category')) {
+            console.log('📦 [AuthInterceptor] Respuesta de /category:', event.body);
+            console.log('📊 [AuthInterceptor] Status:', event.status);
+            console.log('📋 [AuthInterceptor] Headers:', event.headers);
+          }
+        })
+      );
     }
 
     // Si no hay token, enviar la petición sin modificar

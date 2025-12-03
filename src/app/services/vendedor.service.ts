@@ -66,7 +66,14 @@ export class VendedorService {
   }
 
   // ---------- Categorías ----------
-  obtenerCategorias(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.api}/category`, this.getHeaders());
+  // Endpoint público - no requiere autenticación
+  obtenerCategorias(): Observable<any> {
+    console.log('📡 VendedorService: Llamando GET /category');
+    return this.http.get<any>(`${this.api}/category`);
+  }
+
+  // Crear categoría (requiere autenticación)
+  crearCategoria(data: { nombre_categoria: string }): Observable<any> {
+    return this.http.post(`${this.api}/category`, data, this.getHeaders());
   }
 }

@@ -1,15 +1,34 @@
 .mapa-usuarios-wrapper { display: flex; flex-direction: column; gap: 8px; }
-.controls { display:flex; gap:8px; align-items:center; }
-.controls input { flex:1; padding:8px; border-radius:6px; border:1px solid #ccc; }
-.controls button { padding:8px 12px; background:#7dff7a; border:none; border-radius:6px; cursor:pointer; }
+.controls { display:flex; gap:8px; align-items:center; flex-wrap: wrap; }
+.controls input { flex:1; min-width: 200px; padding:8px 12px; border-radius:6px; border:1px solid #1f2847; background: #0f162d; color: #f3f5ff; }
+.controls input:focus { outline: none; border-color: #7dff7a; }
+.controls button { padding:8px 14px; background:#7dff7a; color: #04060f; border:none; border-radius:6px; cursor:pointer; font-weight: 600; transition: all 0.2s; }
+.controls button:hover { background:#6ae66a; transform: translateY(-1px); }
 .layout { display:flex; gap:12px; }
-.list { width:320px; max-height:60vh; overflow:auto; background:#0b1020; padding:8px; border-radius:8px; color:#f3f5ff; }
+.list { width:320px; max-height:60vh; overflow:auto; background:#0b1020; padding:12px; border-radius:8px; color:#f3f5ff; border: 1px solid #1f2847; }
 .list ul { list-style:none; padding:0; margin:0; }
-.list li { padding:8px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; }
-.list li:hover { background: rgba(125,255,122,0.06); }
+.list li { padding:10px 12px; border-bottom:1px solid rgba(125,255,122,0.08); cursor:pointer; border-radius: 6px; margin-bottom: 4px; transition: all 0.2s; }
+.list li:hover { background: rgba(125,255,122,0.1); border-color: #7dff7a; transform: translateX(4px); }
+.list li strong { color: #7dff7a; display: block; margin-bottom: 4px; }
 .dir { font-size:0.85rem; color:#9aa2c7; }
-.map-container { flex:1; height:65vh; border-radius:8px; overflow:hidden; }
-.mensaje { margin-top:8px; color:#7dff7a; }
+.map-container { flex:1; height:65vh; border-radius:8px; overflow:hidden; border: 2px solid #1f2847; }
+.mensaje { margin-top:8px; color:#7dff7a; padding: 8px; background: rgba(125,255,122,0.1); border-radius: 6px; font-size: 0.9rem; }
+
+/* Estilos para popups personalizados de Leaflet */
+:host ::ng-deep .custom-popup .leaflet-popup-content-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 8px;
+}
+
+:host ::ng-deep .custom-popup .leaflet-popup-tip {
+  background: white;
+}
+
+:host ::ng-deep .custom-marker {
+  z-index: 1000 !important;
+}
 
 @media (max-width: 900px) {
   .layout { flex-direction: column; }
@@ -20,3 +39,4 @@
 @media (orientation: landscape) {
   .map-container { height: 75vh; }
 }
+

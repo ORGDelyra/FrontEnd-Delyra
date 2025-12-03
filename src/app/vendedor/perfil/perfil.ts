@@ -43,7 +43,10 @@ export class PerfilVendedor implements OnInit {
     if (userStr) {
       this.usuario = JSON.parse(userStr);
       this.cargarDatos();
-      this.fotoPerfil = this.usuario.foto_perfil || '';
+      // Buscar profile_url en diferentes propiedades
+      this.fotoPerfil = this.usuario.profile_url || this.usuario.foto_perfil || '';
+      console.log('👤 Usuario cargado:', this.usuario);
+      console.log('📸 Foto de perfil:', this.fotoPerfil);
     }
     this.desactivarFormulario();
   }
@@ -77,6 +80,8 @@ export class PerfilVendedor implements OnInit {
     if (!file) return;
 
     this.cargandoFoto = true;
+    this.mensajeError = '';
+
     try {
       const validacion = await this.imageUploadService.validateImage(file, 5, 100, 100);
       if (!validacion.valid) {
@@ -85,15 +90,28 @@ export class PerfilVendedor implements OnInit {
         return;
       }
 
+      console.log('📸 Subiendo foto de perfil a Cloudinary...');
       const response = await this.imageUploadService.uploadImage(file, 'perfil');
+      console.log('✅ Foto subida exitosamente:', response.secure_url);
+
+      // Actualizar la URL de la foto localmente
       this.fotoPerfil = response.secure_url;
-      this.usuario.foto_perfil = response.secure_url;
-      localStorage.setItem('user', JSON.stringify(this.usuario));
-      this.mensajeExito = 'Foto de perfil actualizada';
+
+      // Actualizar el objeto usuario en memoria y localStorage
+      if (this.usuario) {
+        this.usuario.profile_url = response.secure_url;
+        localStorage.setItem('user', JSON.stringify(this.usuario));
+      }
+
+      this.mensajeExito = '✅ Foto de perfil actualizada correctamente';
       this.cargandoFoto = false;
-      setTimeout(() => this.mensajeExito = '', 3000)
+
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => this.mensajeExito = '', 3000);
+
     } catch (e: any) {
-      this.mensajeError = 'Error al validar la imagen' + (e?.message ? ': ' + e.message : '');
+      console.error('❌ Error al subir foto:', e);
+      this.mensajeError = 'Error al subir la imagen' + (e?.message ? ': ' + e.message : '');
       this.cargandoFoto = false;
     }
   }

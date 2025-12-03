@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RegistroService } from '../../services/registro';
 import { VendedorService } from '../../services/vendedor.service';
@@ -32,6 +32,9 @@ export class RegistroVendedor {
   imagenNIT: string | null = null;
   cargandoNIT: boolean = false;
 
+  // Control de visibilidad de contraseña
+  mostrarPassword: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private registroService: RegistroService,
@@ -55,10 +58,38 @@ export class RegistroVendedor {
     this.formSucursal = this.fb.group({
       nombre_sucursal: ['', [Validators.required, Validators.maxLength(50)]],
       nit: ['', Validators.required],
-      latitud: [''],
-      longitud: [''],
+      latitud: ['', [this.validarLatitudQuilichao]],
+      longitud: ['', [this.validarLongitudQuilichao]],
       direccion: ['']
     });
+  }
+
+  /**
+   * Validador personalizado para latitud de Santander de Quilichao
+   * Rango válido: 2.95 a 3.08
+   */
+  validarLatitudQuilichao(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null; // Campo opcional
+    const lat = parseFloat(control.value);
+    if (isNaN(lat)) return { latitudInvalida: 'Latitud debe ser un número válido' };
+    if (lat < 2.95 || lat > 3.08) {
+      return { fueraDeQuilichao: 'La latitud debe estar dentro de Santander de Quilichao (2.95 a 3.08)' };
+    }
+    return null;
+  }
+
+  /**
+   * Validador personalizado para longitud de Santander de Quilichao
+   * Rango válido: -76.58 a -76.38
+   */
+  validarLongitudQuilichao(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null; // Campo opcional
+    const lng = parseFloat(control.value);
+    if (isNaN(lng)) return { longitudInvalida: 'Longitud debe ser un número válido' };
+    if (lng < -76.58 || lng > -76.38) {
+      return { fueraDeQuilichao: 'La longitud debe estar dentro de Santander de Quilichao (-76.58 a -76.38)' };
+    }
+    return null;
   }
 
   /**
@@ -178,7 +209,21 @@ export class RegistroVendedor {
   completarRegistro() {
     if (this.formSucursal.invalid) {
       this.marcarCamposInvalidos(this.formSucursal);
-      this.mensajeError = 'Por favor completa todos los campos requeridos';
+
+      // Mostrar errores específicos de validación de coordenadas
+      const latControl = this.formSucursal.get('latitud');
+      const lngControl = this.formSucursal.get('longitud');
+
+      if (latControl?.errors?.['fueraDeQuilichao']) {
+        this.mensajeError = latControl.errors['fueraDeQuilichao'];
+        return;
+      }
+      if (lngControl?.errors?.['fueraDeQuilichao']) {
+        this.mensajeError = lngControl.errors['fueraDeQuilichao'];
+        return;
+      }
+
+      this.mensajeError = 'Por favor completa todos los campos requeridos correctamente';
       return;
     }
 
@@ -227,6 +272,11 @@ export class RegistroVendedor {
         control.markAsTouched();
       }
     });
+  }
+
+  // Alternar visibilidad de contraseña
+  togglePassword() {
+    this.mostrarPassword = !this.mostrarPassword;
   }
 
   // Helpers para acceder a los controles del formulario

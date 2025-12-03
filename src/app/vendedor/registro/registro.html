@@ -2,9 +2,9 @@
   <div class="max-w-3xl mx-auto">
     <!-- Título principal -->
     <div class="text-center mb-10">
-      <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
-      <p class="text-[#a5b4fc] text-lg">Registro de Vendedor</p>
-      <p class="text-[#9aa2c7] text-sm mt-2">Comparte tus productos con toda la red Delyra</p>
+      <h1 class="text-5xl font-extrabold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-3 font-[Poppins]">Delyra</h1>
+      <p class="text-[#d4a5b4] text-lg">Registro de Vendedor</p>
+      <p class="text-[#8b4a5a] text-sm mt-2">Comparte tus productos con toda la red Delyra</p>
     </div>
 
     <!-- Indicador de pasos -->
@@ -130,12 +130,21 @@
             <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
               Contraseña <span class="text-red-500">*</span>
             </label>
-            <input
-              formControlName="password"
-              type="password"
-              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
-              [class.border-red-500]="fUsuario['password'].invalid && fUsuario['password'].touched"
-            >
+            <div class="relative">
+              <input
+                formControlName="password"
+                [type]="mostrarPassword ? 'text' : 'password'"
+                class="w-full px-4 py-3 pr-12 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+                [class.border-red-500]="fUsuario['password'].invalid && fUsuario['password'].touched"
+              >
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9aa2c7] hover:text-[#7dff7a] transition"
+                title="{{ mostrarPassword ? 'Ocultar' : 'Mostrar' }} contraseña">
+                <span class="text-xl">{{ mostrarPassword ? '👁️' : '🔒' }}</span>
+              </button>
+            </div>
             <span *ngIf="fUsuario['password'].invalid && fUsuario['password'].touched"
                   class="text-red-500 text-sm mt-1 block">Mínimo 6 caracteres</span>
           </div>
@@ -159,7 +168,7 @@
         <button
           type="submit"
           [disabled]="cargando"
-          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed mb-2 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed mb-2 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] text-white shadow-lg hover:opacity-90">
           <span *ngIf="!cargando">Siguiente: Datos de la sucursal</span>
           <span *ngIf="cargando">Procesando...</span>
         </button>
@@ -229,24 +238,66 @@
           >
         </div>
 
+        <!-- Información sobre ubicación -->
+        <div class="mb-4 p-4 bg-[#0f162d] border border-[#1f2847] rounded-lg">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">📍</span>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold text-[#7dff7a] mb-2">¿Cómo obtener las coordenadas de tu negocio?</h4>
+              <ol class="text-xs text-[#9aa2c7] space-y-1 list-decimal list-inside">
+                <li>Abre Google Maps en tu navegador</li>
+                <li>Busca la ubicación exacta de tu negocio en Santander de Quilichao</li>
+                <li>Haz clic derecho sobre el punto exacto</li>
+                <li>Selecciona las coordenadas que aparecen (primer número es latitud, segundo es longitud)</li>
+                <li>Copia y pega cada valor en los campos correspondientes</li>
+              </ol>
+              <p class="text-xs text-[#7dff7a] mt-2">
+                ⚠️ Solo se aceptan coordenadas dentro de Santander de Quilichao, Cauca
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- Latitud y Longitud -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
-            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">Latitud</label>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Latitud
+              <span class="text-xs lowercase normal-case text-[#7dff7a]">(Santander de Quilichao)</span>
+            </label>
             <input
               formControlName="latitud"
               type="text"
+              placeholder="Ej: 3.0133"
               class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fSucursal['latitud'].invalid && fSucursal['latitud'].touched"
             >
+            <span *ngIf="fSucursal['latitud'].errors?.['latitudInvalida'] && fSucursal['latitud'].touched"
+                  class="text-red-500 text-xs mt-1 block">{{ fSucursal['latitud'].errors?.['latitudInvalida'] }}</span>
+            <span *ngIf="fSucursal['latitud'].errors?.['fueraDeQuilichao'] && fSucursal['latitud'].touched"
+                  class="text-red-500 text-xs mt-1 block">{{ fSucursal['latitud'].errors?.['fueraDeQuilichao'] }}</span>
+            <span *ngIf="!fSucursal['latitud'].errors && !fSucursal['latitud'].touched"
+                  class="text-[#9aa2c7] text-xs mt-1 block">Rango: 2.95 a 3.08</span>
           </div>
 
           <div>
-            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">Longitud</label>
+            <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
+              Longitud
+              <span class="text-xs lowercase normal-case text-[#7dff7a]">(Santander de Quilichao)</span>
+            </label>
             <input
               formControlName="longitud"
               type="text"
+              placeholder="Ej: -76.4842"
               class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+              [class.border-red-500]="fSucursal['longitud'].invalid && fSucursal['longitud'].touched"
             >
+            <span *ngIf="fSucursal['longitud'].errors?.['longitudInvalida'] && fSucursal['longitud'].touched"
+                  class="text-red-500 text-xs mt-1 block">{{ fSucursal['longitud'].errors?.['longitudInvalida'] }}</span>
+            <span *ngIf="fSucursal['longitud'].errors?.['fueraDeQuilichao'] && fSucursal['longitud'].touched"
+                  class="text-red-500 text-xs mt-1 block">{{ fSucursal['longitud'].errors?.['fueraDeQuilichao'] }}</span>
+            <span *ngIf="!fSucursal['longitud'].errors && !fSucursal['longitud'].touched"
+                  class="text-[#9aa2c7] text-xs mt-1 block">Rango: -76.58 a -76.38</span>
           </div>
         </div>
 
@@ -263,7 +314,7 @@
           <button
             type="submit"
             [disabled]="cargando"
-            class="flex-1 font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30">
+            class="flex-1 font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] text-white shadow-lg hover:opacity-90">
             <span *ngIf="!cargando">Completar registro</span>
             <span *ngIf="cargando">Guardando...</span>
           </button>

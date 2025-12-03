@@ -12,9 +12,16 @@ export class ProductosService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los productos
+  // Obtener todos los productos (público - para clientes)
   obtenerProductos(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.api}/product`);
+    console.log('📡 ProductosService: Llamando GET /products/public (endpoint público)');
+    return this.http.get<Product[]>(`${this.api}/products/public`);
+  }
+
+  // Obtener productos de una sucursal específica (para perfil de tienda)
+  obtenerProductosPorSucursal(idSucursal: number): Observable<Product[]> {
+    console.log(`📡 ProductosService: Productos de sucursal ${idSucursal}`);
+    return this.http.get<Product[]>(`${this.api}/products/branch/${idSucursal}`);
   }
 
   // Obtener producto por ID

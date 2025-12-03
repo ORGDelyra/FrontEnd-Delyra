@@ -1,8 +1,39 @@
 <div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-8 px-4">
+  <!-- Notificación Toast (aparece en la parte superior derecha) -->
+  <div *ngIf="notificacion" 
+       class="fixed top-6 right-6 z-50 animate-fade-in-down"
+       [ngClass]="{
+         'bg-red-900/95 border-red-500': notificacion.tipo === 'error',
+         'bg-green-900/95 border-[#7dff7a]': notificacion.tipo === 'exito',
+         'bg-blue-900/95 border-blue-400': notificacion.tipo === 'info'
+       }"
+       style="max-width: 400px; animation: slideInRight 0.3s ease-out;">
+    <div class="p-4 border rounded-lg shadow-2xl flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <span *ngIf="notificacion.tipo === 'error'" class="text-2xl">⚠️</span>
+        <span *ngIf="notificacion.tipo === 'exito'" class="text-2xl">✅</span>
+        <span *ngIf="notificacion.tipo === 'info'" class="text-2xl">ℹ️</span>
+      </div>
+      <div class="flex-1">
+        <p [ngClass]="{
+             'text-red-200': notificacion.tipo === 'error',
+             'text-[#7dff7a]': notificacion.tipo === 'exito',
+             'text-blue-200': notificacion.tipo === 'info'
+           }"
+           class="text-sm font-medium">{{ notificacion.mensaje }}</p>
+      </div>
+      <button (click)="notificacion = null" class="flex-shrink-0 text-white/70 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <div class="max-w-7xl mx-auto">
     <h1 class="text-4xl font-bold text-[#7dff7a] mb-6">Carrito de Compras</h1>
 
-    <!-- Mensajes -->
+    <!-- Mensajes de error/éxito grandes (para crear pedido) -->
     <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-900/30 border border-red-500 text-red-300 rounded-lg flex items-center gap-3">
       <span class="text-2xl">[X]</span>
       <span>{{ mensajeError }}</span>
@@ -16,8 +47,8 @@
     <div class="flex flex-col lg:flex-row gap-8">
       <!-- Lista de productos en el carrito -->
       <div class="lg:w-2/3">
-        <div *ngIf="cargando" class="text-center py-12">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7dff7a]"></div>
+        <div *ngIf="cargando" class="flex justify-center items-center py-20">
+          <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#b1122d]"></div>
         </div>
 
         <div *ngIf="!cargando && productos.length === 0" class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-12 text-center">

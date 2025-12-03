@@ -2,9 +2,9 @@
   <div class="max-w-3xl mx-auto">
     <!-- Título principal -->
     <div class="text-center mb-10">
-      <h1 class="text-4xl font-extrabold text-[#7dff7a] mb-2 font-[Poppins]">Delyra</h1>
-      <p class="text-[#a5b4fc] text-lg">Registro de Domiciliario</p>
-      <p class="text-[#9aa2c7] text-sm mt-2">Únete y comienza a generar ingresos con entregas inteligentes</p>
+      <h1 class="text-5xl font-extrabold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-3 font-[Poppins]">Delyra</h1>
+      <p class="text-[#d4a5b4] text-lg">Registro de Domiciliario</p>
+      <p class="text-[#8b4a5a] text-sm mt-2">Únete y comienza a generar ingresos con entregas inteligentes</p>
     </div>
 
     <!-- Indicador de pasos -->
@@ -130,12 +130,21 @@
             <label class="block text-sm uppercase tracking-wide text-[#9aa2c7] mb-2">
               Contraseña <span class="text-red-500">*</span>
             </label>
-            <input
-              formControlName="password"
-              type="password"
-              class="w-full px-4 py-3 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
-              [class.border-red-500]="fUsuario['password'].invalid && fUsuario['password'].touched"
-            >
+            <div class="relative">
+              <input
+                formControlName="password"
+                [type]="mostrarPassword ? 'text' : 'password'"
+                class="w-full px-4 py-3 pr-12 rounded-2xl bg-[#0f162d] border border-[#1e2644] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent"
+                [class.border-red-500]="fUsuario['password'].invalid && fUsuario['password'].touched"
+              >
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9aa2c7] hover:text-[#7dff7a] transition"
+                title="{{ mostrarPassword ? 'Ocultar' : 'Mostrar' }} contraseña">
+                <span class="text-xl">{{ mostrarPassword ? '👁️' : '🔒' }}</span>
+              </button>
+            </div>
             <span *ngIf="fUsuario['password'].invalid && fUsuario['password'].touched"
                   class="text-red-500 text-sm mt-1 block">Mínimo 6 caracteres</span>
           </div>
@@ -187,7 +196,7 @@
         <button
           type="submit"
           [disabled]="cargando"
-          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed mb-2 bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30"
+          class="w-full font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed mb-2 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] text-white shadow-lg hover:opacity-90"
         >
           <span *ngIf="!cargando">Siguiente: Datos del vehículo</span>
           <span *ngIf="cargando">Procesando...</span>
@@ -281,7 +290,7 @@
           <button
             type="submit"
             [disabled]="cargando"
-            class="flex-1 font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed bg-linear-to-r from-[#4CFF78] to-[#A855F7] text-[#05060c] shadow-lg shadow-[#4CFF78]/30"
+            class="flex-1 font-bold py-4 px-6 rounded-2xl transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] text-white shadow-lg hover:opacity-90"
           >
             <span *ngIf="!cargando">Completar registro</span>
             <span *ngIf="cargando">Guardando...</span>

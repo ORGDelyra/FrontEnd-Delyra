@@ -20,7 +20,9 @@ export class SucursalVendedor implements OnInit {
   mensajeExito: string = '';
   cargando: boolean = false;
   sucursal: Branch | null = null;
+  notificacion: { tipo: 'error' | 'exito' | 'warning'; mensaje: string } | null = null;
   modoEdicion: boolean = false;
+  editandoActivamente: boolean = false;
   logoComercio: string = '';
   imagenNIT: string = '';
   cargandoLogo: boolean = false;
@@ -47,23 +49,78 @@ export class SucursalVendedor implements OnInit {
     this.cargarSucursal();
   }
 
+  mostrarNotificacion(tipo: 'error' | 'exito' | 'warning', mensaje: string) {
+    this.notificacion = { tipo, mensaje };
+    setTimeout(() => {
+      this.notificacion = null;
+    }, 5000);
+  }
+
+  obtenerMensajeError(err: any): string {
+    if (err.status === 403) {
+      let mensaje = '🔒 No tienes permisos para realizar esta acción.';
+      
+      // Si hay información de debug, mostrarla
+      if (err.error?.debug) {
+        const debug = err.error.debug;
+        mensaje += ` (Usuario: ${debug.usuario_autenticado}, Dueño: ${debug.dueno_sucursal})`;
+      }
+      
+      return mensaje;
+    } else if (err.status === 401) {
+      return '🔐 Tu sesión ha expirado. Por favor inicia sesión nuevamente.';
+    } else if (err.status === 404) {
+      return '❌ Sucursal no encontrada.';
+    } else if (err.status === 422) {
+      return '⚠️ Datos inválidos: ' + (err.error?.mensaje || 'Verifica los campos');
+    } else if (err.error?.mensaje) {
+      return err.error.mensaje;
+    } else if (err.error?.message) {
+      return err.error.message;
+    } else if (err.message) {
+      return err.message;
+    }
+    return 'Error desconocido. Intenta de nuevo.';
+  }
+
   cargarSucursal() {
     this.cargando = true;
-    // Obtener todas las sucursales del usuario (asumiendo que el backend filtra por usuario logueado)
+    
+    // Obtener usuario actual para verificar propiedad
+    const userStr = localStorage.getItem('user');
+    const usuarioActual = userStr ? JSON.parse(userStr) : null;
+    
+    console.log('👤 Usuario actual:', usuarioActual);
+    
+    // Obtener todas las sucursales del usuario (el backend DEBE filtrar por usuario logueado)
     this.vendedorService.obtenerSucursales().subscribe({
       next: (sucursales: Branch[]) => {
-        if (sucursales && sucursales.length > 0) {
-          // Si hay sucursales, cargar la primera (o la del usuario)
-          this.sucursal = sucursales[0];
-          this.modoEdicion = true;
+        console.log('🏪 Sucursales recibidas:', sucursales);
+        
+        // Filtrar solo sucursales que pertenecen al usuario actual (seguridad adicional)
+        const sucursalesDelUsuario = sucursales.filter(s => 
+          s.id_usuario === usuarioActual?.id
+        );
+        
+        console.log('✅ Sucursales filtradas del usuario:', sucursalesDelUsuario);
+        
+        if (sucursalesDelUsuario && sucursalesDelUsuario.length > 0) {
+          // Si hay sucursales, cargar la primera en modo lectura
+          this.sucursal = sucursalesDelUsuario[0];
+          this.modoEdicion = true; // Tiene sucursal
+          this.editandoActivamente = false; // Pero no está editando
           this.cargarDatosEnFormulario(this.sucursal);
+          console.log('📋 Sucursal cargada:', this.sucursal);
         } else {
+          // No tiene sucursal, permitir crear
+          console.log('⚠️ No hay sucursales para este usuario. Permitiendo crear.');
           this.modoEdicion = false;
+          this.editandoActivamente = true; // Activar formulario para crear
         }
         this.cargando = false;
       },
       error: (err: any) => {
-        console.error("Error al cargar sucursal:", err);
+        console.error("❌ Error al cargar sucursal:", err);
         // Si no hay sucursal, permitir crearla
         this.modoEdicion = false;
         this.cargando = false;
@@ -84,35 +141,53 @@ export class SucursalVendedor implements OnInit {
     this.imagenNIT = sucursal.img_nit || '';
   }
 
+  activarEdicion() {
+    this.editandoActivamente = true;
+  }
+
+  cancelarEdicion() {
+    this.editandoActivamente = false;
+    // Recargar los datos originales
+    if (this.sucursal) {
+      this.cargarDatosEnFormulario(this.sucursal);
+    }
+  }
+
   guardarSucursal() {
     if (this.form.invalid) {
       this.marcarCamposInvalidos();
-      this.mensajeError = 'Por favor completa los campos requeridos (Nombre y NIT)';
+      this.mostrarNotificacion('warning', 'Por favor completa los campos requeridos (Nombre y NIT)');
       return;
     }
 
     this.cargando = true;
-    this.mensajeError = '';
-    this.mensajeExito = '';
 
-    const data = this.form.value;
+    // Incluir las imágenes actuales en los datos a guardar
+    const data = {
+      ...this.form.value,
+      logo_comercio: this.logoComercio || null,
+      img_nit: this.imagenNIT || null
+    };
+
+    console.log('💾 Guardando sucursal con datos:', data);
 
     if (this.modoEdicion && this.sucursal?.id) {
       // Actualizar sucursal existente
       this.vendedorService.actualizarSucursal(this.sucursal.id, data).subscribe({
         next: (res: any) => {
           console.log("Sucursal actualizada exitosamente", res);
-          this.mensajeExito = 'Sucursal actualizada correctamente';
+          this.mostrarNotificacion('exito', 'Sucursal actualizada correctamente');
+          this.editandoActivamente = false;
           this.cargando = false;
           // Recargar datos
           setTimeout(() => {
             this.cargarSucursal();
-            this.mensajeExito = '';
           }, 2000);
         },
         error: (err: any) => {
           console.error("Error al actualizar sucursal:", err);
-          this.mensajeError = err.error?.message || 'Error al actualizar la sucursal. Por favor intenta de nuevo.';
+          const mensajeError = this.obtenerMensajeError(err);
+          this.mostrarNotificacion('error', mensajeError);
           this.cargando = false;
         }
       });
@@ -121,17 +196,18 @@ export class SucursalVendedor implements OnInit {
       this.vendedorService.crearSucursal(data).subscribe({
         next: (res: any) => {
           console.log("Sucursal creada exitosamente", res);
-          this.mensajeExito = 'Sucursal creada correctamente';
+          this.mostrarNotificacion('exito', 'Sucursal creada correctamente');
+          this.editandoActivamente = false;
           this.cargando = false;
           // Recargar datos
           setTimeout(() => {
             this.cargarSucursal();
-            this.mensajeExito = '';
           }, 2000);
         },
         error: (err: any) => {
           console.error("Error al crear sucursal:", err);
-          this.mensajeError = err.error?.message || 'Error al crear la sucursal. Por favor intenta de nuevo.';
+          const mensajeError = this.obtenerMensajeError(err);
+          this.mostrarNotificacion('error', mensajeError);
           this.cargando = false;
         }
       });
@@ -152,25 +228,58 @@ export class SucursalVendedor implements OnInit {
     if (!file) return;
 
     this.cargandoLogo = true;
+
     const validacion = await this.imageUploadService.validateImage(file, 5, 100, 100);
 
     if (!validacion.valid) {
-      this.mensajeError = validacion.error || 'Error en validación';
+      this.mostrarNotificacion('error', validacion.error || 'Error en validación de imagen');
       this.cargandoLogo = false;
       return;
     }
 
     try {
-      const response = await this.imageUploadService.uploadImage(file, 'producto');
+      console.log('📸 Subiendo logo del comercio...');
+      const response = await this.imageUploadService.uploadImage(file, 'perfil');
+      console.log('✅ Logo subido a Cloudinary:', response.secure_url);
+
       this.logoComercio = response.secure_url;
-      if (this.sucursal) {
-        this.sucursal.logo_comercio = response.secure_url;
+
+      // Si existe sucursal, actualizar en el backend inmediatamente
+      if (this.sucursal?.id) {
+        console.log('💾 Guardando logo en el backend...');
+        console.log('📋 Sucursal ID:', this.sucursal.id);
+        console.log('🔑 Usuario actual:', localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).id : 'desconocido');
+        
+        this.vendedorService.actualizarSucursal(this.sucursal.id, {
+          logo_comercio: response.secure_url
+        }).subscribe({
+          next: (res) => {
+            console.log('✅ Logo guardado en backend');
+            this.sucursal!.logo_comercio = response.secure_url;
+            this.logoComercio = response.secure_url; // Asegurar que se actualice también esta propiedad
+            this.mostrarNotificacion('exito', 'Logo del comercio actualizado correctamente');
+          },
+          error: (err) => {
+            console.error('❌ Error al guardar logo en backend:', err);
+            const mensajeError = this.obtenerMensajeError(err);
+            this.mostrarNotificacion('error', mensajeError);
+            
+            // Si es error de permisos, sugerir verificar sesión
+            if (err.status === 403) {
+              setTimeout(() => {
+                this.mostrarNotificacion('warning', 'Intenta cerrar sesión y volver a entrar');
+              }, 5500);
+            }
+          }
+        });
+      } else {
+        this.mostrarNotificacion('exito', 'Logo actualizado (se guardará al crear/actualizar la sucursal)');
       }
-      this.mensajeExito = 'Logo del comercio actualizado';
+
       this.cargandoLogo = false;
-      setTimeout(() => this.mensajeExito = '', 3000);
     } catch (err: any) {
-      this.mensajeError = 'Error al subir el logo: ' + (err?.message || '');
+      console.error('❌ Error al subir logo:', err);
+      this.mostrarNotificacion('error', 'Error al subir el logo: ' + (err?.message || 'Error desconocido'));
       this.cargandoLogo = false;
     }
   }
@@ -180,23 +289,58 @@ export class SucursalVendedor implements OnInit {
     if (!file) return;
 
     this.cargandoNIT = true;
+
     const validacion = await this.imageUploadService.validateDocument(file, 5);
 
     if (!validacion.valid) {
-      this.mensajeError = validacion.error || 'Error en validación';
+      this.mostrarNotificacion('error', validacion.error || 'Error en validación del documento');
       this.cargandoNIT = false;
       return;
     }
 
     try {
+      console.log('📄 Subiendo imagen del NIT...');
       const response = await this.imageUploadService.uploadImage(file, 'comprobante');
+      console.log('✅ NIT subido a Cloudinary:', response.secure_url);
+
       this.imagenNIT = response.secure_url;
       this.form.patchValue({ img_nit: response.secure_url });
-      this.mensajeExito = 'Imagen del NIT actualizada';
+
+      // Si existe sucursal, actualizar en el backend inmediatamente
+      if (this.sucursal?.id) {
+        console.log('💾 Guardando NIT en el backend...');
+        console.log('📋 Sucursal ID:', this.sucursal.id);
+        console.log('🔑 Usuario actual:', localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).id : 'desconocido');
+        
+        this.vendedorService.actualizarSucursal(this.sucursal.id, {
+          img_nit: response.secure_url
+        }).subscribe({
+          next: (res) => {
+            console.log('✅ NIT guardado en backend');
+            this.sucursal!.img_nit = response.secure_url;
+            this.mostrarNotificacion('exito', 'Imagen del NIT actualizada correctamente');
+          },
+          error: (err) => {
+            console.error('❌ Error al guardar NIT en backend:', err);
+            const mensajeError = this.obtenerMensajeError(err);
+            this.mostrarNotificacion('error', mensajeError);
+            
+            // Si es error de permisos, sugerir verificar sesión
+            if (err.status === 403) {
+              setTimeout(() => {
+                this.mostrarNotificacion('warning', 'Intenta cerrar sesión y volver a entrar');
+              }, 5500);
+            }
+          }
+        });
+      } else {
+        this.mostrarNotificacion('exito', 'NIT actualizado (se guardará al crear/actualizar la sucursal)');
+      }
+
       this.cargandoNIT = false;
-      setTimeout(() => this.mensajeExito = '', 3000);
     } catch (err: any) {
-      this.mensajeError = 'Error al subir la imagen del NIT: ' + (err?.message || '');
+      console.error('❌ Error al subir NIT:', err);
+      this.mostrarNotificacion('error', 'Error al subir la imagen del NIT: ' + (err?.message || 'Error desconocido'));
       this.cargandoNIT = false;
     }
   }

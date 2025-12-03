@@ -2,6 +2,8 @@
 export interface Cart {
   id?: number;
   id_usuario?: number;
+  id_cliente?: number;
+  activo?: boolean | number;  // Indica si es el carrito activo del usuario
   tipo_entrega?: 'recogida' | 'domicilio';
   direccion_entrega?: string | null;
   latitud_entrega?: string | null;
