@@ -55,9 +55,9 @@ export class RegistroVendedor {
     this.formSucursal = this.fb.group({
       nombre_sucursal: ['', [Validators.required, Validators.maxLength(50)]],
       nit: ['', Validators.required],
-      latitud: ['', Validators.required],
-      longitud: ['', Validators.required],
-      direccion: ['', Validators.required]
+      latitud: [''],
+      longitud: [''],
+      direccion: ['']
     });
   }
 
@@ -176,9 +176,9 @@ export class RegistroVendedor {
 
   // Completar registro creando la sucursal
   completarRegistro() {
-    if (this.formSucursal.invalid || !this.imagenNIT) {
+    if (this.formSucursal.invalid) {
       this.marcarCamposInvalidos(this.formSucursal);
-      this.mensajeError = 'Por favor completa todos los campos requeridos y carga el NIT';
+      this.mensajeError = 'Por favor completa todos los campos requeridos';
       return;
     }
 
@@ -192,7 +192,7 @@ export class RegistroVendedor {
 
     const dataSucursal = {
       ...this.formSucursal.value,
-      img_nit: this.imagenNIT,
+      img_nit: this.imagenNIT || null,  // NIT es opcional
       logo_url: this.logoComercio || null  // Logo es opcional
     };
 

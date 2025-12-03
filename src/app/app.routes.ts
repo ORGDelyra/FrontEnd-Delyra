@@ -98,7 +98,7 @@ export const routes: Routes = [
   { path: 'domiciliario/perfil', component: PerfilDomiciliario, canActivate: [AuthGuard] },
   { path: 'domiciliario/vehiculo', component: VehiculoDomiciliario, canActivate: [AuthGuard] },
   { path: 'domiciliario/pedidos', component: PedidosDomiciliario, canActivate: [AuthGuard] },
-  { path: 'domiciliario/chat/:idPedido', component: ChatDomiciliario },
+  { path: 'domiciliario/chat', component: ChatDomiciliario },
 
   /* Admin */
    { path: 'admin/inicio', component: InicioAdmin },

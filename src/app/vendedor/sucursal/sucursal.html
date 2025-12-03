@@ -85,18 +85,25 @@
         <!-- Imagen NIT -->
         <div class="mb-6">
           <label class="block text-[#9aa2c7] font-medium mb-2">
-            URL de Imagen del NIT <span class="text-red-400">*</span>
+            Imagen del NIT
           </label>
-          <input
-            formControlName="img_nit"
-            type="text"
-            placeholder="https://ejemplo.com/imagen-nit.jpg"
-            [disabled]="!modoEdicion"
-            class="w-full px-4 py-3 bg-[#1f2847] border border-[#1f2847] rounded-lg text-[#f3f5ff] placeholder-[#9aa2c7] focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed"
-            [class.border-red-500]="f['img_nit'].invalid && f['img_nit'].touched"
-          >
-          <span *ngIf="f['img_nit'].invalid && f['img_nit'].touched"
-                class="text-red-400 text-sm mt-1 block">Este campo es requerido</span>
+          <div *ngIf="!modoEdicion" class="text-[#9aa2c7] text-sm">
+            Haz clic en "Editar" para cambiar la imagen del NIT
+          </div>
+          <div *ngIf="modoEdicion" class="flex flex-col items-center gap-4">
+            <div class="w-full h-32 bg-[#1f2847] border-2 border-dashed border-[#7dff7a] rounded-lg flex items-center justify-center">
+              <img *ngIf="imagenNIT" [src]="imagenNIT" alt="Imagen NIT" class="max-h-full max-w-full object-contain">
+              <span *ngIf="!imagenNIT" class="text-[#9aa2c7]">Vista previa de imagen</span>
+            </div>
+            <label *ngIf="modoEdicion" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-2 rounded-lg font-semibold cursor-pointer transition">
+              Seleccionar imagen del NIT
+              <input type="file" accept="image/*" (change)="onImagenNITSeleccionada($event)" class="hidden" [disabled]="cargandoNIT">
+            </label>
+            <div *ngIf="cargandoNIT" class="text-[#7dff7a] text-sm flex items-center gap-2">
+              <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-[#7dff7a]"></div>
+              Subiendo imagen...
+            </div>
+          </div>
         </div>
 
         <!-- Dirección -->

@@ -22,7 +22,9 @@ export class SucursalVendedor implements OnInit {
   sucursal: Branch | null = null;
   modoEdicion: boolean = false;
   logoComercio: string = '';
+  imagenNIT: string = '';
   cargandoLogo: boolean = false;
+  cargandoNIT: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -33,10 +35,10 @@ export class SucursalVendedor implements OnInit {
     this.form = this.fb.group({
       nombre_sucursal: ['', [Validators.required, Validators.maxLength(50)]],
       nit: ['', Validators.required],
-      img_nit: ['', Validators.required],
-      latitud: ['', Validators.required],
-      longitud: ['', Validators.required],
-      direccion: ['', Validators.required],
+      img_nit: [''],  // Hacer img_nit opcional
+      latitud: [''],
+      longitud: [''],
+      direccion: [''],
     });
   }
 
@@ -73,18 +75,19 @@ export class SucursalVendedor implements OnInit {
     this.form.patchValue({
       nombre_sucursal: sucursal.nombre_sucursal,
       nit: sucursal.nit,
-      img_nit: sucursal.img_nit,
+      img_nit: sucursal.img_nit || '',
       latitud: sucursal.latitud || '',
       longitud: sucursal.longitud || '',
       direccion: sucursal.direccion || '',
     });
     this.logoComercio = sucursal.logo_comercio || '';
+    this.imagenNIT = sucursal.img_nit || '';
   }
 
   guardarSucursal() {
     if (this.form.invalid) {
       this.marcarCamposInvalidos();
-      this.mensajeError = 'Por favor completa todos los campos requeridos';
+      this.mensajeError = 'Por favor completa los campos requeridos (Nombre y NIT)';
       return;
     }
 
@@ -169,6 +172,32 @@ export class SucursalVendedor implements OnInit {
     } catch (err: any) {
       this.mensajeError = 'Error al subir el logo: ' + (err?.message || '');
       this.cargandoLogo = false;
+    }
+  }
+
+  async onImagenNITSeleccionada(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    this.cargandoNIT = true;
+    const validacion = await this.imageUploadService.validateDocument(file, 5);
+
+    if (!validacion.valid) {
+      this.mensajeError = validacion.error || 'Error en validación';
+      this.cargandoNIT = false;
+      return;
+    }
+
+    try {
+      const response = await this.imageUploadService.uploadImage(file, 'comprobante');
+      this.imagenNIT = response.secure_url;
+      this.form.patchValue({ img_nit: response.secure_url });
+      this.mensajeExito = 'Imagen del NIT actualizada';
+      this.cargandoNIT = false;
+      setTimeout(() => this.mensajeExito = '', 3000);
+    } catch (err: any) {
+      this.mensajeError = 'Error al subir la imagen del NIT: ' + (err?.message || '');
+      this.cargandoNIT = false;
     }
   }
 
