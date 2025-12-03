@@ -9,21 +9,15 @@ export type UploadType = 'perfil' | 'comprobante' | 'producto';
 })
 export class ImageUploadService {
   private cloudName = 'dtpg4uivr';
-  private cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dtpg4uivr/image/upload';
-
-  // Mapeo de tipos a presets
-  private presets: Record<UploadType, string> = {
-    'perfil': 'perfil_usuarios',
-    'comprobante': 'imegenes_comprobante_pago',
-    'producto': 'imegenes_productos'
-  };
+  // URL del backend que manejará la autenticación con Cloudinary
+  private backendUploadUrl = '/api/upload';
 
   uploadProgress$ = new Subject<{ loaded: number; total: number }>();
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Sube un archivo a Cloudinary según el tipo
+   * Sube un archivo a través del backend (que lo envía a Cloudinary)
    * @param file Archivo a subir
    * @param type Tipo: 'perfil' | 'comprobante' | 'producto'
    * @param folder Carpeta en Cloudinary (opcional)
@@ -34,20 +28,15 @@ export class ImageUploadService {
     folder?: string
   ): Promise<{ secure_url: string; public_id: string }> {
     return new Promise((resolve, reject) => {
-      const uploadPreset = this.presets[type];
-
-      if (!uploadPreset) {
-        reject(new Error(`Tipo de upload inválido: ${type}`));
-        return;
-      }
-
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
+      formData.append('type', type);
 
       if (folder) {
         formData.append('folder', folder);
       }
+
+      console.log(`[Upload] Enviando ${file.name} (tipo: ${type}) al backend...`);
 
       const xhr = new XMLHttpRequest();
 
@@ -60,21 +49,37 @@ export class ImageUploadService {
 
       xhr.addEventListener('load', () => {
         if (xhr.status === 200) {
-          const response = JSON.parse(xhr.responseText);
-          resolve({
-            secure_url: response.secure_url,
-            public_id: response.public_id
-          });
+          try {
+            const response = JSON.parse(xhr.responseText);
+            console.log(`[Upload SUCCESS]`, response);
+            resolve({
+              secure_url: response.secure_url || response.url,
+              public_id: response.public_id || response.id
+            });
+          } catch (e) {
+            reject(new Error('Invalid response from backend'));
+          }
         } else {
-          reject(new Error(`Error: ${xhr.status}`));
+          try {
+            const errorMsg = xhr.responseText ? JSON.parse(xhr.responseText) : { error: { message: `HTTP ${xhr.status}` } };
+            console.error('Upload error:', errorMsg);
+            reject(new Error(`Upload error: ${errorMsg.error?.message || errorMsg.message || xhr.status}`));
+          } catch (e) {
+            console.error('Upload error (raw):', xhr.responseText);
+            reject(new Error(`Upload error: HTTP ${xhr.status}`));
+          }
         }
       });
 
       xhr.addEventListener('error', () => {
-        reject(new Error('Network error uploading to Cloudinary'));
+        reject(new Error('Network error uploading file'));
       });
 
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`);
+      xhr.addEventListener('abort', () => {
+        reject(new Error('Upload cancelled'));
+      });
+
+      xhr.open('POST', this.backendUploadUrl);
       xhr.send(formData);
     });
   }

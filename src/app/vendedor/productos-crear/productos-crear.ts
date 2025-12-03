@@ -59,12 +59,27 @@ export class CrearProductoVendedor implements OnInit {
       return;
     }
 
+    // Validar que hay al menos una imagen
+    if (this.imagenesProduto.length === 0) {
+      this.mensajeError = 'Por favor carga al menos una imagen del producto';
+      return;
+    }
+
     this.cargando = true;
-    this.vendedorService.crearProducto(this.form.value).subscribe({
-      next: () => {
+    this.mensajeError = '';
+
+    // Preparar datos del producto con imágenes
+    const datosProducto = {
+      ...this.form.value,
+      imagenes: this.imagenesProduto  // Agregar URLs de las imágenes
+    };
+
+    this.vendedorService.crearProducto(datosProducto).subscribe({
+      next: (response: any) => {
+        this.cargando = false;
         this.router.navigate(['/vendedor/productos']);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.mensajeError = err.error?.message || 'Error al crear producto';
         this.cargando = false;
       }

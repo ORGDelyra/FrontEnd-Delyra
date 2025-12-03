@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-8 px-4">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-4xl font-bold text-[#7dff7a] mb-6"><span class="icon-placeholder"></span> Carrito de Compras</h1>
+    <h1 class="text-4xl font-bold text-[#7dff7a] mb-6">Carrito de Compras</h1>
 
     <!-- Mensajes -->
     <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-900/30 border border-red-500 text-red-300 rounded-lg flex items-center gap-3">
@@ -21,7 +21,6 @@
         </div>
 
         <div *ngIf="!cargando && productos.length === 0" class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-12 text-center">
-          <div class="text-6xl mb-4 icon-placeholder"></div>
           <h2 class="text-[#f3f5ff] text-2xl font-bold mb-2">Tu carrito está vacío</h2>
           <p class="text-[#9aa2c7] mb-6">Agrega algunos productos para continuar</p>
           <button routerLink="/productos/listar" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] px-6 py-3 rounded-full font-bold transition">
@@ -31,8 +30,8 @@
 
         <div *ngIf="!cargando && productos.length > 0" class="space-y-4">
           <div *ngFor="let producto of productos" class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 flex items-center gap-4">
-            <div class="w-20 h-20 bg-[#1f2847] rounded-lg flex items-center justify-center shrink-0">
-              <span class="text-3xl icon-placeholder"></span>
+            <div class="w-20 h-20 bg-[#1f2847] rounded-lg flex items-center justify-center shrink-0 text-[#7dff7a] font-bold">
+              #
             </div>
             <div class="flex-1">
               <h3 class="text-[#f3f5ff] font-bold text-lg mb-1">{{ producto.nombre }}</h3>

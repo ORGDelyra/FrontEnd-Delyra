@@ -91,7 +91,7 @@ export class PerfilVendedor implements OnInit {
       localStorage.setItem('user', JSON.stringify(this.usuario));
       this.mensajeExito = 'Foto de perfil actualizada';
       this.cargandoFoto = false;
-      setTimeout(() => this.mensajeExito = '', 3000);
+      setTimeout(() => this.mensajeExito = '', 3000)
     } catch (e: any) {
       this.mensajeError = 'Error al validar la imagen' + (e?.message ? ': ' + e.message : '');
       this.cargandoFoto = false;

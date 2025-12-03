@@ -25,11 +25,11 @@
         <div class="relative">
           <div class="w-32 h-32 rounded-full bg-[#1f2847] border-4 border-[#7dff7a] flex items-center justify-center overflow-hidden shrink-0">
             <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil" class="w-full h-full object-cover">
-            <span *ngIf="!fotoPerfil" class="text-5xl icon-placeholder"></span>
+            <span *ngIf="!fotoPerfil" class="text-5xl">👤</span>
           </div>
 
           <label *ngIf="modoEdicion" class="absolute bottom-0 right-0 bg-[#7dff7a] hover:bg-[#6ae069] p-3 rounded-full cursor-pointer transition shadow-lg">
-            <span class="text-xl icon-placeholder"></span>
+            <span class="text-xl">📷</span>
             <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" class="hidden">
           </label>
         </div>

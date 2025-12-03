@@ -24,19 +24,17 @@
       <div class="mb-8 flex flex-col items-center pb-8 border-b border-[#1f2847]">
         <div class="relative">
           <!-- Avatar -->
-            <div class="w-32 h-32 rounded-full bg-[#1f2847] border-4 border-[#7dff7a] flex items-center justify-center mb-4 overflow-hidden">
+          <div class="w-32 h-32 rounded-full bg-[#1f2847] border-4 border-[#7dff7a] flex items-center justify-center mb-4 overflow-hidden">
             <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil" class="w-full h-full object-cover">
-            <span *ngIf="!fotoPerfil" class="text-5xl icon-placeholder"></span>
+            <span *ngIf="!fotoPerfil" class="text-5xl">👤</span>
           </div>
 
           <!-- Botón cargar foto -->
           <label *ngIf="modoEdicion" class="absolute bottom-0 right-0 bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] p-3 rounded-full cursor-pointer transition duration-200 shadow-lg">
-            <span class="text-xl icon-placeholder"></span>
+            <span class="text-xl">📷</span>
             <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" class="hidden" [disabled]="cargandoFoto">
           </label>
-        </div>
-
-        <p class="text-[#9aa2c7] text-sm mt-2" *ngIf="!modoEdicion">
+        </div>        <p class="text-[#9aa2c7] text-sm mt-2" *ngIf="!modoEdicion">
           Haz clic en "Editar Información" para cambiar tu foto
         </p>
         <div *ngIf="cargandoFoto" class="mt-2 text-[#7dff7a] text-sm flex items-center gap-2">
@@ -56,8 +54,8 @@
           [class.text-[#05060c]]="!modoEdicion"
           [class.text-white]="modoEdicion"
           class="px-6 py-2 rounded-lg font-semibold transition duration-200 flex items-center gap-2">
-          <span *ngIf="!modoEdicion" class="text-lg icon-placeholder"></span>
-          <span *ngIf="modoEdicion" class="text-lg icon-placeholder"></span>
+          <span *ngIf="!modoEdicion" class="text-lg">✏️</span>
+          <span *ngIf="modoEdicion" class="text-lg">❌</span>
           {{ modoEdicion ? 'Cancelar' : 'Editar Información' }}
         </button>
       </div>

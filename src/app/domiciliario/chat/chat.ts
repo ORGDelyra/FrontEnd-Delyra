@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ComprobanteUploadComponent } from '../../components/comprobante-upload/comprobante-upload';
@@ -19,9 +19,18 @@ export class ChatDomiciliario implements OnInit {
   idPedido: string = ''; // ID del pedido actual
   comprobanteUrl: string = ''; // URL del comprobante subido
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit() {
+    // Obtener idPedido de los route params
+    this.activatedRoute.params.subscribe(params => {
+      this.idPedido = params['idPedido'] || '';
+      console.log('Chat abierto para pedido:', this.idPedido);
+    });
     this.cargarMensajes();
   }
 
