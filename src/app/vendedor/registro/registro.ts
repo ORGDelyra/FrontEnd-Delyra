@@ -75,17 +75,15 @@ export class RegistroVendedor {
     }
 
     this.cargandoFotoPerfil = true;
-    this.imageUploadService.uploadImage(file).subscribe({
-      next: (response) => {
-        this.fotoPerfil = response.secure_url;
-        this.cargandoFotoPerfil = false;
-        console.log('Foto de perfil cargada:', this.fotoPerfil);
-      },
-      error: (error) => {
-        this.mensajeError = 'Error al subir foto de perfil';
-        this.cargandoFotoPerfil = false;
-      }
-    });
+    try {
+      const response = await this.imageUploadService.uploadImage(file);
+      this.fotoPerfil = response.secure_url;
+      this.cargandoFotoPerfil = false;
+      console.log('Foto de perfil cargada:', this.fotoPerfil);
+    } catch (error: any) {
+      this.mensajeError = 'Error al subir foto de perfil: ' + (error?.message || '');
+      this.cargandoFotoPerfil = false;
+    }
   }
 
   /**
@@ -102,17 +100,15 @@ export class RegistroVendedor {
     }
 
     this.cargandoLogo = true;
-    this.imageUploadService.uploadImage(file).subscribe({
-      next: (response) => {
-        this.logoComercio = response.secure_url;
-        this.cargandoLogo = false;
-        console.log('Logo cargado:', this.logoComercio);
-      },
-      error: (error) => {
-        this.mensajeError = 'Error al subir logo';
-        this.cargandoLogo = false;
-      }
-    });
+    try {
+      const response = await this.imageUploadService.uploadImage(file);
+      this.logoComercio = response.secure_url;
+      this.cargandoLogo = false;
+      console.log('Logo cargado:', this.logoComercio);
+    } catch (error: any) {
+      this.mensajeError = 'Error al subir logo: ' + (error?.message || '');
+      this.cargandoLogo = false;
+    }
   }
 
   /**
@@ -129,17 +125,15 @@ export class RegistroVendedor {
     }
 
     this.cargandoNIT = true;
-    this.imageUploadService.uploadImage(file).subscribe({
-      next: (response) => {
-        this.imagenNIT = response.secure_url;
-        this.cargandoNIT = false;
-        console.log('NIT cargado:', this.imagenNIT);
-      },
-      error: (error) => {
-        this.mensajeError = 'Error al subir NIT';
-        this.cargandoNIT = false;
-      }
-    });
+    try {
+      const response = await this.imageUploadService.uploadImage(file);
+      this.imagenNIT = response.secure_url;
+      this.cargandoNIT = false;
+      console.log('NIT cargado:', this.imagenNIT);
+    } catch (error: any) {
+      this.mensajeError = 'Error al subir NIT: ' + (error?.message || '');
+      this.cargandoNIT = false;
+    }
   }
 
   // Validar y avanzar al siguiente paso (crear usuario)

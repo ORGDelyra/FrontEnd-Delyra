@@ -85,22 +85,15 @@ export class PerfilVendedor implements OnInit {
         return;
       }
 
-      this.imageUploadService.uploadImage(file, 'perfil').subscribe({
-        next: (response: any) => {
-          this.fotoPerfil = response.secure_url;
-          this.usuario.foto_perfil = response.secure_url;
-          localStorage.setItem('user', JSON.stringify(this.usuario));
-          this.mensajeExito = 'Foto de perfil actualizada';
-          this.cargandoFoto = false;
-          setTimeout(() => this.mensajeExito = '', 3000);
-        },
-        error: (err) => {
-          this.mensajeError = 'Error al subir la foto';
-          this.cargandoFoto = false;
-        }
-      });
-    } catch (e) {
-      this.mensajeError = 'Error al validar la imagen';
+      const response = await this.imageUploadService.uploadImage(file, 'perfil');
+      this.fotoPerfil = response.secure_url;
+      this.usuario.foto_perfil = response.secure_url;
+      localStorage.setItem('user', JSON.stringify(this.usuario));
+      this.mensajeExito = 'Foto de perfil actualizada';
+      this.cargandoFoto = false;
+      setTimeout(() => this.mensajeExito = '', 3000);
+    } catch (e: any) {
+      this.mensajeError = 'Error al validar la imagen' + (e?.message ? ': ' + e.message : '');
       this.cargandoFoto = false;
     }
   }

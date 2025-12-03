@@ -65,18 +65,16 @@ export class RegistroDomiciliario {
     }
 
     this.cargandoFoto = true;
-    this.imageUploadService.uploadImage(file).subscribe({
-      next: (response) => {
-        this.fotoPerfil = response.secure_url;
-        this.cargandoFoto = false;
-        console.log('Foto de perfil cargada:', this.fotoPerfil);
-      },
-      error: (error) => {
-        this.mensajeError = 'Error al subir foto de perfil';
-        this.cargandoFoto = false;
-        console.error('Error:', error);
-      }
-    });
+    try {
+      const response = await this.imageUploadService.uploadImage(file);
+      this.fotoPerfil = response.secure_url;
+      this.cargandoFoto = false;
+      console.log('Foto de perfil cargada:', this.fotoPerfil);
+    } catch (error: any) {
+      this.mensajeError = 'Error al subir foto de perfil: ' + (error?.message || '');
+      this.cargandoFoto = false;
+      console.error('Error:', error);
+    }
   }
 
   siguientePaso() {

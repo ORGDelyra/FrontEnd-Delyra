@@ -157,21 +157,19 @@ export class SucursalVendedor implements OnInit {
       return;
     }
 
-    this.imageUploadService.uploadImage(file, 'productos').subscribe({
-      next: (response: any) => {
-        this.logoComercio = response.secure_url;
-        if (this.sucursal) {
-          this.sucursal.logo_comercio = response.secure_url;
-        }
-        this.mensajeExito = 'Logo del comercio actualizado';
-        this.cargandoLogo = false;
-        setTimeout(() => this.mensajeExito = '', 3000);
-      },
-      error: (err) => {
-        this.mensajeError = 'Error al subir el logo';
-        this.cargandoLogo = false;
+    try {
+      const response = await this.imageUploadService.uploadImage(file, 'productos');
+      this.logoComercio = response.secure_url;
+      if (this.sucursal) {
+        this.sucursal.logo_comercio = response.secure_url;
       }
-    });
+      this.mensajeExito = 'Logo del comercio actualizado';
+      this.cargandoLogo = false;
+      setTimeout(() => this.mensajeExito = '', 3000);
+    } catch (err: any) {
+      this.mensajeError = 'Error al subir el logo: ' + (err?.message || '');
+      this.cargandoLogo = false;
+    }
   }
 
   get f() { return this.form.controls; }

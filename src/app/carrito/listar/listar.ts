@@ -247,17 +247,15 @@ export class ListarCarrito implements OnInit {
       return;
     }
 
-    this.imageUploadService.uploadImage(file).subscribe({
-      next: (response: any) => {
-        this.comprobantePago = response.secure_url;
-        this.mensajeExito = 'Comprobante de pago adjuntado correctamente';
-        this.cargandoComprobante = false;
-        setTimeout(() => this.mensajeExito = '', 3000);
-      },
-      error: (err) => {
-        this.mensajeError = 'Error al subir el comprobante';
-        this.cargandoComprobante = false;
-      }
-    });
+    try {
+      const response = await this.imageUploadService.uploadImage(file);
+      this.comprobantePago = response.secure_url;
+      this.mensajeExito = 'Comprobante de pago adjuntado correctamente';
+      this.cargandoComprobante = false;
+      setTimeout(() => this.mensajeExito = '', 3000);
+    } catch (err: any) {
+      this.mensajeError = 'Error al subir el comprobante: ' + (err?.message || '');
+      this.cargandoComprobante = false;
+    }
   }
 }
