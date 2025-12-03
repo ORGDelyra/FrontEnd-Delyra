@@ -76,7 +76,7 @@ export class RegistroVendedor {
 
     this.cargandoFotoPerfil = true;
     try {
-      const response = await this.imageUploadService.uploadImage(file);
+      const response = await this.imageUploadService.uploadImage(file, 'perfil');
       this.fotoPerfil = response.secure_url;
       this.cargandoFotoPerfil = false;
       console.log('Foto de perfil cargada:', this.fotoPerfil);
@@ -101,7 +101,7 @@ export class RegistroVendedor {
 
     this.cargandoLogo = true;
     try {
-      const response = await this.imageUploadService.uploadImage(file);
+      const response = await this.imageUploadService.uploadImage(file, 'perfil');
       this.logoComercio = response.secure_url;
       this.cargandoLogo = false;
       console.log('Logo cargado:', this.logoComercio);
@@ -126,7 +126,7 @@ export class RegistroVendedor {
 
     this.cargandoNIT = true;
     try {
-      const response = await this.imageUploadService.uploadImage(file);
+      const response = await this.imageUploadService.uploadImage(file, 'comprobante');
       this.imagenNIT = response.secure_url;
       this.cargandoNIT = false;
       console.log('NIT cargado:', this.imagenNIT);

@@ -9,15 +9,15 @@ export type UploadType = 'perfil' | 'comprobante' | 'producto';
 })
 export class ImageUploadService {
   private cloudName = 'dtpg4uivr';
-  // URL del backend que manejará la autenticación con Cloudinary
-  private backendUploadUrl = '/api/upload';
+  // URL del backend Laravel que subirá a Cloudinary
+  private backendUploadUrl = 'http://127.0.0.1:8000/api/upload/cloudinary';
 
   uploadProgress$ = new Subject<{ loaded: number; total: number }>();
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Sube un archivo a través del backend (que lo envía a Cloudinary)
+   * Sube un archivo a través del backend Laravel (que lo sube a Cloudinary)
    * @param file Archivo a subir
    * @param type Tipo: 'perfil' | 'comprobante' | 'producto'
    * @param folder Carpeta en Cloudinary (opcional)
@@ -36,7 +36,7 @@ export class ImageUploadService {
         formData.append('folder', folder);
       }
 
-      console.log(`[Upload] Enviando ${file.name} (tipo: ${type}) al backend...`);
+      console.log(`[Upload] Enviando ${file.name} (tipo: ${type}) al backend Laravel...`);
 
       const xhr = new XMLHttpRequest();
 
@@ -80,6 +80,14 @@ export class ImageUploadService {
       });
 
       xhr.open('POST', this.backendUploadUrl);
+
+      // Agregar headers de autenticación
+      const token = localStorage.getItem('token');
+      if (token) {
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      }
+      xhr.setRequestHeader('Accept', 'application/json');
+
       xhr.send(formData);
     });
   }
