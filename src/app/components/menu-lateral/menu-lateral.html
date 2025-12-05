@@ -1,0 +1,48 @@
+<!-- Menú lateral expandible/colapsable -->
+<aside
+  *ngIf="menuAbierto"
+  class="w-64 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] shadow-lg rounded-lg h-fit sticky top-24 transition-all duration-300 z-30">
+
+  <!-- Botón cerrar -->
+  <button
+    (click)="cerrarMenu()"
+    class="w-full flex justify-between items-center p-4 text-[#04060f] hover:text-[#8b0000] transition font-bold border-b border-[#d4a5a5]">
+    <h3 class="text-lg">Menú</h3>
+    <span class="text-xl">◀</span>
+  </button>
+
+  <!-- Menú items -->
+  <ul class="space-y-2 px-2 pb-4 pt-2">
+    <li *ngFor="let item of menuItems">
+      <ng-container *ngIf="item.route">
+        <a [routerLink]="item.route" (click)="cerrarMenu()" class="flex items-center space-x-3 text-[#04060f] hover:text-[#8b0000] transition p-3 rounded hover:bg-[#e8c4c4]">
+          <span class="text-xl">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="item.action && !item.route">
+        <button (click)="clickItem(item)" class="flex items-center space-x-3 text-[#04060f] hover:text-[#8b0000] transition p-3 rounded hover:bg-[#e8c4c4] w-full text-left">
+          <span class="text-xl">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </button>
+      </ng-container>
+    </li>
+
+    <!-- Separador y botón Cerrar Sesión -->
+    <li class="border-t border-[#d4a5a5] pt-2 mt-2">
+      <button (click)="cerrarSesion()" class="flex items-center space-x-3 text-red-600 hover:text-red-700 transition p-3 rounded hover:bg-[#ffe0e0] w-full text-left">
+        <span class="text-xl">🚪</span>
+        <span>Cerrar Sesión</span>
+      </button>
+    </li>
+  </ul>
+</aside>
+
+<!-- Botón flotante para abrir menú (solo cuando está cerrado) -->
+<button
+  *ngIf="!menuAbierto"
+  (click)="toggleMenu()"
+  class="fixed left-4 top-24 z-40 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] text-[#04060f] hover:text-[#8b0000] p-3 rounded-lg shadow-lg transition"
+  title="Abrir menú">
+  <span class="text-2xl">☰</span>
+</button>

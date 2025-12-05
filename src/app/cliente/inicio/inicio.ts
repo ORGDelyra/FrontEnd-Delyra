@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { MapaUsuarios } from '../../mapa/mapa-usuarios';
 import { ProductosService } from '../../services/productos.service';
 import { Category } from '../../interfaces/product.interface';
+import { MenuLateral, MenuItem } from '../../components/menu-lateral/menu-lateral';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, MapaUsuarios],
+  imports: [RouterModule, CommonModule, FormsModule, MapaUsuarios, MenuLateral],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
@@ -19,7 +20,7 @@ export class InicioCliente implements OnInit {
   terminoBusqueda: string = '';
   categoriaSeleccionada: string = 'Todas';
   menuAbierto: boolean = false;
-  menuLateralAbierto: boolean = false; // Menu lateral cerrado por defecto
+  menuItems: MenuItem[] = [];
 
   constructor(
     private router: Router,
@@ -27,11 +28,21 @@ export class InicioCliente implements OnInit {
   ) {}
 
   ngOnInit() {
-    try {
-      const saved = localStorage.getItem('menuLateralAbierto');
-      if (saved !== null) this.menuLateralAbierto = saved === 'true';
-    } catch (e) { }
+    this.inicializarMenuItems();
     this.cargarCategorias();
+  }
+
+  inicializarMenuItems() {
+    this.menuItems = [
+      { icon: '🛍️', label: 'Productos', route: '/productos/listar' },
+      { icon: '👤', label: 'Mi Perfil', route: '/cliente/perfil' },
+      { icon: '🛒', label: 'Carrito', route: '/carrito' },
+      { icon: '📋', label: 'Pedidos', route: '/cliente/pedidos' },
+      { icon: '♥', label: 'Favoritos' },
+      { icon: '💬', label: 'Chat' },
+      { icon: '⚙️', label: 'Configuración' },
+      { icon: '❓', label: 'Ayuda' }
+    ];
   }
 
   cargarCategorias() {
@@ -73,10 +84,5 @@ export class InicioCliente implements OnInit {
 
   cerrarMenu() {
     this.menuAbierto = false;
-  }
-
-  toggleMenuLateral() {
-    this.menuLateralAbierto = !this.menuLateralAbierto;
-    try { localStorage.setItem('menuLateralAbierto', String(this.menuLateralAbierto)); } catch(e){}
   }
 }

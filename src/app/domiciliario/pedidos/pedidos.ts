@@ -34,13 +34,21 @@ export class PedidosDomiciliario implements OnInit {
   cargarPedidos() {
     this.cargando = true;
     this.mensajeError = '';
+    console.log('📦 Cargando pedidos del domiciliario...');
     this.pedidosService.obtenerMisEntregas().subscribe({
       next: (pedidos: Cart[]) => {
+        console.log('✅ Pedidos cargados:', pedidos);
+        console.log('📊 Total de pedidos:', pedidos.length);
+        pedidos.forEach((p, i) => {
+          console.log(`  ${i + 1}. Pedido ID: ${p.id}, Estado: ${p.estado_pedido}, Productos: ${(p as any).products?.length || 0}`);
+        });
         this.pedidos = pedidos;
         this.cargando = false;
       },
       error: (err) => {
-        console.error("Error al cargar pedidos:", err);
+        console.error("❌ Error al cargar pedidos:", err);
+        console.error('📋 Status:', err.status);
+        console.error('💬 Mensaje:', err.error?.mensaje || err.message);
         this.mensajeError = err.error?.mensaje || 'Error al cargar los pedidos';
         this.pedidos = [];
         this.cargando = false;
@@ -105,9 +113,9 @@ export class PedidosDomiciliario implements OnInit {
     if (!fecha) return 'Fecha no disponible';
     try {
       const date = new Date(fecha);
-      return date.toLocaleDateString('es-ES', { 
-        year: 'numeric', 
-        month: 'long', 
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
@@ -115,5 +123,21 @@ export class PedidosDomiciliario implements OnInit {
     } catch {
       return fecha;
     }
+  }
+
+  obtenerNombreCliente(pedido: any): string {
+    return pedido?.user?.primer_nombre || pedido?.cliente?.nombre_completo || 'N/A';
+  }
+
+  obtenerTelefonoCliente(pedido: any): string {
+    return pedido?.user?.telefono || pedido?.cliente?.telefono || 'N/A';
+  }
+
+  tieneProductos(pedido: any): boolean {
+    return pedido?.products && Array.isArray(pedido.products) && pedido.products.length > 0;
+  }
+
+  obtenerProductos(pedido: any): any[] {
+    return pedido?.products || [];
   }
 }

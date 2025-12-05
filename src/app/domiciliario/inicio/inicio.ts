@@ -2,65 +2,123 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomiciliarioService } from '../../services/domiciliario.service';
-import { Shipment } from '../../interfaces/cart.interface';
+import { PedidosService } from '../../services/pedidos.service';
+import { Cart } from '../../interfaces/cart.interface';
+import { MenuLateral, MenuItem } from '../../components/menu-lateral/menu-lateral';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, MenuLateral],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
 export class InicioDomiciliario implements OnInit {
 
-  pedidosDisponibles: Shipment[] = [];
-  misPedidos: Shipment[] = [];
-  estadoDispo: string = 'activo';
+  pedidosDisponibles: Cart[] = [];  // Pedidos que puede tomar
+  misPedidos: Cart[] = [];           // Pedidos ya tomados
   cargando: boolean = false;
+  cargandoDisponibles: boolean = false;
   menuAbierto: boolean = false;
-  menuLateralAbierto: boolean = false;
+  vistaActual: 'disponibles' | 'mis-entregas' = 'disponibles'; // Pestaña activa
+  menuItems: MenuItem[] = [];
 
   constructor(
     private router: Router,
-    private domiciliarioService: DomiciliarioService
+    private domiciliarioService: DomiciliarioService,
+    private pedidosService: PedidosService
   ) {}
 
   ngOnInit() {
-    try {
-      const saved = localStorage.getItem('menuLateralAbierto');
-      if (saved !== null) this.menuLateralAbierto = saved === 'true';
-    } catch (e) { }
-    this.cargarPedidos();
+    this.inicializarMenuItems();
+    this.cargarPedidosDisponibles();
+    this.cargarMisEntregas();
+  }
+
+  inicializarMenuItems() {
+    this.menuItems = [
+      { icon: '📦', label: 'Pedidos Disponibles', action: () => this.vistaActual = 'disponibles' },
+      { icon: '🚚', label: 'Mis Entregas', action: () => this.vistaActual = 'mis-entregas' },
+      { icon: '👤', label: 'Mi Perfil', route: '/domiciliario/perfil' },
+      { icon: '📊', label: 'Estadísticas' },
+      { icon: '💬', label: 'Chat' },
+      { icon: '⚙️', label: 'Configuración' },
+      { icon: '❓', label: 'Ayuda' }
+    ];
+  }
+
+  cargarPedidosDisponibles() {
+    this.cargandoDisponibles = true;
+    console.log('📦 Cargando pedidos disponibles...');
+
+    this.pedidosService.obtenerPedidosDisponibles().subscribe({
+      next: (pedidos: Cart[]) => {
+        console.log('✅ Pedidos disponibles:', pedidos);
+        this.pedidosDisponibles = pedidos || [];
+        this.cargandoDisponibles = false;
+      },
+      error: (err) => {
+        console.error('❌ Error al cargar pedidos disponibles:', err);
+        this.pedidosDisponibles = [];
+        this.cargandoDisponibles = false;
+      }
+    });
   }
 
   cargarPedidos() {
     this.cargando = true;
+    console.log('📦 Cargando mis entregas...');
 
-    // Cargar pedidos disponibles (sin domiciliario asignado)
-    this.domiciliarioService.obtenerEnviosDisponibles().subscribe({
-      next: (envios: Shipment[]) => {
-        this.pedidosDisponibles = envios.filter(e => e.estado === 'espera');
-      },
-      error: (err) => {
-        console.error("Error al cargar pedidos disponibles:", err);
-      }
-    });
-
-    // Cargar mis pedidos (asignados a mí)
-    this.domiciliarioService.obtenerEnvios().subscribe({
-      next: (envios: Shipment[]) => {
-        // Filtrar solo los que están asignados al domiciliario actual
-        const userId = this.getUsuarioId();
-        this.misPedidos = envios.filter(e =>
-          e.id_servicio && (e.estado === 'en_camino' || e.estado === 'preparando')
-        );
+    // Cargar mis pedidos (ya tomados por mí)
+    this.pedidosService.obtenerMisEntregas().subscribe({
+      next: (pedidos: Cart[]) => {
+        console.log('✅ Entregas cargadas:', pedidos);
+        this.misPedidos = pedidos || [];
         this.cargando = false;
       },
       error: (err) => {
-        console.error("Error al cargar mis pedidos:", err);
+        console.error('❌ Error al cargar entregas:', err);
+        this.misPedidos = [];
         this.cargando = false;
       }
     });
+  }
+
+  cargarMisEntregas() {
+    this.cargarPedidos();
+  }
+
+  tomarPedido(pedidoId: number) {
+    if (!confirm('¿Deseas tomar este pedido?')) {
+      return;
+    }
+
+    console.log(`🚀 Tomando pedido ${pedidoId}...`);
+
+    this.pedidosService.tomarPedido(pedidoId).subscribe({
+      next: (response) => {
+        console.log('✅ Pedido tomado:', response);
+        alert('✅ Pedido tomado exitosamente');
+        // Recargar ambas listas
+        this.cargarPedidosDisponibles();
+        this.cargarMisEntregas();
+        // Cambiar a la vista de mis entregas
+        this.vistaActual = 'mis-entregas';
+      },
+      error: (err) => {
+        console.error('❌ Error al tomar pedido:', err);
+        alert(err.error?.mensaje || 'Error al tomar el pedido. Puede que otro domiciliario lo haya tomado primero.');
+      }
+    });
+  }
+
+  cambiarVista(vista: 'disponibles' | 'mis-entregas') {
+    this.vistaActual = vista;
+    if (vista === 'disponibles') {
+      this.cargarPedidosDisponibles();
+    } else {
+      this.cargarMisEntregas();
+    }
   }
 
   private getUsuarioId(): number | null {
@@ -76,87 +134,8 @@ export class InicioDomiciliario implements OnInit {
     return null;
   }
 
-  aceptarPedido(idEnvio: number) {
-    // Usar el método especial de ShipmentController
-    this.domiciliarioService.aceptarPedido(idEnvio).subscribe({
-      next: () => {
-        alert('Pedido aceptado exitosamente');
-        this.cargarPedidos();
-      },
-      error: (err) => {
-        console.error("Error al aceptar pedido:", err);
-        alert(err.error?.message || 'Error al aceptar el pedido');
-      }
-    });
-  }
-
-  completarPedido(idEnvio: number) {
-    // Usar el método especial de ShipmentController
-    this.domiciliarioService.completarPedido(idEnvio).subscribe({
-      next: () => {
-        alert('Pedido completado exitosamente');
-        this.cargarPedidos();
-      },
-      error: (err) => {
-        console.error("Error al completar pedido:", err);
-        alert(err.error?.message || 'Error al completar el pedido');
-      }
-    });
-  }
-
-  cambiarEstado() {
-    const nuevoEstado = this.estadoDispo === 'activo' ? 'inactivo' : 'activo';
-
-    // Obtener el ID del servicio del usuario actual
-    const userId = this.getUsuarioId();
-    if (!userId) {
-      alert('No se pudo obtener la información del usuario');
-      return;
-    }
-
-    // Obtener el servicio del domiciliario actual
-    this.domiciliarioService.obtenerServicios().subscribe({
-      next: (servicios: any[]) => {
-        const miServicio = servicios.find(s => s.id_usuario === userId);
-        if (miServicio && miServicio.id) {
-          this.domiciliarioService.actualizarEstadoServicio(miServicio.id, nuevoEstado).subscribe({
-            next: () => {
-              this.estadoDispo = nuevoEstado;
-              alert(`Estado cambiado a: ${nuevoEstado}`);
-            },
-            error: (err) => {
-              console.error("Error al cambiar estado:", err);
-              alert('Error al cambiar el estado de disponibilidad');
-            }
-          });
-        } else {
-          // Si no tiene servicio, crear uno
-          this.domiciliarioService.crearServicio({
-            id_usuario: userId,
-            estado_dispo: nuevoEstado
-          }).subscribe({
-            next: () => {
-              this.estadoDispo = nuevoEstado;
-              alert(`Estado establecido a: ${nuevoEstado}`);
-            },
-            error: (err) => {
-              console.error("Error al crear servicio:", err);
-              alert('Error al crear el servicio');
-            }
-          });
-        }
-      },
-      error: (err) => {
-        console.error("Error al obtener servicios:", err);
-        alert('Error al obtener información del servicio');
-      }
-    });
-  }
-
-  cerrarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.router.navigate(['/seleccionar-rol']);
+  irADetalles(pedidoId: number) {
+    this.router.navigate(['/domiciliario/pedidos']);
   }
 
   toggleMenu() {
@@ -167,8 +146,9 @@ export class InicioDomiciliario implements OnInit {
     this.menuAbierto = false;
   }
 
-  toggleMenuLateral() {
-    this.menuLateralAbierto = !this.menuLateralAbierto;
-    try { localStorage.setItem('menuLateralAbierto', String(this.menuLateralAbierto)); } catch(e){}
+  cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/seleccionar-rol']);
   }
 }

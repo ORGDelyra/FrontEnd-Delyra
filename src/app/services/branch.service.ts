@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BranchService {
-  private apiUrl = 'http://127.0.0.1:8000/api/branch';
+  private apiUrl = 'https://backend-delyra-production.up.railway.app/api/branch';
 
   constructor(private http: HttpClient) {}
 

@@ -1,0 +1,481 @@
+.selector-ubicacion-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #0b1020;
+  border: 1px solid #1f2847;
+  border-radius: 12px;
+  overflow: visible;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  width: 100%;
+  min-height: auto;
+  box-sizing: border-box;
+}
+
+/* ===== SECCIÓN DE BÚSQUEDA ===== */
+.busqueda-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.input-busqueda {
+  flex: 1;
+  padding: 12px 16px;
+  background: #1f2847;
+  border: 1px solid #2d3e5f;
+  border-radius: 8px;
+  color: #f3f5ff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.input-busqueda:focus {
+  outline: none;
+  border-color: #7dff7a;
+  box-shadow: 0 0 8px rgba(125, 255, 122, 0.3);
+  background: #253050;
+}
+
+.input-busqueda::placeholder {
+  color: #9aa2c7;
+}
+
+.btn-ubicacion {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #0f7bb8 0%, #0d5a8a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-ubicacion:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0d5a8a 0%, #0a4570 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 123, 184, 0.4);
+}
+
+.btn-ubicacion:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== RESULTADOS DE BÚSQUEDA ===== */
+.resultados-busqueda {
+  position: absolute;
+  top: 70px;
+  left: 20px;
+  right: 20px;
+  background: #0b1020;
+  border: 1px solid #1f2847;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.resultado-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #1f2847;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.resultado-item:last-child {
+  border-bottom: none;
+}
+
+.resultado-item:hover {
+  background: #1f2847;
+}
+
+.resultado-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.resultado-texto {
+  color: #f3f5ff;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+/* ===== MENSAJES ===== */
+.mensaje-carga,
+.mensaje {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.mensaje-carga {
+  background: #1f2847;
+  color: #7dff7a;
+  border: 1px solid #2d3e5f;
+}
+
+.mensaje {
+  border: 1px solid #2d3e5f;
+}
+
+.mensaje-error {
+  background: #2f1518;
+  color: #ff6b6b;
+  border-color: #b1122d;
+}
+
+.mensaje-exito {
+  background: #1a2a1a;
+  color: #7dff7a;
+  border-color: #2d5a2d;
+}
+
+/* ===== MAPA ===== */
+.mapa-container {
+  width: 100%;
+  height: 350px;
+  min-height: 250px;
+  max-height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #1f2847;
+  background: #0f162d;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Estilos para Leaflet dentro del componente */
+:host ::ng-deep #mapa-selector {
+  z-index: 0 !important;
+  position: relative !important;
+  contain: layout style;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+/* Forzar todos los elementos Leaflet a quedarse dentro del contenedor */
+:host ::ng-deep #mapa-selector * {
+  max-z-index: 999;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-pane,
+:host ::ng-deep #mapa-selector .leaflet-map-pane {
+  position: absolute !important;
+  z-index: 1 !important;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-control-container {
+  position: absolute !important;
+  z-index: 2 !important;
+  font-family: inherit;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-control {
+  background: #0b1020 !important;
+  border: 1px solid #1f2847 !important;
+  z-index: 2 !important;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-bar {
+  z-index: 2 !important;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-bar a {
+  background: #1f2847;
+  color: #7dff7a;
+  border-left: 1px solid #1f2847;
+  transition: all 0.3s ease;
+  z-index: 2 !important;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-bar a:hover {
+  background: #2d3e5f;
+  color: #fff;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-popup {
+  z-index: 3 !important;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-marker-icon {
+  z-index: 1 !important;
+}
+
+:host ::ng-deep #mapa-selector .leaflet-top,
+:host ::ng-deep #mapa-selector .leaflet-bottom {
+  position: absolute !important;
+  z-index: 2 !important;
+}
+
+/* ===== INFORMACIÓN DE UBICACIÓN ===== */
+.ubicacion-info {
+  background: #1f2847;
+  border: 1px solid #2d3e5f;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ubicacion-info h3 {
+  color: #7dff7a;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-row label {
+  color: #9aa2c7;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-texto {
+  padding: 10px 12px;
+  background: #0b1020;
+  border: 1px solid #1f2847;
+  border-radius: 6px;
+  color: #f3f5ff;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  font-family: 'Courier New', monospace;
+}
+
+.input-texto:focus {
+  outline: none;
+  border-color: #7dff7a;
+  box-shadow: 0 0 6px rgba(125, 255, 122, 0.2);
+  background: #0f162d;
+}
+
+.input-texto::placeholder {
+  color: #9aa2c7;
+}
+
+.input-readonly {
+  background: #0f162d;
+  color: #7dff7a;
+  cursor: not-allowed;
+}
+
+.info-ayuda {
+  color: #9aa2c7;
+  background: #0b1020;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #7dff7a;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.botones-accion {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-confirmar,
+.btn-limpiar {
+  flex: 1;
+  min-width: 150px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-confirmar {
+  background: linear-gradient(135deg, #7dff7a 0%, #6ae069 100%);
+  color: #04060f;
+}
+
+.btn-confirmar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #6ae069 0%, #5acc52 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(125, 255, 122, 0.3);
+}
+
+.btn-confirmar:disabled {
+  background: #1f2847;
+  color: #9aa2c7;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-limpiar {
+  background: #1f2847;
+  color: #f3f5ff;
+  border: 1px solid #2d3e5f;
+}
+
+.btn-limpiar:hover {
+  background: #2d3e5f;
+  transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .selector-ubicacion-container {
+    padding: 12px;
+    gap: 10px;
+    max-height: 100%;
+  }
+
+  .mapa-container {
+    height: 300px;
+    min-height: 200px;
+    width: 100%;
+  }
+
+  .input-group {
+    flex-direction: column;
+  }
+
+  .btn-ubicacion {
+    width: 100%;
+  }
+
+  .botones-accion {
+    flex-direction: column;
+  }
+
+  .btn-confirmar,
+  .btn-limpiar {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .selector-ubicacion-container {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .mapa-container {
+    height: 250px;
+    min-height: 180px;
+  }
+
+  .input-busqueda {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .btn-ubicacion {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .btn-confirmar,
+  .btn-limpiar {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .ubicacion-info {
+    padding: 12px;
+  }
+
+  .info-row label {
+    font-size: 11px;
+  }
+
+  .input-texto {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultados-busqueda {
+  animation: slideInDown 0.3s ease;
+}
+
+/* ===== ESTILOS ADICIONALES PARA LEAFLET ===== */
+/* Asegurar que Leaflet no escape del contenedor */
+:host ::ng-deep .leaflet-container {
+  position: relative !important;
+  z-index: 0 !important;
+  contain: layout style !important;
+  isolation: isolate !important;
+}
+
+:host ::ng-deep .leaflet-pane,
+:host ::ng-deep .leaflet-map-pane {
+  position: absolute !important;
+  z-index: 1 !important;
+  will-change: transform;
+}
+
+/* Forzar todos los controles a position absolute */
+:host ::ng-deep .leaflet-control {
+  position: absolute !important;
+  z-index: 2 !important;
+}
+
+/* Popup por encima de controles pero dentro del contenedor */
+:host ::ng-deep .leaflet-popup {
+  z-index: 3 !important;
+  position: absolute !important;
+}
+
+/* Marcadores en la capa más baja */
+:host ::ng-deep .leaflet-marker {
+  z-index: 1 !important;
+  position: absolute !important;
+}
+
+/* Tile layer por debajo de todo */
+:host ::ng-deep .leaflet-tile-pane {
+  z-index: 0 !important;
+  position: absolute !important;
+}

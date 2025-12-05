@@ -3,17 +3,17 @@
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
     <!-- Logo y título -->
     <div class="flex items-center space-x-2">
-      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" />
+      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-10 rounded-md object-contain" width="40" height="40" loading="lazy" />
       <span class="text-2xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent font-[Poppins]">Delyra</span>
     </div>
 
-      <!-- Menú desplegable en móvil -->
+      <!-- Perfil desplegable en móvil -->
       <div class="relative md:hidden">
         <button
           (click)="toggleMenu()"
           class="flex items-center gap-2 text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 font-semibold">
-          <span class="text-2xl">☰</span>
-          <span>Menú</span>
+          <span class="text-2xl">👤</span>
+          <span>Perfil</span>
         </button>      <!-- Dropdown Menu -->
       <div *ngIf="menuAbierto" class="absolute right-0 mt-2 w-48 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50">
         <a routerLink="/cliente/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
@@ -41,9 +41,6 @@
       <a routerLink="/cliente/pedidos" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium flex items-center gap-2 transition">
         Pedidos
       </a>
-      <button (click)="cerrarSesion()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200">
-        Cerrar Sesión
-      </button>
     </div>
   </div>
 </header>
@@ -51,72 +48,8 @@
 <div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
   <div class="max-w-7xl mx-auto px-4 py-6">
     <div class="flex gap-6">
-      <!-- Menú lateral desplegable -->
-      <aside
-        [class.w-64]="menuLateralAbierto"
-        [class.w-20]="!menuLateralAbierto"
-        class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 h-fit sticky top-24 transition-all duration-300">
-
-        <!-- Botón toggle -->
-        <button
-          (click)="toggleMenuLateral()"
-          class="w-full flex justify-between items-center mb-4 text-[#7dff7a] hover:text-[#f3f5ff] transition">
-          <h3 *ngIf="menuLateralAbierto" class="text-xl font-bold">Menú Principal</h3>
-          <span class="text-2xl">{{ menuLateralAbierto ? '◀' : '▶' }}</span>
-        </button>
-
-        <!-- Menú items -->
-        <ul class="space-y-3">
-          <li>
-            <a routerLink="/productos/listar" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Ver Productos' : ''">
-              <span class="text-xl">🛍️</span>
-              <span *ngIf="menuLateralAbierto">Productos</span>
-            </a>
-          </li>
-          <li>
-            <a routerLink="/cliente/perfil" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Mi Perfil' : ''">
-              <span class="text-xl">👤</span>
-              <span *ngIf="menuLateralAbierto">Mi Perfil</span>
-            </a>
-          </li>
-          <li>
-            <a routerLink="/carrito" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Carrito de Compras' : ''">
-              <span class="text-xl">🛒</span>
-              <span *ngIf="menuLateralAbierto">Carrito</span>
-            </a>
-          </li>
-          <li>
-            <a routerLink="/cliente/pedidos" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Mis Pedidos' : ''">
-              <span class="text-xl">📋</span>
-              <span *ngIf="menuLateralAbierto">Pedidos</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Favoritos' : ''">
-              <span class="text-xl">♥</span>
-              <span *ngIf="menuLateralAbierto">Favoritos</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Chat' : ''">
-              <span class="text-xl">💬</span>
-              <span *ngIf="menuLateralAbierto">Chat</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Configuración' : ''">
-              <span class="text-xl">⚙</span>
-              <span *ngIf="menuLateralAbierto">Config</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center space-x-3 text-[#9aa2c7] hover:text-[#7dff7a] transition p-2 rounded hover:bg-[#1f2847]" [title]="!menuLateralAbierto ? 'Ayuda' : ''">
-              <span class="text-xl">?</span>
-              <span *ngIf="menuLateralAbierto">Ayuda</span>
-            </a>
-          </li>
-        </ul>
-      </aside>
+      <!-- Menú Lateral Compartido -->
+      <app-menu-lateral [menuItems]="menuItems" [onLogout]="cerrarSesion.bind(this)"></app-menu-lateral>
 
       <!-- Sección central -->
       <main class="flex-1 w-full">

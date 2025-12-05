@@ -10,7 +10,7 @@ export type UploadType = 'perfil' | 'comprobante' | 'producto';
 export class ImageUploadService {
   private cloudName = 'dtpg4uivr';
   // URL del backend Laravel que subirá a Cloudinary
-  private backendUploadUrl = 'http://127.0.0.1:8000/api/upload/cloudinary';
+  private backendUploadUrl = 'https://backend-delyra-production.up.railway.app/api/upload/cloudinary';
 
   uploadProgress$ = new Subject<{ loaded: number; total: number }>();
 
@@ -62,11 +62,23 @@ export class ImageUploadService {
         } else {
           try {
             const errorMsg = xhr.responseText ? JSON.parse(xhr.responseText) : { error: { message: `HTTP ${xhr.status}` } };
-            console.error('Upload error:', errorMsg);
-            reject(new Error(`Upload error: ${errorMsg.error?.message || errorMsg.message || xhr.status}`));
+            console.error('❌ Upload error (status ' + xhr.status + '):', errorMsg);
+            console.error('📋 Response completa:', xhr.responseText);
+            
+            // Extraer mensaje de error más descriptivo
+            let mensaje = 'Error al subir la imagen';
+            if (errorMsg.message) {
+              mensaje = errorMsg.message;
+            } else if (errorMsg.error?.message) {
+              mensaje = errorMsg.error.message;
+            } else if (errorMsg.errors) {
+              mensaje = JSON.stringify(errorMsg.errors);
+            }
+            
+            reject(new Error(mensaje));
           } catch (e) {
-            console.error('Upload error (raw):', xhr.responseText);
-            reject(new Error(`Upload error: HTTP ${xhr.status}`));
+            console.error('❌ Upload error (raw text):', xhr.responseText);
+            reject(new Error(`Error del servidor (${xhr.status}). Verifica la configuración de Cloudinary en el backend.`));
           }
         }
       });

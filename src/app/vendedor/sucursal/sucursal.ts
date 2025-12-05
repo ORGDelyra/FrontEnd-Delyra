@@ -59,13 +59,13 @@ export class SucursalVendedor implements OnInit {
   obtenerMensajeError(err: any): string {
     if (err.status === 403) {
       let mensaje = '🔒 No tienes permisos para realizar esta acción.';
-      
+
       // Si hay información de debug, mostrarla
       if (err.error?.debug) {
         const debug = err.error.debug;
         mensaje += ` (Usuario: ${debug.usuario_autenticado}, Dueño: ${debug.dueno_sucursal})`;
       }
-      
+
       return mensaje;
     } else if (err.status === 401) {
       return '🔐 Tu sesión ha expirado. Por favor inicia sesión nuevamente.';
@@ -85,25 +85,25 @@ export class SucursalVendedor implements OnInit {
 
   cargarSucursal() {
     this.cargando = true;
-    
+
     // Obtener usuario actual para verificar propiedad
     const userStr = localStorage.getItem('user');
     const usuarioActual = userStr ? JSON.parse(userStr) : null;
-    
+
     console.log('👤 Usuario actual:', usuarioActual);
-    
+
     // Obtener todas las sucursales del usuario (el backend DEBE filtrar por usuario logueado)
     this.vendedorService.obtenerSucursales().subscribe({
       next: (sucursales: Branch[]) => {
         console.log('🏪 Sucursales recibidas:', sucursales);
-        
+
         // Filtrar solo sucursales que pertenecen al usuario actual (seguridad adicional)
-        const sucursalesDelUsuario = sucursales.filter(s => 
+        const sucursalesDelUsuario = sucursales.filter(s =>
           s.id_usuario === usuarioActual?.id
         );
-        
+
         console.log('✅ Sucursales filtradas del usuario:', sucursalesDelUsuario);
-        
+
         if (sucursalesDelUsuario && sucursalesDelUsuario.length > 0) {
           // Si hay sucursales, cargar la primera en modo lectura
           this.sucursal = sucursalesDelUsuario[0];
@@ -249,7 +249,7 @@ export class SucursalVendedor implements OnInit {
         console.log('💾 Guardando logo en el backend...');
         console.log('📋 Sucursal ID:', this.sucursal.id);
         console.log('🔑 Usuario actual:', localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).id : 'desconocido');
-        
+
         this.vendedorService.actualizarSucursal(this.sucursal.id, {
           logo_comercio: response.secure_url
         }).subscribe({
@@ -263,7 +263,7 @@ export class SucursalVendedor implements OnInit {
             console.error('❌ Error al guardar logo en backend:', err);
             const mensajeError = this.obtenerMensajeError(err);
             this.mostrarNotificacion('error', mensajeError);
-            
+
             // Si es error de permisos, sugerir verificar sesión
             if (err.status === 403) {
               setTimeout(() => {
@@ -311,7 +311,7 @@ export class SucursalVendedor implements OnInit {
         console.log('💾 Guardando NIT en el backend...');
         console.log('📋 Sucursal ID:', this.sucursal.id);
         console.log('🔑 Usuario actual:', localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).id : 'desconocido');
-        
+
         this.vendedorService.actualizarSucursal(this.sucursal.id, {
           img_nit: response.secure_url
         }).subscribe({
@@ -324,7 +324,7 @@ export class SucursalVendedor implements OnInit {
             console.error('❌ Error al guardar NIT en backend:', err);
             const mensajeError = this.obtenerMensajeError(err);
             this.mostrarNotificacion('error', mensajeError);
-            
+
             // Si es error de permisos, sugerir verificar sesión
             if (err.status === 403) {
               setTimeout(() => {
