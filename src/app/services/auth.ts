@@ -8,7 +8,7 @@ import { tap } from 'rxjs/operators';
 })
 export class AuthService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api'; // URL de el backend en Laravel
+  private apiUrl = 'https://backend-delyra-production.up.railway.app/api'; // URL de el backend en Laravel
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 

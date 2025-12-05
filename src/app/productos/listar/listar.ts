@@ -51,12 +51,12 @@ export class ListarProductos implements OnInit {
       next: (prods: Product[]) => {
         this.productos = prods;
         if (this.categoriaSeleccionada !== 'Todas') {
-          this.productos = this.productos.filter(p => 
+          this.productos = this.productos.filter(p =>
             this.categorias.find(c => c.id === p.id_categoria)?.nombre_categoria === this.categoriaSeleccionada
           );
         }
         if (this.terminoBusqueda) {
-          this.productos = this.productos.filter(p => 
+          this.productos = this.productos.filter(p =>
             p.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
           );
         }
@@ -91,8 +91,12 @@ export class ListarProductos implements OnInit {
 
   filtrarPorCategoria(categoria: string) {
     this.categoriaSeleccionada = categoria;
-    this.router.navigate(['/productos/listar'], { 
-      queryParams: { categoria: categoria !== 'Todas' ? categoria : null } 
+    this.router.navigate(['/productos/listar'], {
+      queryParams: { categoria: categoria !== 'Todas' ? categoria : null }
     });
+  }
+
+  volverAlInicio() {
+    this.router.navigate(['/cliente/inicio']);
   }
 }

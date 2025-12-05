@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+aside {
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
+button {
+  font-family: inherit;
+}

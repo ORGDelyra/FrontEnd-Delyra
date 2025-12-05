@@ -8,7 +8,7 @@ import { Product, Category } from '../interfaces/product.interface';
 })
 export class ProductosService {
 
-  private api = 'http://127.0.0.1:8000/api';
+  private api = 'https://backend-delyra-production.up.railway.app/api';
 
   constructor(private http: HttpClient) {}
 

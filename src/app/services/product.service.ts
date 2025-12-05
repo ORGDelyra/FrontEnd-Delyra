@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'http://127.0.0.1:8000/api/product';
+  private apiUrl = 'https://backend-delyra-production.up.railway.app/api/product';
 
   constructor(private http: HttpClient) {}
 

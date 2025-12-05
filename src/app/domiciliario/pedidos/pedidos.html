@@ -1,111 +1,171 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4">
-  <div class="max-w-4xl mx-auto">
+<div class="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 py-8 px-4">
+  <div class="max-w-5xl mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-blue-700">🚚 Mis Entregas</h1>
-      <button routerLink="/domiciliario/inicio" class="text-gray-600 hover:text-blue-600">← Volver</button>
+      <button routerLink="/domiciliario/inicio" class="text-gray-600 hover:text-blue-600 flex items-center gap-2">
+        ← Volver al Inicio
+      </button>
     </div>
 
-    <!-- Mensajes -->
-    <div *ngIf="mensajeError" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+    <!-- Mensajes de notificación -->
+    <div *ngIf="mensajeError" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center gap-3">
+      <span>⚠️</span>
       {{ mensajeError }}
     </div>
-    <div *ngIf="mensajeExito" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+    <div *ngIf="mensajeExito" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center gap-3">
+      <span>✅</span>
       {{ mensajeExito }}
     </div>
 
+    <!-- Loading -->
     <div *ngIf="cargando" class="text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div>
+      <p class="text-gray-600">Cargando tus entregas...</p>
     </div>
 
+    <!-- Sin pedidos -->
     <div *ngIf="!cargando && pedidos.length === 0" class="bg-white shadow-lg rounded-lg p-12 text-center">
       <div class="text-6xl mb-4">📦</div>
-      <p class="text-gray-500 text-lg mb-4">No tienes pedidos asignados</p>
-      <p class="text-gray-400 text-sm">Los pedidos aparecerán aquí cuando te sean asignados</p>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">No tienes pedidos asignados</h2>
+      <p class="text-gray-500 text-lg mb-4">Los pedidos aparecerán aquí cuando te sean asignados</p>
+      <button routerLink="/domiciliario/inicio" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+        Volver al Inicio
+      </button>
     </div>
 
+    <!-- Lista de pedidos -->
     <div *ngIf="!cargando && pedidos.length > 0" class="space-y-6">
-      <div *ngFor="let pedido of pedidos" class="bg-white shadow-lg rounded-lg p-6">
-        <div class="flex justify-between items-start mb-4">
-          <div class="flex-1">
-            <h3 class="font-bold text-gray-800 mb-1 text-lg">Pedido #{{ pedido.id }}</h3>
-            <p class="text-gray-600 text-sm">Fecha: {{ formatearFecha(pedido.created_at) }}</p>
-            <p class="text-blue-600 font-bold mt-2 text-xl">Total: ${{ pedido.total | number:'1.0-0' }}</p>
-            
-            <!-- Cliente -->
-            <div *ngIf="pedido.cliente" class="mt-2 text-sm text-gray-600">
-              👤 Cliente: {{ pedido.cliente.nombre_completo }} - {{ pedido.cliente.telefono }}
-            </div>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+        <p class="text-blue-800 font-semibold">📊 Total de entregas pendientes: <span class="text-2xl text-blue-600">{{ pedidos.length }}</span></p>
+      </div>
 
-            <!-- Dirección de entrega -->
-            <div *ngIf="pedido.direccion_entrega" class="mt-2 text-sm text-gray-600">
-              📍 Dirección: {{ pedido.direccion_entrega }}
+      <div *ngFor="let pedido of pedidos; let i = index" class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Header del pedido -->
+        <div class="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-bold text-2xl">Pedido #{{ pedido.id }}</h3>
+              <p class="text-blue-100 text-sm mt-1">📅 {{ formatearFecha(pedido.created_at) }}</p>
             </div>
-
-            <!-- Coordenadas -->
-            <div *ngIf="pedido.latitud_entrega && pedido.longitud_entrega" class="mt-2 text-sm text-gray-600">
-              🗺️ Coordenadas: {{ pedido.latitud_entrega }}, {{ pedido.longitud_entrega }}
-            </div>
-          </div>
-          <span [ngClass]="obtenerEstadoColor(pedido.estado_pedido)" 
-                class="px-3 py-1 rounded-full text-sm font-bold">
-            {{ obtenerEstadoTexto(pedido.estado_pedido) }}
-          </span>
-        </div>
-
-        <!-- Productos -->
-        <div *ngIf="pedido.productos && pedido.productos.length > 0" class="border-t border-gray-200 pt-4 mt-4">
-          <h4 class="font-semibold mb-2">Productos a entregar:</h4>
-          <div class="space-y-2">
-            <div *ngFor="let producto of pedido.productos" class="flex justify-between text-sm">
-              <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
-              <span class="font-semibold">${{ producto.subtotal | number:'1.0-0' }}</span>
-            </div>
+            <span [ngClass]="obtenerEstadoColor(pedido.estado_pedido)"
+                  class="px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">
+              {{ obtenerEstadoTexto(pedido.estado_pedido) }}
+            </span>
           </div>
         </div>
 
-        <!-- Acciones -->
-        <div class="border-t border-gray-200 pt-4 mt-4">
-          <button *ngIf="puedeMarcarEntregado(pedido)" 
-                  (click)="abrirModalEntregar(pedido.id!)"
-                  class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold">
-            ✅ Marcar como Entregado
-          </button>
+        <!-- Contenido del pedido -->
+        <div class="p-6">
+          <!-- Información del cliente -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-bold text-gray-800 mb-3">👤 Información del Cliente</h4>
+              <div class="space-y-2 text-sm">
+                <div>
+                  <span class="text-gray-600">Nombre:</span>
+                  <span class="font-semibold text-gray-800">{{ obtenerNombreCliente(pedido) }}</span>
+                </div>
+                <div class="text-gray-600">
+                  <span>Teléfono:</span>
+                  <span class="font-semibold text-gray-800">{{ obtenerTelefonoCliente(pedido) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información de entrega -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-bold text-gray-800 mb-3">📍 Dirección de Entrega</h4>
+              <div class="space-y-2 text-sm">
+                <div *ngIf="pedido.direccion_entrega">
+                  <p class="text-gray-800 font-semibold">{{ pedido.direccion_entrega }}</p>
+                </div>
+                <div *ngIf="pedido.latitud_entrega && pedido.longitud_entrega" class="text-gray-600 text-xs">
+                  Coordenadas: {{ pedido.latitud_entrega }}, {{ pedido.longitud_entrega }}
+                </div>
+                <div *ngIf="!pedido.direccion_entrega" class="text-gray-500 italic">
+                  No hay dirección especificada
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Productos a entregar -->
+          <div class="border-t border-gray-200 pt-6 mb-6">
+            <h4 class="font-bold text-gray-800 mb-4">📦 Productos a Entregar</h4>
+            <div *ngIf="tieneProductos(pedido)" class="space-y-3">
+              <div *ngFor="let producto of obtenerProductos(pedido)" class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-800">{{ producto.nombre }}</p>
+                  <p class="text-sm text-gray-600">Cantidad: <span class="font-bold">{{ producto.pivot?.cantidad || 1 }}</span></p>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-blue-600">${{ (producto.pivot?.precio_unitario || producto.precio) | number:'1.0-0' }}</p>
+                  <p class="text-xs text-gray-500">c/u</p>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!tieneProductos(pedido)" class="text-gray-500 italic text-center py-4">
+              No hay productos en este pedido
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="border-t border-gray-200 pt-4 mb-6">
+            <div class="flex justify-between items-center text-xl">
+              <span class="font-bold text-gray-800">Total a cobrar:</span>
+              <span class="text-2xl font-bold text-blue-600">${{ pedido.total | number:'1.0-0' }}</span>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex gap-3">
+            <button *ngIf="puedeMarcarEntregado(pedido)"
+                    (click)="abrirModalEntregar(pedido.id!)"
+                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition font-bold flex items-center justify-center gap-2">
+              ✅ Marcar como Entregado
+            </button>
+            <button *ngIf="!puedeMarcarEntregado(pedido)"
+                    disabled
+                    class="flex-1 bg-gray-300 text-gray-600 px-4 py-3 rounded-lg font-bold cursor-not-allowed">
+              ✓ Ya Entregado
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal para marcar como entregado -->
-  <div *ngIf="pedidoSeleccionado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-      <h3 class="text-xl font-bold mb-4">Marcar como Entregado</h3>
-      <p class="text-gray-600 mb-4">Confirma la entrega del pedido #{{ pedidoSeleccionado }}</p>
-      
-      <div class="mb-4">
-        <label class="block text-gray-700 font-medium mb-2">Código de Confirmación (opcional)</label>
-        <input type="text" 
-               [(ngModel)]="codigoConfirmacion"
-               maxlength="50"
-               placeholder="Código de confirmación"
-               class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-      </div>
+  <div *ngIf="pedidoSeleccionado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full shadow-2xl">
+      <h3 class="text-2xl font-bold mb-4 text-gray-800">✅ Marcar como Entregado</h3>
+      <p class="text-gray-600 mb-6">Confirma la entrega del pedido <span class="font-bold text-blue-600">#{{ pedidoSeleccionado }}</span></p>
 
       <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-2">Código de Confirmación (opcional)</label>
+        <input type="text"
+               [(ngModel)]="codigoConfirmacion"
+               maxlength="50"
+               placeholder="Ej: ENTREGADO123"
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="mb-6">
         <label class="block text-gray-700 font-medium mb-2">Comentario (opcional)</label>
         <textarea [(ngModel)]="comentario"
                   maxlength="500"
                   placeholder="Comentarios sobre la entrega..."
                   rows="3"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"></textarea>
       </div>
 
-      <div class="flex gap-2">
-        <button (click)="marcarComoEntregado()" 
-                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
-          Confirmar Entrega
+      <div class="flex gap-3">
+        <button (click)="marcarComoEntregado()"
+                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition font-bold">
+          Confirmar
         </button>
-        <button (click)="pedidoSeleccionado = null" 
-                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">
+        <button (click)="pedidoSeleccionado = null"
+                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-3 rounded-lg transition font-bold">
           Cancelar
         </button>
       </div>

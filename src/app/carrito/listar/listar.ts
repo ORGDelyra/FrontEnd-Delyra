@@ -6,13 +6,14 @@ import { CarritoService } from '../../services/carrito.service';
 import { ProductosService } from '../../services/productos.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { SelectorUbicacion } from '../selector-ubicacion/selector-ubicacion';
 import { Product } from '../../interfaces/product.interface';
 import { Cart, ProductSelect } from '../../interfaces/cart.interface';
 
 @Component({
   selector: 'app-listar',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, SelectorUbicacion],
   templateUrl: './listar.html',
   styleUrl: './listar.css',
 })
@@ -57,26 +58,27 @@ export class ListarCarrito implements OnInit {
 
   cargarCarrito() {
     this.cargando = true;
-    
+
     // Obtener todos los carritos del usuario y buscar el activo
     this.carritoService.obtenerCarritos().subscribe({
       next: (carts: Cart[]) => {
         console.log('🛒 Carritos recibidos del backend:', carts);
-        
+
         // Buscar el carrito activo sin estado_pedido
         const carritoActivo = carts.find(c => (c.activo === true || c.activo === 1) && !c.estado_pedido);
-        
+
         console.log('🎯 Carrito activo encontrado:', carritoActivo);
-        
+
         if (carritoActivo && carritoActivo.id) {
           this.carritoId = carritoActivo.id;
-          
+
           // Si el carrito viene con productos incluidos
           if ((carritoActivo as any).products && Array.isArray((carritoActivo as any).products)) {
             console.log('📦 Productos en el carrito:', (carritoActivo as any).products);
             this.productos = (carritoActivo as any).products.map((p: any) => ({
               ...p,
-              cantidad: p.pivot?.cantidad || 1
+              stock: p.cantidad || 0,  // Guardar el stock real del producto
+              cantidad: p.pivot?.cantidad || 1  // Cantidad en el carrito
             }));
             this.calcularTotal();
           } else {
@@ -101,17 +103,25 @@ export class ListarCarrito implements OnInit {
     });
   }
 
-  actualizarCantidad(producto: Product & { cantidad: number }, nuevaCantidad: number) {
+  actualizarCantidad(producto: Product & { cantidad: number; stock?: number; cantidadCarrito?: number }, nuevaCantidad: number) {
     if (nuevaCantidad < 1) {
       this.mostrarNotificacion('error', 'La cantidad debe ser al menos 1');
       return;
     }
-    
+
+    // Verificar si excede el stock disponible
+    const stockDisponible = producto.stock || producto.cantidad || 0;  // usar stock si existe, sino cantidad
+
+    if (nuevaCantidad > stockDisponible) {
+      this.mostrarNotificacion('error', 'La cantidad que seleccionaste supera las existencias actuales de este producto');
+      return;
+    }
+
     if (!this.carritoId || !producto.id) return;
 
     const cantidadAnterior = producto.cantidad;
     producto.cantidad = nuevaCantidad;
-    
+
     this.carritoService.actualizarCantidadProducto(this.carritoId, producto.id, nuevaCantidad).subscribe({
       next: (response) => {
         this.calcularTotal();
@@ -120,7 +130,7 @@ export class ListarCarrito implements OnInit {
       error: (err) => {
         // Revertir cantidad si falla
         producto.cantidad = cantidadAnterior;
-        
+
         if (err.status === 400 && err.error?.stock_disponible !== undefined) {
           this.mostrarNotificacion('error', `Solo hay ${err.error.stock_disponible} unidades disponibles de ${producto.nombre}`);
         } else if (err.error?.mensaje) {
@@ -159,19 +169,14 @@ export class ListarCarrito implements OnInit {
     this.total = this.subtotal + this.envio + this.servicio;
   }
 
-  obtenerUbicacion() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.latitudEntrega = position.coords.latitude.toString();
-          this.longitudEntrega = position.coords.longitude.toString();
-        },
-        (error) => {
-          console.error('Error al obtener ubicación:', error);
-          this.mensajeError = 'No se pudo obtener tu ubicación. Por favor ingrésala manualmente.';
-        }
-      );
-    }
+  /**
+   * Recibe los datos de ubicación desde el selector de mapa
+   */
+  onUbicacionSeleccionada(ubicacion: { direccion: string; latitud: string; longitud: string }) {
+    this.direccionEntrega = ubicacion.direccion;
+    this.latitudEntrega = ubicacion.latitud;
+    this.longitudEntrega = ubicacion.longitud;
+    this.mostrarNotificacion('exito', '✅ Ubicación confirmada');
   }
 
   procederAlPago() {
@@ -228,7 +233,9 @@ export class ListarCarrito implements OnInit {
         }, 2000);
       },
       error: (err) => {
-        console.error("Error al crear pedido:", err);
+        console.error("❌ Error completo al crear pedido:", err);
+        console.error("📋 Respuesta del servidor:", err.error);
+        
         // Extraer mensaje de error más limpio
         let mensajeError = 'Error al crear el pedido. Por favor intenta de nuevo.';
         if (err.error?.mensaje) {
@@ -238,6 +245,13 @@ export class ListarCarrito implements OnInit {
         } else if (err.message) {
           mensajeError = err.message;
         }
+        
+        // Si el error menciona domiciliario, dar contexto
+        if (mensajeError.toLowerCase().includes('domiciliario')) {
+          mensajeError = 'Tu pedido ha sido recibido pero hay un problema en el sistema. Por favor contacta con soporte.';
+          console.error("🐛 BUG: El backend está requiriendo domiciliario al crear pedido (no debería)");
+        }
+        
         this.mensajeError = mensajeError;
         this.cargando = false;
       }

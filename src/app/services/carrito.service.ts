@@ -8,7 +8,7 @@ import { Cart, ProductSelect, AddToCartRequest, PaymentTransaction } from '../in
 })
 export class CarritoService {
 
-  private api = 'http://127.0.0.1:8000/api';
+  private api = 'https://backend-delyra-production.up.railway.app/api';
 
   constructor(private http: HttpClient) {}
 

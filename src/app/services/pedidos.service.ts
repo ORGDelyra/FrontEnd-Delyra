@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { 
-  Cart, 
-  CrearPedidoRequest, 
-  ActualizarEstadoRequest, 
+import {
+  Cart,
+  CrearPedidoRequest,
+  ActualizarEstadoRequest,
   AsignarDomiciliarioRequest,
   MarcarEntregadoRequest,
   MarcarRecogidoRequest
@@ -15,7 +15,7 @@ import {
 })
 export class PedidosService {
 
-  private api = 'http://127.0.0.1:8000/api';
+  private api = 'https://backend-delyra-production.up.railway.app/api';
 
   constructor(private http: HttpClient) {}
 
@@ -74,7 +74,28 @@ export class PedidosService {
   // ========== DOMICILIARIO ==========
 
   /**
-   * Ver mis entregas (domiciliario)
+   * Ver pedidos DISPONIBLES para tomar (sin domiciliario asignado)
+   * GET /api/cart/pedidos-disponibles
+   * ✨ NUEVO ENDPOINT - Backend implementado
+   */
+  obtenerPedidosDisponibles(): Observable<Cart[]> {
+    return this.http.get<Cart[]>(`${this.api}/cart/pedidos-disponibles`);
+  }
+
+  /**
+   * TOMAR un pedido disponible (asignarse a sí mismo)
+   * PUT /api/cart/{id}/tomar-pedido
+   * ✨ NUEVO ENDPOINT - Backend implementado
+   * Cambios automáticos:
+   * - id_domiciliario = user.id
+   * - estado_pedido = 'en_camino'
+   */
+  tomarPedido(id: number): Observable<any> {
+    return this.http.put(`${this.api}/cart/${id}/tomar-pedido`, {});
+  }
+
+  /**
+   * Ver mis entregas YA TOMADAS (domiciliario)
    * GET /api/cart/mis-entregas
    */
   obtenerMisEntregas(): Observable<Cart[]> {

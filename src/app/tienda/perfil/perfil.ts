@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-perfil-tienda',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [ CommonModule, RouterModule ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -100,7 +100,7 @@ export class PerfilTienda implements OnInit {
         console.log('✓ Activo:', response.cart?.activo);
         console.log('📋 Estado pedido:', response.cart?.estado_pedido);
         console.log('🛍️ Cantidad de productos en cart:', response.cart?.products?.length);
-        
+
         // Expandir productos para ver detalles
         if (response.cart?.products) {
           console.log('📦 PRODUCTOS DETALLADOS:');
@@ -108,7 +108,7 @@ export class PerfilTienda implements OnInit {
             console.log(`  ${index + 1}. ID: ${p.id}, Nombre: ${p.nombre}, Cantidad: ${p.pivot?.cantidad || '?'}`);
           });
         }
-        
+
         this.mensajeExito = `✅ ${producto.nombre} agregado al carrito`;
         setTimeout(() => this.mensajeExito = '', 3000);
       },
