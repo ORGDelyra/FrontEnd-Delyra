@@ -6,6 +6,7 @@ import { CarritoService } from '../../services/carrito.service';
 import { ProductosService } from '../../services/productos.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { MercadoPagoService } from '../../services/mercado-pago.service';
 import { SelectorUbicacion } from '../selector-ubicacion/selector-ubicacion';
 import { Product } from '../../interfaces/product.interface';
 import { Cart, ProductSelect } from '../../interfaces/cart.interface';
@@ -36,12 +37,14 @@ export class ListarCarrito implements OnInit {
   comprobantePago: string = '';
   cargandoComprobante: boolean = false;
   notificacion: { tipo: 'error' | 'exito' | 'info'; mensaje: string } | null = null;
+  procesandoPago: boolean = false;
 
   constructor(
     private carritoService: CarritoService,
     private productosService: ProductosService,
     private pedidosService: PedidosService,
     private imageUploadService: ImageUploadService,
+    private mercadoPagoService: MercadoPagoService,
     private router: Router
   ) {}
 
@@ -197,6 +200,7 @@ export class ListarCarrito implements OnInit {
       }
     }
 
+    this.procesandoPago = true;
     this.cargando = true;
     this.mensajeError = '';
     this.mensajeExito = '';
@@ -210,7 +214,12 @@ export class ListarCarrito implements OnInit {
 
     const datosPedido: any = {
       productos: productosPedido,
-      tipo_entrega: this.tipoEntrega
+      tipo_entrega: this.tipoEntrega,
+      metodo_pago: this.metodoPago,
+      total: this.total,
+      subtotal: this.subtotal,
+      costo_envio: this.envio,
+      costo_servicio: this.servicio
     };
 
     // Si es domicilio, agregar dirección y coordenadas
@@ -220,7 +229,71 @@ export class ListarCarrito implements OnInit {
       datosPedido.longitud_entrega = this.longitudEntrega;
     }
 
-    // Crear pedido usando el nuevo endpoint
+    // Lógica de flujos de pago según tipo de entrega y método de pago
+    if (this.tipoEntrega === 'domicilio' && this.metodoPago === 'mercado-pago') {
+      // Flujo 1: Domicilio + Mercado Pago (Pago Online)
+      this.iniciarPagoMercadoPago(datosPedido);
+    } else if (this.tipoEntrega === 'domicilio' && this.metodoPago === 'contraentrega') {
+      // Flujo 2: Domicilio + Contraentrega (Pago Contra Entrega)
+      this.crearPedidoSinPago(datosPedido);
+    } else if (this.tipoEntrega === 'recogida') {
+      // Flujo 3: Recogida en Tienda + Efectivo Local (Pago en Tienda)
+      this.crearPedidoSinPago(datosPedido);
+    } else {
+      // Fallback: Crear pedido sin pago online
+      this.crearPedidoSinPago(datosPedido);
+    }
+  }
+
+  /**
+   * Inicia flujo de pago con Mercado Pago
+   */
+  private iniciarPagoMercadoPago(datosPedido: any) {
+    // Crear preferencia de pago en Mercado Pago
+    this.mercadoPagoService.crearPreferenciaPago({
+      items: this.productos.map(p => ({
+        title: p.nombre,
+        quantity: p.cantidad,
+        unit_price: p.precio,
+        currency_id: 'COP'
+      })),
+      payer: {
+        email: '', // Se debe obtener del usuario autenticado
+      },
+      back_urls: {
+        success: `${window.location.origin}/cliente/pedidos?payment=success`,
+        failure: `${window.location.origin}/carrito?payment=failure`,
+        pending: `${window.location.origin}/carrito?payment=pending`
+      },
+      auto_return: 'approved'
+    }).subscribe({
+      next: (respuesta: any) => {
+        // Guardar datos del pedido pendiente de pago en backend
+        datosPedido.mercado_pago_preference_id = respuesta.id;
+        datosPedido.estado_pago = 'pendiente';
+
+        // Redirigir a Mercado Pago
+        if (respuesta.init_point) {
+          window.location.href = respuesta.init_point;
+        } else {
+          this.mensajeError = 'Error al iniciar Mercado Pago. Por favor intenta de nuevo.';
+          this.procesandoPago = false;
+          this.cargando = false;
+        }
+      },
+      error: (err) => {
+        console.error("❌ Error al crear preferencia de Mercado Pago:", err);
+        this.mensajeError = 'Error al procesar el pago. Por favor intenta de nuevo.';
+        this.procesandoPago = false;
+        this.cargando = false;
+      }
+    });
+  }
+
+  /**
+   * Crea pedido sin requerir pago online (contraentrega o recogida)
+   */
+  private crearPedidoSinPago(datosPedido: any) {
     this.pedidosService.crearPedido(datosPedido).subscribe({
       next: (resultado: any) => {
         this.mensajeExito = resultado.mensaje || 'Pedido creado exitosamente';
@@ -228,6 +301,8 @@ export class ListarCarrito implements OnInit {
         this.carritoId = null;
         this.productos = [];
         this.total = 0;
+        this.procesandoPago = false;
+        this.cargando = false;
         setTimeout(() => {
           this.router.navigate(['/cliente/pedidos']);
         }, 2000);
