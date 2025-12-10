@@ -8,14 +8,16 @@
  * al backend mediante el archivo vercel.json (rewrites)
  */
 
-// Detectar si está en producción
-const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+// Detectar si está en desarrollo local
+const isDevelopment = typeof window !== 'undefined' && 
+                     (window.location.hostname === 'localhost' || 
+                      window.location.hostname === '127.0.0.1');
 
 export const API_CONFIG = {
   // URL base del backend
+  // En desarrollo (localhost): usa http://localhost:8000
   // En producción (Vercel): usa rutas relativas /api/* (serán forwardeadas por vercel.json)
-  // En desarrollo: usa http://localhost:8000
-  BASE_URL: isProduction ? '' : 'http://localhost:8000',
+  BASE_URL: isDevelopment ? 'http://localhost:8000' : '',
 
   // Endpoints
   endpoints: {
