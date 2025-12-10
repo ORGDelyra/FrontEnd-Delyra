@@ -1,2 +1,5 @@
-<app-navbar *ngIf="mostrarNavbar"></app-navbar>
-<router-outlet></router-outlet>
+<app-mantenimiento *ngIf="enMantenimiento"></app-mantenimiento>
+<ng-container *ngIf="!enMantenimiento">
+  <app-navbar *ngIf="mostrarNavbar"></app-navbar>
+  <router-outlet></router-outlet>
+</ng-container>
