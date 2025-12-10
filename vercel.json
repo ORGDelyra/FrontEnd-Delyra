@@ -1,14 +1,9 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist/frontend-delyra/browser",
-  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://backend-delyra-production.up.railway.app/api/:path*"
-    },
-    {
-      "source": "/:path*",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
