@@ -8,16 +8,13 @@
  * al backend mediante el archivo vercel.json (rewrites)
  */
 
-// Detectar si está en desarrollo local
-const isDevelopment = typeof window !== 'undefined' && 
-                     (window.location.hostname === 'localhost' || 
-                      window.location.hostname === '127.0.0.1');
+// Configuración fija de backend (prod)
+const BASE_BACKEND = 'https://backend-delyra-production.up.railway.app';
 
 export const API_CONFIG = {
   // URL base del backend
-  // En desarrollo (localhost): usa http://localhost:8000
-  // En producción (Vercel): usa rutas relativas /api/* (serán forwardeadas por vercel.json)
-  BASE_URL: isDevelopment ? 'http://localhost:8000' : '',
+  // Usa siempre la URL completa del backend
+  BASE_URL: BASE_BACKEND,
 
   // Endpoints
   endpoints: {
