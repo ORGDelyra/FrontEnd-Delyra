@@ -2,7 +2,7 @@
   <div class="max-w-2xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-4xl font-bold text-[#7dff7a] mb-2">Mi Perfil</h1>
+      <h1 class="text-4xl font-bold text-[#344264] mb-2">Mi Perfil</h1>
       <p class="text-[#9aa2c7]">Administra tu información personal</p>
     </div>
 
@@ -24,7 +24,7 @@
       <div class="mb-8 flex flex-col items-center pb-8 border-b border-[#1f2847]">
         <div class="relative">
           <!-- Avatar -->
-          <div class="w-32 h-32 rounded-full bg-[#1f2847] border-4 border-[#7dff7a] flex items-center justify-center mb-4 overflow-hidden">
+          <div class="w-32 h-32 rounded-full bg-[#1f2847] border-4 border-[#f64e4e] flex items-center justify-center mb-4 overflow-hidden">
             <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil" class="w-full h-full object-cover">
             <span *ngIf="!fotoPerfil" class="text-5xl">👤</span>
           </div>
@@ -62,7 +62,7 @@
           [class.text-[#05060c]]="!modoEdicion"
           [class.text-white]="modoEdicion"
           class="px-6 py-2 rounded-lg font-semibold transition duration-200 flex items-center gap-2">
-          <span *ngIf="!modoEdicion" class="text-lg">[Edit]</span>
+          <span *ngIf="!modoEdicion" class="text-lg">[Editar]</span>
           <span *ngIf="modoEdicion" class="text-lg">[X]</span>
           {{ modoEdicion ? 'Cancelar' : 'Editar Información' }}
         </button>
@@ -74,7 +74,7 @@
         <!-- Nombres -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-[#9aa2c7] font-medium mb-2">Primer Nombre *</label>
+            <label class="block text-[#9aa2c7] font-medium mb-2">Primer Nombre <span class="text-red-800">*</span></label>
             <input
               formControlName="primer_nombre"
               type="text"
@@ -98,7 +98,7 @@
         <!-- Apellidos -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-[#9aa2c7] font-medium mb-2">Primer Apellido *</label>
+            <label class="block text-[#9aa2c7] font-medium mb-2">Primer Apellido <span class="text-red-800">*</span></label>
             <input
               formControlName="primer_apellido"
               type="text"
@@ -122,7 +122,7 @@
         <!-- Contacto -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-[#9aa2c7] font-medium mb-2">Teléfono *</label>
+            <label class="block text-[#9aa2c7] font-medium mb-2">Teléfono <span class="text-red-800">*</span></label>
             <input
               formControlName="telefono"
               type="text"
@@ -132,7 +132,7 @@
               class="w-full px-4 py-3 border border-[#1f2847] rounded-lg text-[#f3f5ff] focus:border-[#7dff7a] focus:outline-none transition">
           </div>
           <div>
-            <label class="block text-[#9aa2c7] font-medium mb-2">Correo *</label>
+            <label class="block text-[#9aa2c7] font-medium mb-2">Correo <span class="text-red-800">*</span></label>
             <input
               formControlName="correo"
               type="email"
@@ -145,7 +145,7 @@
 
         <!-- Cuenta Bancaria -->
         <div>
-          <label class="block text-[#9aa2c7] font-medium mb-2">Cuenta Bancaria *</label>
+          <label class="block text-[#9aa2c7] font-medium mb-2">Cuenta Bancaria <span class="text-red-800">*</span></label>
           <input
             formControlName="cuenta_bancaria"
             type="text"
@@ -160,7 +160,7 @@
           <button
             type="button"
             routerLink="/cliente/inicio"
-            class="flex-1 bg-[#1f2847] hover:bg-[#2f3847] text-[#f3f5ff] font-semibold py-3 px-6 rounded-lg transition duration-200">
+            class="flex-1 bg-gradient-to-r from-[#344264] via-[#B2192F] to-[#FFC0AB] hover:bg-[#2f3847] text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
             Volver
           </button>
           <button

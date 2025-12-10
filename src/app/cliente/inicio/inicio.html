@@ -4,7 +4,7 @@
     <!-- Logo y título -->
     <div class="flex items-center space-x-2">
       <img src="/assets/logo.png" alt="Delyra" class="h-10 w-10 rounded-md object-contain" width="40" height="40" loading="lazy" />
-      <span class="text-2xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent font-[Poppins]">Delyra</span>
+      <span class="text-2xl font-bold bg-gradient-to-r from-[#344264] via-[#B2192F] to-[#FFC0AB] bg-clip-text text-transparent font-[Poppins]">Delyra</span>
     </div>
 
       <!-- Perfil desplegable en móvil -->
@@ -66,7 +66,7 @@
               />
               <button
                 (click)="buscar()"
-                class="bg-[#7dff7a] hover:bg-[#6ae66a] text-[#05060c] px-6 py-3 rounded-lg transition duration-200 font-semibold">
+                class="bg-gradient-to-r from-[#344264] via-[#B2192F] to-[#FFC0AB] hover:bg-[#6ae66a] text-white px-6 py-3 rounded-lg transition duration-200 font-extrabold">
                 Buscar
               </button>
             </div>
@@ -96,16 +96,16 @@
 
         <!-- Carrusel de ofertas -->
         <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
-          <div class="bg-linear-to-r from-[#7dff7a] to-[#5dd565] rounded-lg p-8 text-[#04060f] flex items-center justify-between">
+          <div class="bg-gradient-to-r from-[#344264] via-[#B2192F] to-[#FFC0AB] rounded-lg p-8 text-[#04060f] flex items-center justify-between">
             <div class="flex-1">
               <div class="flex items-center space-x-2 mb-3">
-                <span class="text-2xl">★</span>
-                <b class="text-2xl">OFERTA ESPECIAL</b>
+                <span class="text-2xl text-white">★</span>
+                <b class="text-2xl text-white">OFERTA ESPECIAL </b>
               </div>
-              <p class="text-lg mb-2">Hasta 50% de descuento en panaderías</p>
-              <p class="text-sm opacity-90">Válido hasta el 30 de noviembre</p>
-              <button routerLink="/productos/listar" class="mt-4 bg-[#04060f] text-[#7dff7a] font-bold px-6 py-2 rounded-lg hover:bg-[#0b1020] transition">
-                Ver Ofertas
+              <p class="text-lg mb-2 text-white">Hasta 50% de descuento en panaderías</p>
+              <p class="text-sm opacity-60 text-white">Válido hasta el 30 de noviembre</p>
+              <button routerLink="/productos/listar" class="mt-4 bg-black text-[#7dff7a] font-bold px-6 py-2 rounded-lg hover:bg-[#0b1020] transition">
+                Ver  Ofertas
               </button>
             </div>
             <div class="text-right">

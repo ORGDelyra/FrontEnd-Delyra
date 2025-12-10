@@ -2,8 +2,8 @@
 .controls { display:flex; gap:8px; align-items:center; flex-wrap: wrap; }
 .controls input { flex:1; min-width: 200px; padding:8px 12px; border-radius:6px; border:1px solid #1f2847; background: #0f162d; color: #f3f5ff; }
 .controls input:focus { outline: none; border-color: #7dff7a; }
-.controls button { padding:8px 14px; background:#7dff7a; color: #04060f; border:none; border-radius:6px; cursor:pointer; font-weight: 600; transition: all 0.2s; }
-.controls button:hover { background:#6ae66a; transform: translateY(-1px); }
+.controls button { padding:8px 14px; background: linear-gradient(to right,#344264, #B2192F, #FFC0AB ); color: #ffffff; border:none; border-radius:6px; cursor:pointer; font-weight: 600; transition: all 0.2s; }
+.controls button:hover { background: #344264; transform: translateY(-1px); }
 .layout { display:flex; gap:12px; }
 .list { width:320px; max-height:60vh; overflow:auto; background:#0b1020; padding:12px; border-radius:8px; color:#f3f5ff; border: 1px solid #1f2847; }
 .list ul { list-style:none; padding:0; margin:0; }
