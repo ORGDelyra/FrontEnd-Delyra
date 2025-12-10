@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/FrontendDelyra",
+  "outputDirectory": "dist/FrontendDelyra/browser",
   "rewrites": [
     {
       "source": "/(.*)",
