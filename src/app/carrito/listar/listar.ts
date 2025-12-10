@@ -7,6 +7,7 @@ import { ProductosService } from '../../services/productos.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { ImageUploadService } from '../../services/image-upload.service';
 import { MercadoPagoService } from '../../services/mercado-pago.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { SelectorUbicacion } from '../selector-ubicacion/selector-ubicacion';
 import { Product } from '../../interfaces/product.interface';
 import { Cart, ProductSelect } from '../../interfaces/cart.interface';
@@ -14,7 +15,7 @@ import { Cart, ProductSelect } from '../../interfaces/cart.interface';
 @Component({
   selector: 'app-listar',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, SelectorUbicacion],
+  imports: [RouterModule, CommonModule, FormsModule, MonedaColombianaPipe, SelectorUbicacion],
   templateUrl: './listar.html',
   styleUrl: './listar.css',
 })
@@ -23,7 +24,7 @@ export class ListarCarrito implements OnInit {
   productos: Array<Product & { cantidad: number }> = [];
   total: number = 0;
   subtotal: number = 0;
-  envio: number = 3000; // Costo fijo de envío
+  envio: number = 3000; // Costo fijo de envío en COP ($3.000)
   servicio: number = 0; // 5% del subtotal
   cargando: boolean = false;
   carritoId: number | null = null;
@@ -168,7 +169,7 @@ export class ListarCarrito implements OnInit {
     this.subtotal = this.productos.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
     this.servicio = this.subtotal * 0.05; // 5% de servicio
     // Si es recogida, no hay costo de envío
-    this.envio = this.tipoEntrega === 'domicilio' ? 3000 : 0;
+    this.envio = this.tipoEntrega === 'domicilio' ? 3000 : 0; // $3.000 COP para domicilio
     this.total = this.subtotal + this.envio + this.servicio;
   }
 
@@ -232,7 +233,8 @@ export class ListarCarrito implements OnInit {
     // Lógica de flujos de pago según tipo de entrega y método de pago
     if (this.tipoEntrega === 'domicilio' && this.metodoPago === 'mercado-pago') {
       // Flujo 1: Domicilio + Mercado Pago (Pago Online)
-      this.iniciarPagoMercadoPago(datosPedido);
+      // Primero crear el pedido, luego iniciar pago
+      this.crearPedidoParaMercadoPago(datosPedido);
     } else if (this.tipoEntrega === 'domicilio' && this.metodoPago === 'contraentrega') {
       // Flujo 2: Domicilio + Contraentrega (Pago Contra Entrega)
       this.crearPedidoSinPago(datosPedido);
@@ -246,34 +248,70 @@ export class ListarCarrito implements OnInit {
   }
 
   /**
+   * Crea pedido primero, luego inicia pago con Mercado Pago
+   */
+  private crearPedidoParaMercadoPago(datosPedido: any) {
+    this.pedidosService.crearPedido(datosPedido).subscribe({
+      next: (resultado: any) => {
+        // El pedido fue creado exitosamente, obtener su ID con tolerancia a estructuras distintas
+        const pedidoId = resultado?.id
+          ?? resultado?.pedido_id
+          ?? resultado?.pedidoId
+          ?? resultado?.pedido?.id
+          ?? resultado?.cart?.id
+          ?? resultado?.carrito?.id
+          ?? resultado?.data?.id;
+
+        if (!pedidoId) {
+          this.mensajeError = 'Error: no se obtuvo ID del pedido (respuesta inesperada del backend)';
+          this.procesandoPago = false;
+          this.cargando = false;
+          return;
+        }
+
+        // Ahora iniciar el pago con Mercado Pago
+        this.iniciarPagoMercadoPago(pedidoId);
+      },
+      error: (err) => {
+        console.error("❌ Error al crear pedido para MP:", err);
+        let mensajeError = 'Error al crear el pedido. Por favor intenta de nuevo.';
+        if (err.error?.mensaje) {
+          mensajeError = err.error.mensaje;
+        }
+        this.mensajeError = mensajeError;
+        this.procesandoPago = false;
+        this.cargando = false;
+      }
+    });
+  }
+
+  /**
    * Inicia flujo de pago con Mercado Pago
    */
-  private iniciarPagoMercadoPago(datosPedido: any) {
+  private iniciarPagoMercadoPago(pedidoId: number) {
+    // Obtener datos del usuario autenticado
+    const usuarioData = JSON.parse(localStorage.getItem('usuarioData') || '{}');
+
     // Crear preferencia de pago en Mercado Pago
     this.mercadoPagoService.crearPreferenciaPago({
+      pedidoId: pedidoId,
       items: this.productos.map(p => ({
+        id: `SKU-${p.id}`,
         title: p.nombre,
         quantity: p.cantidad,
-        unit_price: p.precio,
-        currency_id: 'COP'
+        unit_price: Math.round(p.precio) // Asegurar que es entero en COP
       })),
-      payer: {
-        email: '', // Se debe obtener del usuario autenticado
-      },
-      back_urls: {
-        success: `${window.location.origin}/cliente/pedidos?payment=success`,
-        failure: `${window.location.origin}/carrito?payment=failure`,
-        pending: `${window.location.origin}/carrito?payment=pending`
-      },
-      auto_return: 'approved'
+      total: Math.round(this.total), // Total en COP (entero sin decimales)
+      cliente: {
+        nombre: usuarioData.nombre || 'Cliente',
+        email: usuarioData.email || '',
+        telefono: usuarioData.telefono || ''
+      }
     }).subscribe({
       next: (respuesta: any) => {
-        // Guardar datos del pedido pendiente de pago en backend
-        datosPedido.mercado_pago_preference_id = respuesta.id;
-        datosPedido.estado_pago = 'pendiente';
-
-        // Redirigir a Mercado Pago
+        // Backend retorna: { mensaje, preference_id, init_point, pedido_id }
         if (respuesta.init_point) {
+          // Redirigir a Mercado Pago
           window.location.href = respuesta.init_point;
         } else {
           this.mensajeError = 'Error al iniciar Mercado Pago. Por favor intenta de nuevo.';
@@ -310,7 +348,7 @@ export class ListarCarrito implements OnInit {
       error: (err) => {
         console.error("❌ Error completo al crear pedido:", err);
         console.error("📋 Respuesta del servidor:", err.error);
-        
+
         // Extraer mensaje de error más limpio
         let mensajeError = 'Error al crear el pedido. Por favor intenta de nuevo.';
         if (err.error?.mensaje) {
@@ -320,13 +358,13 @@ export class ListarCarrito implements OnInit {
         } else if (err.message) {
           mensajeError = err.message;
         }
-        
+
         // Si el error menciona domiciliario, dar contexto
         if (mensajeError.toLowerCase().includes('domiciliario')) {
           mensajeError = 'Tu pedido ha sido recibido pero hay un problema en el sistema. Por favor contacta con soporte.';
           console.error("🐛 BUG: El backend está requiriendo domiciliario al crear pedido (no debería)");
         }
-        
+
         this.mensajeError = mensajeError;
         this.cargando = false;
       }

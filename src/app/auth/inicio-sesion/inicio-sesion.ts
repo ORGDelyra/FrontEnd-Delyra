@@ -115,7 +115,7 @@ export class InicioSesion {
         break;
       default:
         // Si no hay rol, volver a selección
-        this.router.navigate(['/seleccionar-rol']);
+        this.router.navigate(['/bienvenida']);
     }
   }
 

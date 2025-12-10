@@ -24,7 +24,7 @@ export class SeleccionRegistro {
   }
 
   volver() {
-    this.router.navigate(['/seleccionar-rol']);
+    this.router.navigate(['/bienvenida']);
   }
 }
 

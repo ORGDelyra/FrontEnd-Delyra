@@ -1,63 +1,213 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8 px-4">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-6">
-      <button (click)="volverAlInicio()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition flex items-center gap-2">
-        <span class="text-xl">&larr;</span>
-        <span>Volver al Inicio</span>
-      </button>
-    </div>
-    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
+  <!-- Header sticky con buscador y filtros -->
+  <div class="sticky top-0 z-40 bg-[#0b1020] border-b border-[#1f2847] shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <!-- Título y botón volver -->
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent">
+            Explorar Productos
+          </h1>
+          <p class="text-[#9aa2c7] text-sm mt-1">Encuentra lo que buscas</p>
+        </div>
+        <button 
+          (click)="volverAlInicio()" 
+          class="bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] px-4 py-2 rounded-lg transition flex items-center gap-2">
+          <span>←</span>
+          <span>Volver</span>
+        </button>
+      </div>
+
+      <!-- Buscador -->
       <div class="flex gap-2 mb-4">
         <input
           type="text"
-          [value]="terminoBusqueda"
-          (input)="terminoBusqueda = $any($event.target).value"
-          (keyup.enter)="cargarProductos()"
-          placeholder="Buscar productos..."
-          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+          [(ngModel)]="terminoBusqueda"
+          (input)="onBusquedaChange()"
+          placeholder="Buscar por nombre, descripción..."
+          class="flex-1 px-4 py-3 bg-[#0f162d] border border-[#1e2644] rounded-lg focus:ring-2 focus:ring-[#b1122d] focus:border-transparent text-[#f3f5ff] placeholder-[#9aa2c7] transition"
         />
-        <button (click)="cargarProductos()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition">
-          Buscar
-        </button>
       </div>
-      <div class="flex flex-wrap gap-2">
-        <button (click)="filtrarPorCategoria('Todas')" [class.bg-green-600]="categoriaSeleccionada === 'Todas'" [class.text-white]="categoriaSeleccionada === 'Todas'" class="px-4 py-2 rounded-lg transition hover:bg-green-500">
+
+      <!-- Filtros por categoría -->
+      <div class="flex flex-wrap gap-2 overflow-x-auto pb-2">
+        <button 
+          (click)="filtrarPorCategoria('Todas')" 
+          [class.bg-[#b1122d]]="categoriaSeleccionada === 'Todas'"
+          [class.text-white]="categoriaSeleccionada === 'Todas'"
+          [class.bg-[#1f2847]]="categoriaSeleccionada !== 'Todas'"
+          [class.text-[#9aa2c7]]="categoriaSeleccionada !== 'Todas'"
+          class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#f8bfa8] whitespace-nowrap">
           Todas
         </button>
-        <button *ngFor="let cat of categorias" (click)="filtrarPorCategoria(cat.nombre_categoria)" [class.bg-green-600]="categoriaSeleccionada === cat.nombre_categoria" [class.text-white]="categoriaSeleccionada === cat.nombre_categoria" class="px-4 py-2 rounded-lg transition hover:bg-green-500">
+        <button 
+          *ngFor="let cat of categorias" 
+          (click)="filtrarPorCategoria(cat.nombre_categoria)" 
+          [class.bg-[#b1122d]]="categoriaSeleccionada === cat.nombre_categoria"
+          [class.text-white]="categoriaSeleccionada === cat.nombre_categoria"
+          [class.bg-[#1f2847]]="categoriaSeleccionada !== cat.nombre_categoria"
+          [class.text-[#9aa2c7]]="categoriaSeleccionada !== cat.nombre_categoria"
+          class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#f8bfa8] whitespace-nowrap">
           {{ cat.nombre_categoria }}
         </button>
       </div>
     </div>
+  </div>
 
-    <div *ngIf="cargando" class="text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
+  <!-- Contenido principal -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Loading -->
+    <div *ngIf="cargando" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#b1122d] mb-4"></div>
+      <p class="text-[#9aa2c7]">Cargando productos...</p>
     </div>
 
-    <div *ngIf="!cargando && productos.length === 0" class="text-center py-12 text-gray-500">
-      <p>No se encontraron productos</p>
+    <!-- Sin resultados -->
+    <div *ngIf="!cargando && productosFiltrados.length === 0" class="text-center py-20">
+      <p class="text-3xl mb-2">🔍</p>
+      <p class="text-[#9aa2c7] text-lg">No se encontraron productos</p>
+      <p class="text-[#9aa2c7] text-sm mt-2">Intenta con otros términos de búsqueda o categorías</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div *ngFor="let producto of productos" class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition">
-        <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+    <!-- Grid de productos -->
+    <div *ngIf="!cargando && productosFiltrados.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div 
+        *ngFor="let producto of productosFiltrados" 
+        class="bg-[#0b1020] border border-[#1f2847] rounded-xl overflow-hidden hover:border-[#b1122d] hover:shadow-lg hover:shadow-[#b1122d]/20 transition duration-300 group">
+        
+        <!-- Imagen -->
+        <div class="h-48 bg-[#1f2847] overflow-hidden relative">
           <img
             *ngIf="producto.images && producto.images.length > 0"
             [src]="producto.images[0].url"
             [alt]="producto.nombre"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
             (error)="$any($event.target).src='https://via.placeholder.com/400x300?text=Sin+Imagen'"
           >
           <div *ngIf="!producto.images || producto.images.length === 0"
-               class="w-full h-full flex items-center justify-center text-5xl text-gray-400">
+               class="w-full h-full flex items-center justify-center text-5xl text-[#9aa2c7]">
             📦
           </div>
         </div>
-        <h3 class="font-bold text-gray-800 mb-2">{{ producto.nombre }}</h3>
-        <p class="text-sm text-gray-600 mb-2">{{ producto.descripcion }}</p>
-        <p class="text-xl font-bold text-green-600 mb-4">${{ producto.precio | number:'1.0-0' }}</p>
-        <button (click)="agregarAlCarrito(producto)" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition">
-          Agregar al Carrito
+
+        <!-- Contenido -->
+        <div class="p-4 flex flex-col gap-3">
+          <div>
+            <h3 class="font-bold text-[#f3f5ff] line-clamp-2 group-hover:text-[#f8bfa8] transition">
+              {{ producto.nombre }}
+            </h3>
+            <p class="text-sm text-[#9aa2c7] line-clamp-2 mt-1">
+              {{ producto.descripcion || 'Sin descripción' }}
+            </p>
+          </div>
+
+          <!-- Precio y stock -->
+          <div class="flex items-baseline justify-between pt-2 border-t border-[#1f2847]">
+            <p class="text-2xl font-bold text-[#b1122d]">
+              {{ producto.precio | monedaColombia }}
+            </p>
+            <span class="text-xs text-[#9aa2c7] bg-[#1f2847] px-2 py-1 rounded">
+              Stock: {{ producto.stock || producto.cantidad || '∞' }}
+            </span>
+          </div>
+
+          <!-- Botón agregar -->
+          <button 
+            (click)="abrirModalCantidad(producto)"
+            class="w-full bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] hover:opacity-90 text-white font-bold py-2 rounded-lg transition duration-200">
+            🛒 Agregar al carrito
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información de resultados -->
+    <div *ngIf="!cargando && productosFiltrados.length > 0" class="mt-8 text-center text-[#9aa2c7] text-sm">
+      Mostrando {{ productosFiltrados.length }} de {{ productos.length }} productos
+    </div>
+  </div>
+
+  <!-- Modal de cantidad -->
+  <div *ngIf="mostrarModalCantidad" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-[#0b1020] border border-[#b1122d] rounded-xl shadow-2xl w-full max-w-sm p-5 animate-in fade-in duration-300">
+      <!-- Encabezado -->
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-[#f3f5ff]">Seleccionar cantidad</h3>
+        <button 
+          (click)="cerrarModalCantidad()"
+          class="text-[#9aa2c7] hover:text-[#f3f5ff] transition text-xl">
+          ✕
+        </button>
+      </div>
+
+      <!-- Imagen y nombre del producto -->
+      <div *ngIf="productoSeleccionado" class="mb-4">
+        <div class="h-32 bg-[#1f2847] rounded-lg mb-3 overflow-hidden flex items-center justify-center">
+          <img 
+            *ngIf="productoSeleccionado.images && productoSeleccionado.images.length > 0"
+            [src]="productoSeleccionado.images[0].url"
+            alt="Producto"
+            class="w-full h-full object-cover"
+            (error)="$any($event.target).src='https://via.placeholder.com/400x300?text=Sin+Imagen'"
+          >
+          <div *ngIf="!productoSeleccionado.images || productoSeleccionado.images.length === 0"
+               class="text-5xl text-[#9aa2c7]">
+            📦
+          </div>
+        </div>
+        <h4 class="text-base font-bold text-[#f3f5ff] mb-1">{{ productoSeleccionado.nombre }}</h4>
+        <p class="text-[#9aa2c7] text-xs mb-2 line-clamp-2">{{ productoSeleccionado.descripcion || 'Sin descripción' }}</p>
+      </div>
+
+      <!-- Selector de cantidad -->
+      <div class="bg-[#0f162d] rounded-lg p-4 mb-4">
+        <p class="text-[#9aa2c7] text-xs mb-3 text-center">¿Cuántos deseas agregar?</p>
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <button 
+            (click)="decrementarCantidad()"
+            [disabled]="cantidadSeleccionada <= 1"
+            [class.opacity-50]="cantidadSeleccionada <= 1"
+            [class.cursor-not-allowed]="cantidadSeleccionada <= 1"
+            class="w-10 h-10 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] rounded font-bold text-lg transition">
+            −
+          </button>
+          <input 
+            type="number" 
+            [(ngModel)]="cantidadSeleccionada"
+            min="1"
+            [max]="obtenerStockDisponible()"
+            class="w-16 text-center text-xl font-bold bg-[#1f2847] border border-[#b1122d] rounded py-1 text-[#f3f5ff]">
+          <button 
+            (click)="incrementarCantidad()"
+            [disabled]="!puedeIncrementar()"
+            [class.opacity-50]="!puedeIncrementar()"
+            [class.cursor-not-allowed]="!puedeIncrementar()"
+            class="w-10 h-10 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] rounded font-bold text-lg transition">
+            +
+          </button>
+        </div>
+        <p class="text-xs text-[#9aa2c7] text-center mb-3">Stock disponible: {{ obtenerStockDisponible() === Infinity ? '∞' : obtenerStockDisponible() }}</p>
+
+        <!-- Precio total -->
+        <div class="border-t border-[#1f2847] pt-3">
+          <p class="text-[#9aa2c7] text-xs mb-1">Precio total:</p>
+          <p *ngIf="productoSeleccionado" class="text-2xl font-bold text-[#b1122d]">
+            {{ (productoSeleccionado.precio * cantidadSeleccionada) | monedaColombia }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex gap-2 pt-2">
+        <button 
+          (click)="cerrarModalCantidad()"
+          class="flex-1 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] font-bold py-2 rounded transition text-sm">
+          Cancelar
+        </button>
+        <button 
+          (click)="confirmarAgregarAlCarrito()"
+          class="flex-1 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] hover:opacity-90 text-white font-bold py-2 rounded transition text-sm">
+          Agregar ({{ cantidadSeleccionada }})
         </button>
       </div>
     </div>

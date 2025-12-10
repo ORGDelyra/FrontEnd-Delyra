@@ -8,6 +8,7 @@ export interface Product {
   descripcion?: string;
   precio: number;
   cantidad: number;
+  stock?: number;  // Alias para cantidad
   images?: ProductImage[];  // Array de imágenes relacionadas
   category?: Category;      // Relación con categoría
   created_at?: string;

@@ -59,23 +59,54 @@ export class MapaUsuarios implements OnInit, AfterViewInit, OnDestroy {
       document.head.appendChild(link);
     }
 
-    // Inicializar mapa centrado en Santander de Quilichao
-    this.map = L.map('mapa-usuarios-container', {
-      center: this.SQ_CENTER,
-      zoom: 13,
-      minZoom: 11,
-      maxZoom: 18,
-      maxBounds: this.SQ_BOUNDS,
-      maxBoundsViscosity: 1.0
-    });
+    // Usar setTimeout para asegurar que el contenedor tenga dimensiones
+    setTimeout(() => {
+      const container = document.getElementById('mapa-usuarios-container');
+      if (!container) {
+        console.error('Contenedor del mapa no encontrado');
+        return;
+      }
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+      // Verificar que el contenedor tenga dimensiones
+      const rect = container.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        console.warn('Contenedor del mapa sin dimensiones, reintentando...');
+        setTimeout(() => this.initMap(), 500);
+        return;
+      }
 
-    this.markersLayer = L.layerGroup().addTo(this.map);
+      this.initMap();
+    }, 100);
+  }
 
-    if (this.branches.length) this.renderMarkers();
+  private initMap(): void {
+    try {
+      // Inicializar mapa centrado en Santander de Quilichao
+      this.map = L.map('mapa-usuarios-container', {
+        center: this.SQ_CENTER,
+        zoom: 13,
+        minZoom: 11,
+        maxZoom: 18,
+        maxBounds: this.SQ_BOUNDS,
+        maxBoundsViscosity: 1.0
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(this.map);
+
+      this.markersLayer = L.layerGroup().addTo(this.map);
+
+      // Forzar recalcular tamaño del mapa
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize();
+          if (this.branches.length) this.renderMarkers();
+        }
+      }, 200);
+    } catch (error) {
+      console.error('Error inicializando mapa:', error);
+    }
   }
 
   fitToQuilichao() {
@@ -95,65 +126,73 @@ export class MapaUsuarios implements OnInit, AfterViewInit, OnDestroy {
   }
 
   renderMarkers() {
-    this.markersLayer.clearLayers();
+    if (!this.map || !this.markersLayer) return;
 
-    for (const b of this.filteredBranches) {
-      const lat = b.latitud ? parseFloat(b.latitud) : NaN;
-      const lng = b.longitud ? parseFloat(b.longitud) : NaN;
+    try {
+      // Asegurar que el contenedor tenga tamaño antes de pintar
+      this.map.invalidateSize({ pan: false });
+      this.markersLayer.clearLayers();
 
-      // Validar coordenadas
-      if (isNaN(lat) || isNaN(lng)) {
-        console.warn(`Sucursal "${b.nombre_sucursal}" sin coordenadas válidas`);
-        continue;
+      for (const b of this.filteredBranches) {
+        const lat = b.latitud ? parseFloat(b.latitud) : NaN;
+        const lng = b.longitud ? parseFloat(b.longitud) : NaN;
+
+        // Validar coordenadas
+        if (isNaN(lat) || isNaN(lng)) {
+          console.warn(`Sucursal "${b.nombre_sucursal}" sin coordenadas válidas`);
+          continue;
+        }
+
+        // Crear icono personalizado
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: '<div style="background-color:#7dff7a;width:28px;height:28px;border-radius:50%;border:3px solid #04060f;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><span style="font-size:16px;">📍</span></div>',
+          iconSize: [28, 28],
+          iconAnchor: [14, 28]
+        });
+
+        const marker = L.marker([lat, lng], { icon: customIcon });
+
+        // Crear popup con diseño mejorado
+        const logoHtml = b.logo_comercio
+          ? `<div style="margin-bottom:8px;text-align:center;"><img src="${b.logo_comercio}" alt="logo" style="width:100px;height:60px;object-fit:cover;border-radius:8px;border:2px solid #7dff7a;"/></div>`
+          : '';
+
+        const popupContent = `
+          <div style="min-width:180px;font-family:system-ui,-apple-system,sans-serif;">
+            ${logoHtml}
+            <div style="font-size:16px;font-weight:bold;color:#04060f;margin-bottom:6px;">${b.nombre_sucursal}</div>
+            <div style="font-size:13px;color:#555;margin-bottom:4px;">📍 ${b.direccion || 'Dirección no disponible'}</div>
+            <div style="font-size:12px;color:#666;border-top:1px solid #eee;padding-top:6px;margin-top:6px;">
+              <div>NIT: ${b.nit || 'N/A'}</div>
+            </div>
+            <div style="margin-top:10px;text-align:center;">
+              <a href="/tienda/${b.id}" style="display:inline-block;padding:8px 16px;background:#007bff;color:white;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px;">
+                🏪 Ver Tienda
+              </a>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent, {
+          maxWidth: 300,
+          className: 'custom-popup'
+        });
+
+        marker.addTo(this.markersLayer);
       }
 
-      // Crear icono personalizado
-      const customIcon = L.divIcon({
-        className: 'custom-marker',
-        html: '<div style="background-color:#7dff7a;width:28px;height:28px;border-radius:50%;border:3px solid #04060f;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><span style="font-size:16px;">📍</span></div>',
-        iconSize: [28, 28],
-        iconAnchor: [14, 28]
-      });
-
-      const marker = L.marker([lat, lng], { icon: customIcon });
-
-      // Crear popup con diseño mejorado
-      const logoHtml = b.logo_comercio
-        ? `<div style="margin-bottom:8px;text-align:center;"><img src="${b.logo_comercio}" alt="logo" style="width:100px;height:60px;object-fit:cover;border-radius:8px;border:2px solid #7dff7a;"/></div>`
-        : '';
-
-      const popupContent = `
-        <div style="min-width:180px;font-family:system-ui,-apple-system,sans-serif;">
-          ${logoHtml}
-          <div style="font-size:16px;font-weight:bold;color:#04060f;margin-bottom:6px;">${b.nombre_sucursal}</div>
-          <div style="font-size:13px;color:#555;margin-bottom:4px;">📍 ${b.direccion || 'Dirección no disponible'}</div>
-          <div style="font-size:12px;color:#666;border-top:1px solid #eee;padding-top:6px;margin-top:6px;">
-            <div>NIT: ${b.nit || 'N/A'}</div>
-          </div>
-          <div style="margin-top:10px;text-align:center;">
-            <a href="/tienda/${b.id}" style="display:inline-block;padding:8px 16px;background:#007bff;color:white;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px;">
-              🏪 Ver Tienda
-            </a>
-          </div>
-        </div>
-      `;
-
-      marker.bindPopup(popupContent, {
-        maxWidth: 300,
-        className: 'custom-popup'
-      });
-
-      marker.addTo(this.markersLayer);
-    }
-
-    // Ajustar vista si hay marcadores
-    const allMarkers = this.markersLayer.getLayers();
-    if (allMarkers.length > 0) {
-      const group = L.featureGroup(allMarkers as L.Marker[]);
-      this.map.fitBounds(group.getBounds().pad(0.15));
-    } else {
-      // Si no hay marcadores, centrar en Quilichao
-      this.map.setView(this.SQ_CENTER, 13);
+      // Ajustar vista si hay marcadores
+      const allMarkers = this.markersLayer.getLayers();
+      if (allMarkers.length > 0) {
+        const group = L.featureGroup(allMarkers as L.Marker[]);
+        this.map.fitBounds(group.getBounds().pad(0.15));
+      } else {
+        // Si no hay marcadores, centrar en Quilichao
+        this.map.setView(this.SQ_CENTER, 13);
+      }
+    } catch (error) {
+      console.error('Error renderizando marcadores:', error);
     }
   }
 

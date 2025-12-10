@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { API_CONFIG } from '../config/api.config';
+import { mapIdRolToString } from '../utils/rol.utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = 'https://backend-delyra-production.up.railway.app/api'; // URL de el backend en Laravel
+  private apiUrl = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -55,7 +57,13 @@ export class AuthService {
         // Guardar usuario
         const usuario = res.usuario || res.user || res.data?.user;
         if (usuario) {
-          localStorage.setItem('user', JSON.stringify(usuario));
+          // Agregar el rol string basado en id_rol
+          const usuarioConRol = {
+            ...usuario,
+            rol: mapIdRolToString(usuario.id_rol || usuario.rol_id)
+          };
+          localStorage.setItem('user', JSON.stringify(usuarioConRol));
+          localStorage.setItem('usuarioData', JSON.stringify(usuarioConRol)); // También guardar en usuarioData para compatibilidad
           console.log("[🔑 AuthService.login] ✅ Usuario guardado:", usuario.email || usuario.correo || 'sin email');
           console.log("[🔑 AuthService.login] 📊 Datos del usuario:", usuario);
         } else {
@@ -80,6 +88,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('usuarioData');
     this.isAuthenticatedSubject.next(false);
   }
 

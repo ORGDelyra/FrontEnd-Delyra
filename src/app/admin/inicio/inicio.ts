@@ -84,7 +84,7 @@ export class InicioAdmin implements OnInit {
   cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.router.navigate(['/seleccionar-rol']);
+    this.router.navigate(['/bienvenida']);
   }
 }
 

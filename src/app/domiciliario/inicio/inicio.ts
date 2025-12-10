@@ -3,13 +3,13 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomiciliarioService } from '../../services/domiciliario.service';
 import { PedidosService } from '../../services/pedidos.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Cart } from '../../interfaces/cart.interface';
-import { MenuLateral, MenuItem } from '../../components/menu-lateral/menu-lateral';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterModule, CommonModule, MenuLateral],
+  imports: [RouterModule, CommonModule, MonedaColombianaPipe],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
@@ -21,7 +21,6 @@ export class InicioDomiciliario implements OnInit {
   cargandoDisponibles: boolean = false;
   menuAbierto: boolean = false;
   vistaActual: 'disponibles' | 'mis-entregas' = 'disponibles'; // Pestaña activa
-  menuItems: MenuItem[] = [];
 
   constructor(
     private router: Router,
@@ -30,21 +29,8 @@ export class InicioDomiciliario implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.inicializarMenuItems();
     this.cargarPedidosDisponibles();
     this.cargarMisEntregas();
-  }
-
-  inicializarMenuItems() {
-    this.menuItems = [
-      { icon: '📦', label: 'Pedidos Disponibles', action: () => this.vistaActual = 'disponibles' },
-      { icon: '🚚', label: 'Mis Entregas', action: () => this.vistaActual = 'mis-entregas' },
-      { icon: '👤', label: 'Mi Perfil', route: '/domiciliario/perfil' },
-      { icon: '📊', label: 'Estadísticas' },
-      { icon: '💬', label: 'Chat' },
-      { icon: '⚙️', label: 'Configuración' },
-      { icon: '❓', label: 'Ayuda' }
-    ];
   }
 
   cargarPedidosDisponibles() {
@@ -107,7 +93,29 @@ export class InicioDomiciliario implements OnInit {
       },
       error: (err) => {
         console.error('❌ Error al tomar pedido:', err);
-        alert(err.error?.mensaje || 'Error al tomar el pedido. Puede que otro domiciliario lo haya tomado primero.');
+        console.error('📋 Detalles completos del error:', {
+          status: err.status,
+          statusText: err.statusText,
+          error: err.error,
+          message: err.message
+        });
+
+        let mensaje = 'Error al tomar el pedido.';
+
+        if (err.status === 500) {
+          mensaje = err.error?.mensaje || err.error?.error || err.error?.message || 'Error interno del servidor. Verifica que el pedido esté disponible.';
+        } else if (err.status === 400) {
+          mensaje = err.error?.mensaje || 'El pedido no está disponible o ya fue tomado.';
+        } else if (err.status === 403) {
+          mensaje = 'No tienes permisos para tomar este pedido.';
+        } else if (err.error?.mensaje) {
+          mensaje = err.error.mensaje;
+        }
+
+        alert('❌ ' + mensaje);
+        console.log('💡 Mensaje mostrado al usuario:', mensaje);
+        // Recargar la lista de disponibles por si acaso
+        this.cargarPedidosDisponibles();
       }
     });
   }
@@ -138,17 +146,9 @@ export class InicioDomiciliario implements OnInit {
     this.router.navigate(['/domiciliario/pedidos']);
   }
 
-  toggleMenu() {
-    this.menuAbierto = !this.menuAbierto;
-  }
-
-  cerrarMenu() {
-    this.menuAbierto = false;
-  }
-
   cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.router.navigate(['/seleccionar-rol']);
+    this.router.navigate(['/bienvenida']);
   }
 }

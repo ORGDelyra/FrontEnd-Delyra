@@ -61,6 +61,8 @@ export class SelectorUbicacion implements OnInit, AfterViewInit, OnDestroy {
       maxZoom: 19
     }).addTo(this.map);
 
+
+
     // Forzar estilos en el contenedor del mapa después de que Leaflet lo cree
     setTimeout(() => {
       const mapContainer = document.getElementById('mapa-selector') as HTMLElement;
@@ -127,9 +129,9 @@ export class SelectorUbicacion implements OnInit, AfterViewInit, OnDestroy {
           this.buscando = false;
         },
         (error) => {
-          this.mensaje = 'No se pudo obtener tu ubicación. Por favor, busca tu dirección.';
+          this.mensaje = 'No se pudo obtener tu ubicación. Puedes buscar tu dirección manualmente.';
           this.buscando = false;
-          console.error('Error de geolocalización:', error);
+          console.warn('Error de geolocalización:', error);
         }
       );
     }

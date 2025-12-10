@@ -3,13 +3,14 @@ import { Observable } from 'rxjs';
 import { Branch, CreateBranchRequest } from '../interfaces/branch.interface';
 import { Product, CreateProductRequest, UpdateProductRequest } from '../interfaces/product.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VendedorService {
 
-  private api = 'https://backend-delyra-production.up.railway.app/api';
+  private api = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
 
   constructor(private http: HttpClient) {}
 

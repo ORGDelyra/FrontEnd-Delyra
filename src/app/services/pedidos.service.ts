@@ -9,13 +9,14 @@ import {
   MarcarEntregadoRequest,
   MarcarRecogidoRequest
 } from '../interfaces/cart.interface';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PedidosService {
 
-  private api = 'https://backend-delyra-production.up.railway.app/api';
+  private api = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
 
   constructor(private http: HttpClient) {}
 

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BranchService {
-  private apiUrl = 'https://backend-delyra-production.up.railway.app/api/branch';
+  private apiUrl = API_CONFIG.BASE_URL + API_CONFIG.endpoints.branch;
 
   constructor(private http: HttpClient) {}
 

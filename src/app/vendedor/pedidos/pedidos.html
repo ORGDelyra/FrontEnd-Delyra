@@ -84,7 +84,7 @@
         <div class="flex flex-col gap-4 md:flex-row md:justify-between">
           <div class="flex-1">
             <p class="text-sm text-[#9aa2c7]">Pedido #{{ pedido.id }}</p>
-            <p class="text-lg font-semibold">Total: ${{ pedido.total | number:'1.0-0' }}</p>
+            <p class="text-lg font-semibold">Total: {{ pedido.total | monedaColombia }}</p>
             <p class="text-sm text-[#6b739c]">Fecha: {{ formatearFecha(pedido.created_at) }}</p>
 
             <div *ngIf="pedido.usuario" class="mt-3 text-sm text-[#9aa2c7]">
@@ -117,7 +117,7 @@
           <p class="font-semibold">Productos</p>
           <div *ngFor="let producto of pedido.productos" class="flex justify-between">
             <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
-            <span class="font-semibold">${{ producto.subtotal | number:'1.0-0' }}</span>
+            <span class="font-semibold">{{ producto.subtotal | monedaColombia }}</span>
           </div>
         </div>
 

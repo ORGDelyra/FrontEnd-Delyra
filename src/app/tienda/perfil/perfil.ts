@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductosService } from '../../services/productos.service';
 import { CarritoService } from '../../services/carrito.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Product } from '../../interfaces/product.interface';
 import { Branch } from '../../interfaces/branch.interface';
 import { HttpClient } from '@angular/common/http';
@@ -10,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-perfil-tienda',
   standalone: true,
-  imports: [ CommonModule, RouterModule ],
+  imports: [ CommonModule, RouterModule, MonedaColombianaPipe ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
