@@ -14,7 +14,7 @@ const BASE_BACKEND = 'https://backend-delyra-production.up.railway.app';
 export const API_CONFIG = {
   // URL base del backend
   // Usa siempre la URL completa del backend
-    BASE_URL: 'http://127.0.0.1:8000',
+    BASE_URL: 'https://backend-delyra-production.up.railway.app',
 
   // Endpoints
   endpoints: {
