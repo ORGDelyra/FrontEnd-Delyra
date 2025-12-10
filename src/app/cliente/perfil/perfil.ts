@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { UserService } from '../../services/user.service';
 import { ProfileUploadComponent } from '../../components/profile-upload/profile-upload';
 
 @Component({
@@ -26,7 +27,8 @@ export class PerfilCliente implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private imageUploadService: ImageUploadService
+    private imageUploadService: ImageUploadService,
+    private userService: UserService
   ) {
     this.form = this.fb.group({
       primer_nombre: ['', Validators.required],
@@ -44,7 +46,7 @@ export class PerfilCliente implements OnInit {
     if (userStr) {
       this.usuario = JSON.parse(userStr);
       this.cargarDatos();
-      this.fotoPerfil = this.usuario.foto_perfil || '';
+      this.fotoPerfil = this.usuario.profile_url || this.usuario.foto_perfil || '';
     }
     this.desactivarFormulario();
   }
@@ -62,13 +64,31 @@ export class PerfilCliente implements OnInit {
   }
 
   onProfileImageUploaded(imageUrl: string) {
+    this.cargandoFoto = true;
     this.fotoPerfil = imageUrl;
-    if (this.usuario) {
-      this.usuario.foto_perfil = imageUrl;
-      localStorage.setItem('user', JSON.stringify(this.usuario));
-    }
-    this.mensajeExito = 'Foto de perfil actualizada';
-    setTimeout(() => this.mensajeExito = '', 3000);
+    
+    // Guardar en el backend
+    this.userService.actualizarFotoPerfil(imageUrl).subscribe({
+      next: (response) => {
+        console.log('✅ Foto de perfil guardada en el backend:', response);
+        
+        // Actualizar localStorage
+        if (this.usuario) {
+          this.usuario.profile_url = imageUrl;
+          localStorage.setItem('user', JSON.stringify(this.usuario));
+        }
+        
+        this.mensajeExito = '✅ Foto de perfil actualizada correctamente';
+        this.cargandoFoto = false;
+        setTimeout(() => this.mensajeExito = '', 3000);
+      },
+      error: (error) => {
+        console.error('❌ Error al guardar foto en backend:', error);
+        this.mensajeError = 'Error al guardar la foto de perfil';
+        this.cargandoFoto = false;
+        setTimeout(() => this.mensajeError = '', 3000);
+      }
+    });
   }
 
   desactivarFormulario() {
@@ -98,11 +118,28 @@ export class PerfilCliente implements OnInit {
 
       const response = await this.imageUploadService.uploadImage(file, 'perfil');
       this.fotoPerfil = response.secure_url;
-      this.usuario.foto_perfil = response.secure_url;
-      localStorage.setItem('user', JSON.stringify(this.usuario));
-      this.mensajeExito = 'Foto de perfil actualizada';
-      this.cargandoFoto = false;
-      setTimeout(() => this.mensajeExito = '', 3000);
+      
+      // Guardar en el backend
+      this.userService.actualizarFotoPerfil(response.secure_url).subscribe({
+        next: (backendResponse) => {
+          console.log('✅ Foto guardada en backend:', backendResponse);
+          
+          // Actualizar localStorage
+          this.usuario.profile_url = response.secure_url;
+          localStorage.setItem('user', JSON.stringify(this.usuario));
+          
+          this.mensajeExito = '✅ Foto de perfil actualizada correctamente';
+          this.cargandoFoto = false;
+          setTimeout(() => this.mensajeExito = '', 3000);
+        },
+        error: (error) => {
+          console.error('❌ Error al guardar en backend:', error);
+          this.mensajeError = 'Error al guardar la foto de perfil';
+          this.cargandoFoto = false;
+          setTimeout(() => this.mensajeError = '', 3000);
+        }
+      });
+      
     } catch (e: any) {
       this.mensajeError = 'Error al validar la imagen' + (e?.message ? ': ' + e.message : '');
       this.cargandoFoto = false;

@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { HomeGuard } from './guards/home.guard';
 
 /* ================================
    PANTALLAS DE SELECCIÓN
 ================================ */
-import { SeleccionRol } from './seleccion-rol/seleccion-rol';
-import { SeleccionInicio } from './seleccion-inicio/seleccion-inicio';
+import { Bienvenida } from './bienvenida/bienvenida';
 import { SeleccionRegistro } from './seleccion-registro/seleccion-registro';
 
 /* ================================
@@ -62,8 +62,7 @@ import { CategoriasAdmin } from './admin/categorias/categorias';
 export const routes: Routes = [
 
   /* Selección inicial */
-  { path: 'seleccionar-rol', component: SeleccionRol },
-  { path: 'seleccionar-inicio', component: SeleccionInicio },
+  { path: 'bienvenida', component: Bienvenida },
   { path: 'seleccionar-registro', component: SeleccionRegistro },
 
   /* Autenticación (compartido) */
@@ -111,5 +110,5 @@ export const routes: Routes = [
    { path: 'admin/categorias', component: CategoriasAdmin },
 
   /* Default */
-  { path: '', redirectTo: 'seleccionar-rol', pathMatch: 'full' }
+  { path: '', redirectTo: 'bienvenida', pathMatch: 'full' }
 ];

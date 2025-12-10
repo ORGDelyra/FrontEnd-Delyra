@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PedidosService } from '../../services/pedidos.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Cart } from '../../interfaces/cart.interface';
 
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, MonedaColombianaPipe],
   templateUrl: './pedidos.html',
   styleUrl: './pedidos.css',
 })

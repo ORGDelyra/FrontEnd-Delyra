@@ -29,6 +29,7 @@
     "@capacitor/android": "^7.4.4",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
+    "@mercadopago/sdk-js": "^0.0.3",
     "@tailwindcss/postcss": "^4.1.17",
     "leaflet": "^1.9.4",
     "postcss": "^8.5.6",

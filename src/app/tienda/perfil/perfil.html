@@ -64,7 +64,7 @@
         <div class="producto-info">
           <h3>{{ producto.nombre }}</h3>
           <p class="descripcion">{{ producto.descripcion || 'Sin descripción' }}</p>
-          <p class="precio">${{ producto.precio | number:'1.0-0' }}</p>
+          <p class="precio">{{ producto.precio | monedaColombia }}</p>
           <button class="btn-agregar" (click)="agregarAlCarrito(producto)" [disabled]="producto.cantidad === 0">
             🛒 Agregar al carrito
           </button>

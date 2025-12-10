@@ -5,13 +5,14 @@ import { User } from '../interfaces/user.interface';
 import { Branch } from '../interfaces/branch.interface';
 import { Product } from '../interfaces/product.interface';
 import { Cart } from '../interfaces/cart.interface';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  private api = 'https://backend-delyra-production.up.railway.app/api';
+  private api = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
 
   constructor(private http: HttpClient) {}
 

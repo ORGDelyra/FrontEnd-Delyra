@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cart, ProductSelect, AddToCartRequest, PaymentTransaction } from '../interfaces/cart.interface';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarritoService {
 
-  private api = 'https://backend-delyra-production.up.railway.app/api';
+  private api = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
 
   constructor(private http: HttpClient) {}
 

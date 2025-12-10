@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegistroService {
 
-  private api = 'https://backend-delyra-production.up.railway.app/api';
+  private api = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
 
   constructor(private http: HttpClient) {}
 

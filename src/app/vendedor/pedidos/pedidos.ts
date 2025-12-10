@@ -3,12 +3,13 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidosService } from '../../services/pedidos.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Cart } from '../../interfaces/cart.interface';
 
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, MonedaColombianaPipe],
   templateUrl: './pedidos.html',
   styleUrl: './pedidos.css',
 })
@@ -97,8 +98,8 @@ export class PedidosVendedor implements OnInit {
       return;
     }
 
-    this.pedidosService.asignarDomiciliario(this.pedidoSeleccionado, { 
-      id_domiciliario: this.domiciliarioSeleccionado 
+    this.pedidosService.asignarDomiciliario(this.pedidoSeleccionado, {
+      id_domiciliario: this.domiciliarioSeleccionado
     }).subscribe({
       next: (res: any) => {
         this.mensajeExito = res.mensaje || 'Domiciliario asignado correctamente';
@@ -148,8 +149,8 @@ export class PedidosVendedor implements OnInit {
   }
 
   puedeAsignarDomiciliario(pedido: Cart): boolean {
-    return pedido.tipo_entrega === 'domicilio' && 
-           !pedido.id_domiciliario && 
+    return pedido.tipo_entrega === 'domicilio' &&
+           !pedido.id_domiciliario &&
            (pedido.estado_pedido === 'confirmado' || pedido.estado_pedido === 'en_preparacion');
   }
 
@@ -157,9 +158,9 @@ export class PedidosVendedor implements OnInit {
     if (!fecha) return 'Fecha no disponible';
     try {
       const date = new Date(fecha);
-      return date.toLocaleDateString('es-ES', { 
-        year: 'numeric', 
-        month: 'long', 
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'

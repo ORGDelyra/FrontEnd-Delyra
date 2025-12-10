@@ -48,7 +48,7 @@
         </div>
         <h3 class="font-semibold text-lg mb-1">{{ producto.nombre }}</h3>
         <p class="text-sm text-[#9aa2c7] mb-1">Cantidad: {{ producto.cantidad }}</p>
-        <p class="text-2xl font-bold text-[#7dff7a] mb-4">${{ producto.precio | number:'1.0-0' }}</p>
+        <p class="text-2xl font-bold text-[#7dff7a] mb-4">{{ producto.precio | monedaColombia }}</p>
         <div class="mt-auto flex gap-2">
           <button routerLink="/vendedor/productos/editar/{{ producto.id }}" class="flex-1 px-3 py-2 rounded-2xl border border-[#1f2847] text-sm font-semibold hover:text-[#7dff7a]">
             Editar

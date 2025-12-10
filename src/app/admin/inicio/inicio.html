@@ -1,23 +1,11 @@
-<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] py-8 px-4">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-      <div class="flex items-center gap-4">
-        <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" />
-        <div>
-          <h1 class="text-4xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-2">Panel de Administración</h1>
-          <p class="text-[#9aa2c7]">Gestiona todos los aspectos de la plataforma</p>
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Contenido principal -->
+    <main class="overflow-auto">
+        <!-- Mensaje de error -->
+        <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {{ mensajeError }}
         </div>
-      </div>
-      <button (click)="cerrarSesion()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
-        Cerrar Sesión
-      </button>
-    </div>
-
-    <!-- Mensaje de error -->
-    <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-      {{ mensajeError }}
-    </div>
 
     <!-- Estadísticas -->
     <div *ngIf="cargando" class="text-center py-12">
@@ -132,6 +120,7 @@
         </div>
       </div>
     </div>
+      </main>
   </div>
 </div>
 

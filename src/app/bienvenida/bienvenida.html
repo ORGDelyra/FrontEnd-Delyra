@@ -1,15 +1,29 @@
 <div class="min-h-screen bg-[#04060f] text-[#f3f5ff] flex items-center justify-center py-8 px-4">
-  <div class="max-w-4xl w-full text-center">
+  <div class="max-w-4xl w-full">
     <!-- Logo y Título -->
-    <div class="mb-12">
+    <div class="text-center mb-12">
       <h1 class="text-5xl font-extrabold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-4 font-[Poppins]">Delyra</h1>
       <p class="text-xl text-[#d4a5b4]">Plataforma de Delivery y Comercio Local</p>
+    </div>
+
+    <!-- Hero - Explorar productos (sin login) -->
+    <div class="mb-12 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] rounded-2xl p-8 shadow-2xl">
+      <div class="text-center">
+        <div class="text-5xl mb-4">🛍️</div>
+        <h2 class="text-3xl font-bold text-white mb-3">Explora nuestro catálogo</h2>
+        <p class="text-lg text-gray-100 mb-6">Descubre los mejores productos y negocios locales sin necesidad de registrarse</p>
+        <button 
+          (click)="irAProductos()"
+          class="bg-white hover:bg-gray-100 text-[#b1122d] font-bold py-3 px-8 rounded-lg transition duration-200 text-lg shadow-lg">
+          Explorar Productos →
+        </button>
+      </div>
     </div>
 
     <!-- Tarjetas de opciones -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
       <!-- Opción Registro -->
-      <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-xl p-8 hover:shadow-xl hover:border-[#7dff7a] transition-all cursor-pointer" (click)="irARegistro()">
+      <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-xl p-8 hover:shadow-xl hover:border-[#b1122d] transition-all cursor-pointer" (click)="irARegistro()">
         <div class="text-6xl mb-4">📝</div>
         <h2 class="text-2xl font-bold text-[#f3f5ff] mb-3">Registrarse</h2>
         <p class="text-[#9aa2c7] mb-6">Crea una cuenta nueva en Delyra</p>
@@ -19,7 +33,7 @@
       </div>
 
       <!-- Opción Inicio de Sesión -->
-      <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-xl p-8 hover:shadow-xl hover:border-[#7dff7a] transition-all cursor-pointer" (click)="irAInicio()">
+      <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-xl p-8 hover:shadow-xl hover:border-[#b1122d] transition-all cursor-pointer" (click)="irAInicio()">
         <div class="text-6xl mb-4">🔐</div>
         <h2 class="text-2xl font-bold text-[#f3f5ff] mb-3">Iniciar Sesión</h2>
         <p class="text-[#9aa2c7] mb-6">Accede a tu cuenta existente</p>
@@ -30,7 +44,7 @@
     </div>
 
     <!-- Información adicional -->
-    <div class="text-[#9aa2c7] text-sm">
+    <div class="text-center text-[#9aa2c7] text-sm">
       <p>Selecciona una opción para continuar</p>
     </div>
   </div>

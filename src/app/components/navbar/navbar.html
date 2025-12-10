@@ -1,0 +1,140 @@
+<header class="border-b border-[#1f2847] bg-[#04060f] sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <!-- Logo y título siempre visible -->
+    <div class="flex items-center gap-3">
+      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" width="40" height="40" />
+      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-tr from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent">
+        Delyra
+      </h1>
+    </div>
+  </div>
+
+  <!-- Barra de navegación secundaria (solo cuando hay sesión) -->
+  <div *ngIf="isAuthenticated" class="border-t border-[#1f2847] bg-[#0b1020]">
+    <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
+      <!-- Botón menú lateral (izquierda) -->
+      <button (click)="toggleMenuLateral()" class="flex items-center gap-2 text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 font-semibold">
+        <span class="text-xl">☰</span>
+        <span class="text-sm">Menú</span>
+      </button>
+
+      <!-- Panel menú lateral desplegable -->
+      <div *ngIf="menuLateralAbierto" class="fixed left-0 top-[120px] w-64 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] shadow-xl rounded-r-lg z-50 transition-all duration-300">
+        <!-- Botón cerrar -->
+        <button
+          (click)="cerrarMenuLateral()"
+          class="w-full flex justify-between items-center p-4 text-[#04060f] hover:text-[#8b0000] transition font-bold border-b border-[#d4a5a5]">
+          <h3 class="text-lg">Menú</h3>
+          <span class="text-xl">◀</span>
+        </button>
+
+        <!-- Menú items -->
+        <ul class="space-y-2 px-2 pb-4 pt-2">
+          <li *ngFor="let item of menuItems">
+            <ng-container *ngIf="item.route">
+              <a [routerLink]="item.route" (click)="cerrarMenuLateral()" class="flex items-center space-x-3 text-[#04060f] hover:text-[#8b0000] transition p-3 rounded hover:bg-[#e8c4c4]">
+                <span class="text-xl">{{ item.icon }}</span>
+                <span>{{ item.label }}</span>
+              </a>
+            </ng-container>
+            <ng-container *ngIf="!item.route">
+              <button class="flex items-center space-x-3 text-[#04060f] hover:text-[#8b0000] transition p-3 rounded hover:bg-[#e8c4c4] w-full text-left opacity-50 cursor-not-allowed">
+                <span class="text-xl">{{ item.icon }}</span>
+                <span>{{ item.label }}</span>
+              </button>
+            </ng-container>
+          </li>
+
+          <!-- Separador y botón Cerrar Sesión -->
+          <li class="border-t border-[#d4a5a5] pt-2 mt-2">
+            <button (click)="cerrarSesion()" class="flex items-center space-x-3 text-red-600 hover:text-red-700 transition p-3 rounded hover:bg-[#ffe0e0] w-full text-left">
+              <span class="text-xl">🚪</span>
+              <span>Cerrar Sesión</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Botón menú móvil (derecha - solo para dispositivos pequeños) -->
+      <button (click)="toggleMenu()" class="md:hidden flex items-center gap-2 text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 font-semibold">
+        <span class="text-sm">Accesos</span>
+        <span class="text-xl">▼</span>
+      </button>
+
+      <!-- Botón menú móvil (derecha - solo para dispositivos pequeños) -->
+      <button (click)="toggleMenu()" class="md:hidden flex items-center gap-2 text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 font-semibold">
+        <span class="text-sm">Accesos</span>
+        <span class="text-xl">▼</span>
+      </button>
+
+      <!-- Menú desplegable móvil (accesos rápidos) -->
+      <div *ngIf="menuAbierto" class="absolute right-4 top-full mt-1 w-52 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50 md:hidden">
+        <a [routerLink]="linkInicio()" (click)="cerrarMenu()" class="block px-4 py-2 text-[#7dff7a] hover:bg-[#1f2847] hover:text-[#f3f5ff] transition font-semibold">🏠 Inicio</a>
+        <hr class="my-2 border-[#1f2847]">
+
+        <ng-container [ngSwitch]="rol">
+          <ng-container *ngSwitchCase="'cliente'">
+            <a routerLink="/cliente/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">👤 Mi Perfil</a>
+            <a routerLink="/carrito/listar" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">🛒 Carrito</a>
+            <a routerLink="/cliente/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📋 Mis Pedidos</a>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'vendedor'">
+            <a routerLink="/vendedor/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">👤 Mi Perfil</a>
+            <a routerLink="/vendedor/sucursal" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">🏪 Mi Sucursal</a>
+            <a routerLink="/vendedor/productos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📦 Mis Productos</a>
+            <a routerLink="/vendedor/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📋 Pedidos</a>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'domiciliario'">
+            <a routerLink="/domiciliario/inicio" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">🚗 Entregas</a>
+            <a routerLink="/domiciliario/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📦 Mis Pedidos</a>
+            <a routerLink="/domiciliario/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">👤 Mi Perfil</a>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'admin'">
+            <a routerLink="/admin/inicio" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">⚙️ Dashboard</a>
+          </ng-container>
+        </ng-container>
+
+        <hr class="my-2 border-[#1f2847]">
+        <button (click)="cerrarSesion(); cerrarMenu()" class="w-full text-left px-4 py-2 text-red-400 hover:bg-[#2f1518] transition">Cerrar Sesión</button>
+      </div>
+
+      <!-- Navegación escritorio -->
+      <div class="hidden md:flex gap-2 items-center flex-1 ml-8">
+        <a [routerLink]="linkInicio()" class="nav-btn-sm text-[#7dff7a] font-semibold">🏠 Inicio</a>
+
+        <ng-container [ngSwitch]="rol">
+          <ng-container *ngSwitchCase="'cliente'">
+            <a routerLink="/cliente/perfil" class="nav-btn-sm">👤 Perfil</a>
+            <a routerLink="/carrito/listar" class="nav-btn-sm">🛒 Carrito</a>
+            <a routerLink="/cliente/pedidos" class="nav-btn-sm">📋 Pedidos</a>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'vendedor'">
+            <a routerLink="/vendedor/perfil" class="nav-btn-sm">👤 Perfil</a>
+            <a routerLink="/vendedor/sucursal" class="nav-btn-sm">🏪 Sucursal</a>
+            <a routerLink="/vendedor/productos" class="nav-btn-sm">📦 Productos</a>
+            <a routerLink="/vendedor/pedidos" class="nav-btn-sm">📋 Pedidos</a>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'domiciliario'">
+            <a routerLink="/domiciliario/inicio" class="nav-btn-sm">🚗 Entregas</a>
+            <a routerLink="/domiciliario/pedidos" class="nav-btn-sm">📦 Pedidos</a>
+            <a routerLink="/domiciliario/perfil" class="nav-btn-sm">👤 Perfil</a>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'admin'">
+            <a routerLink="/admin/inicio" class="nav-btn-sm">⚙️ Dashboard</a>
+          </ng-container>
+        </ng-container>
+      </div>
+
+      <!-- Botón cerrar sesión (escritorio) -->
+      <button (click)="cerrarSesion()" class="hidden md:block px-4 py-1.5 rounded-xl bg-[#ff5f5f] text-[#05060c] text-sm font-semibold hover:bg-[#ff7373] transition">
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</header>

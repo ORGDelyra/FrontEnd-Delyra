@@ -1,24 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ProductosService } from '../../services/productos.service';
 import { CarritoService } from '../../services/carrito.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Product, Category } from '../../interfaces/product.interface';
 
 @Component({
   selector: 'app-listar',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, MonedaColombianaPipe, FormsModule],
   templateUrl: './listar.html',
   styleUrl: './listar.css',
 })
 export class ListarProductos implements OnInit {
 
   productos: Product[] = [];
+  productosFiltrados: Product[] = [];
   categorias: Category[] = [];
   categoriaSeleccionada: string = 'Todas';
   terminoBusqueda: string = '';
   cargando: boolean = false;
+
+  // Variables para el modal de cantidad
+  mostrarModalCantidad: boolean = false;
+  productoSeleccionado: Product | null = null;
+  cantidadSeleccionada: number = 1;
+  Infinity = Infinity;
 
   constructor(
     private productosService: ProductosService,
@@ -50,21 +59,93 @@ export class ListarProductos implements OnInit {
     this.productosService.obtenerProductos().subscribe({
       next: (prods: Product[]) => {
         this.productos = prods;
-        if (this.categoriaSeleccionada !== 'Todas') {
-          this.productos = this.productos.filter(p =>
-            this.categorias.find(c => c.id === p.id_categoria)?.nombre_categoria === this.categoriaSeleccionada
-          );
-        }
-        if (this.terminoBusqueda) {
-          this.productos = this.productos.filter(p =>
-            p.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
-          );
-        }
+        this.aplicarFiltros();
         this.cargando = false;
       },
       error: (err) => {
         console.error("Error al cargar productos:", err);
         this.cargando = false;
+      }
+    });
+  }
+
+  aplicarFiltros() {
+    let filtrados = [...this.productos];
+
+    // Filtro por categoría
+    if (this.categoriaSeleccionada !== 'Todas') {
+      filtrados = filtrados.filter(p =>
+        this.categorias.find(c => c.id === p.id_categoria)?.nombre_categoria === this.categoriaSeleccionada
+      );
+    }
+
+    // Filtro por búsqueda
+    if (this.terminoBusqueda) {
+      filtrados = filtrados.filter(p =>
+        p.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+        (p.descripcion && p.descripcion.toLowerCase().includes(this.terminoBusqueda.toLowerCase()))
+      );
+    }
+
+    this.productosFiltrados = filtrados;
+  }
+
+  onBusquedaChange() {
+    this.aplicarFiltros();
+  }
+
+  abrirModalCantidad(producto: Product) {
+    if (!producto.id) {
+      alert('Error: Producto no válido');
+      return;
+    }
+    this.productoSeleccionado = producto;
+    this.cantidadSeleccionada = 1;
+    this.mostrarModalCantidad = true;
+  }
+
+  cerrarModalCantidad() {
+    this.mostrarModalCantidad = false;
+    this.productoSeleccionado = null;
+    this.cantidadSeleccionada = 1;
+  }
+
+  incrementarCantidad() {
+    const stockDisponible = this.productoSeleccionado?.stock || this.productoSeleccionado?.cantidad || Infinity;
+    if (this.cantidadSeleccionada < stockDisponible) {
+      this.cantidadSeleccionada++;
+    }
+  }
+
+  obtenerStockDisponible(): number {
+    return this.productoSeleccionado?.stock || this.productoSeleccionado?.cantidad || Infinity;
+  }
+
+  puedeIncrementar(): boolean {
+    return this.cantidadSeleccionada < this.obtenerStockDisponible();
+  }
+
+  decrementarCantidad() {
+    if (this.cantidadSeleccionada > 1) {
+      this.cantidadSeleccionada--;
+    }
+  }
+
+  confirmarAgregarAlCarrito() {
+    if (!this.productoSeleccionado || !this.productoSeleccionado.id) {
+      alert('Error: Producto no válido');
+      return;
+    }
+
+    this.carritoService.agregarProductoAlCarrito(this.productoSeleccionado.id, this.cantidadSeleccionada).subscribe({
+      next: (res: any) => {
+        console.log("Producto agregado al carrito:", res);
+        alert(`✅ ${this.cantidadSeleccionada}x ${this.productoSeleccionado!.nombre} agregado al carrito`);
+        this.cerrarModalCantidad();
+      },
+      error: (err: any) => {
+        console.error("Error al agregar producto:", err);
+        alert(err.error?.mensaje || `Error al agregar ${this.productoSeleccionado!.nombre} al carrito`);
       }
     });
   }
@@ -75,12 +156,10 @@ export class ListarProductos implements OnInit {
       return;
     }
 
-    // Usar el método especial de ProductController
     this.carritoService.agregarProductoAlCarrito(producto.id, 1).subscribe({
       next: (res: any) => {
         console.log("Producto agregado al carrito:", res);
         alert(`✅ ${producto.nombre} agregado al carrito`);
-        // Opcional: mostrar notificación o actualizar contador
       },
       error: (err: any) => {
         console.error("Error al agregar producto:", err);
@@ -91,6 +170,7 @@ export class ListarProductos implements OnInit {
 
   filtrarPorCategoria(categoria: string) {
     this.categoriaSeleccionada = categoria;
+    this.aplicarFiltros();
     this.router.navigate(['/productos/listar'], {
       queryParams: { categoria: categoria !== 'Todas' ? categoria : null }
     });

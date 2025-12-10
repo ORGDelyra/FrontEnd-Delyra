@@ -1,51 +1,6 @@
-<!-- Barra superior -->
-<header class="bg-[#04060f] border-b border-[#1f2847] shadow-lg sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" width="40" height="40" loading="lazy" />
-      <span class="text-2xl font-bold bg-linear-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent font-[Poppins]">Delyra - Domiciliario</span>
-    </div>
-
-    <!-- Menú desplegable en móvil -->
-    <div class="relative md:hidden">
-      <button
-        (click)="toggleMenu()"
-        class="text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 text-2xl">
-        ☰
-      </button>
-
-      <!-- Dropdown Menu -->
-      <div *ngIf="menuAbierto" class="absolute right-0 mt-2 w-48 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50">
-        <a routerLink="/domiciliario/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
-          👤 Mi Perfil
-        </a>
-        <a routerLink="/domiciliario/vehiculo" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
-          🚗 Mi Vehículo
-        </a>
-        <a routerLink="/domiciliario/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
-          📦 Mis Pedidos
-        </a>
-        <hr class="my-2 border-[#1f2847]">
-        <button (click)="cerrarSesion(); cerrarMenu()" class="w-full text-left px-4 py-2 text-red-400 hover:bg-[#2f1518] transition">
-          🚪 Cerrar Sesión
-        </button>
-      </div>
-    </div>
-
-    <!-- Menú en escritorio -->
-    <div class="hidden md:flex items-center space-x-4">
-      <a routerLink="/domiciliario/perfil" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium transition">Mi Perfil</a>
-      <a routerLink="/domiciliario/vehiculo" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium transition">Mi Vehículo</a>
-    </div>
-  </div>
-</header>
-
-<div class="min-h-screen bg-[#04060f] text-[#f3f5ff] flex">
-  <!-- Menú Lateral Compartido -->
-  <app-menu-lateral [menuItems]="menuItems" [onLogout]="cerrarSesion.bind(this)"></app-menu-lateral>
-
+<div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
   <!-- Contenido principal -->
-  <div class="flex-1 overflow-auto">
+  <div class="overflow-auto">
     <div class="max-w-7xl mx-auto px-4 py-6">
       <!-- Encabezado -->
       <div class="mb-6">
@@ -118,7 +73,7 @@
                 <div class="flex-1">
                   <h3 class="font-bold text-xl">Pedido #{{ pedido.id }}</h3>
                   <p class="text-green-100 text-sm mt-1">Cliente: <span class="font-semibold">{{ pedido.cliente?.nombre_completo || 'No especificado' }}</span></p>
-                  <p class="text-green-100 text-sm">Total: <span class="font-bold text-lg">${{ pedido.total | number:'1.0-0' }}</span></p>
+                  <p class="text-green-100 text-sm">Total: <span class="font-bold text-lg">{{ pedido.total | monedaColombia }}</span></p>
                 </div>
                 <div class="text-right">
                   <span class="px-4 py-2 rounded-full text-sm font-bold bg-yellow-500/80 text-white block mb-2">
@@ -145,7 +100,7 @@
                 <ul class="space-y-2">
                   <li *ngFor="let item of pedido.productos" class="flex justify-between items-center text-sm">
                     <span class="text-[#f3f5ff]">{{ item.nombre || 'Producto' }} x{{ item.cantidad }}</span>
-                    <span class="text-[#7dff7a]">${{ (item.precio_unitario || 0) * item.cantidad | number:'1.0-0' }}</span>
+                    <span class="text-[#7dff7a]">{{ (item.precio_unitario || 0) * item.cantidad | monedaColombia }}</span>
                   </li>
                 </ul>
               </div>
@@ -192,7 +147,7 @@
               <div class="flex justify-between items-start gap-4">
                 <div class="flex-1">
                   <h3 class="font-bold text-2xl">Pedido #{{ pedido.id }}</h3>
-                  <p class="text-blue-100 text-sm mt-1">Total: ${{ pedido.total | number:'1.0-0' }}</p>
+                  <p class="text-blue-100 text-sm mt-1">Total: {{ pedido.total | monedaColombia }}</p>
                 </div>
                 <span class="px-4 py-2 rounded-full text-sm font-bold bg-blue-400 text-blue-900">
                   {{ pedido.estado_pedido || 'En progreso' }}

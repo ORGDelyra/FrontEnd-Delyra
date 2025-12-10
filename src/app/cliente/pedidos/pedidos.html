@@ -93,7 +93,7 @@
           <div class="flex-1">
             <h3 class="font-bold text-[#f3f5ff] mb-1 text-lg">Pedido #{{ pedido.id }}</h3>
             <p class="text-[#9aa2c7] text-sm">Fecha: {{ formatearFecha(pedido.created_at) }}</p>
-            <p class="text-[#7dff7a] font-bold mt-2 text-xl">Total: ${{ pedido.total | number:'1.0-0' }}</p>
+            <p class="text-[#7dff7a] font-bold mt-2 text-xl">Total: {{ pedido.total | monedaColombia }}</p>
 
             <!-- Tipo de entrega -->
             <div class="mt-2">
@@ -128,7 +128,7 @@
           <div class="space-y-2">
             <div *ngFor="let producto of pedido.productos" class="flex justify-between text-sm text-[#9aa2c7]">
               <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
-              <span class="font-semibold text-[#7dff7a]">${{ producto.subtotal | number:'1.0-0' }}</span>
+              <span class="font-semibold text-[#7dff7a]">{{ producto.subtotal | monedaColombia }}</span>
             </div>
           </div>
         </div>

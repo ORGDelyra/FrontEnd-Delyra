@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'https://backend-delyra-production.up.railway.app/api/product';
+  private apiUrl = API_CONFIG.BASE_URL + API_CONFIG.endpoints.product;
 
   constructor(private http: HttpClient) {}
 

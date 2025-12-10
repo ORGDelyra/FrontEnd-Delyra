@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 export type UploadType = 'perfil' | 'comprobante' | 'producto';
 
@@ -10,7 +11,7 @@ export type UploadType = 'perfil' | 'comprobante' | 'producto';
 export class ImageUploadService {
   private cloudName = 'dtpg4uivr';
   // URL del backend Laravel que subirá a Cloudinary
-  private backendUploadUrl = 'https://backend-delyra-production.up.railway.app/api/upload/cloudinary';
+  private backendUploadUrl = API_CONFIG.BASE_URL + API_CONFIG.endpoints.upload;
 
   uploadProgress$ = new Subject<{ loaded: number; total: number }>();
 
@@ -64,7 +65,7 @@ export class ImageUploadService {
             const errorMsg = xhr.responseText ? JSON.parse(xhr.responseText) : { error: { message: `HTTP ${xhr.status}` } };
             console.error('❌ Upload error (status ' + xhr.status + '):', errorMsg);
             console.error('📋 Response completa:', xhr.responseText);
-            
+
             // Extraer mensaje de error más descriptivo
             let mensaje = 'Error al subir la imagen';
             if (errorMsg.message) {
@@ -74,7 +75,7 @@ export class ImageUploadService {
             } else if (errorMsg.errors) {
               mensaje = JSON.stringify(errorMsg.errors);
             }
-            
+
             reject(new Error(mensaje));
           } catch (e) {
             console.error('❌ Upload error (raw text):', xhr.responseText);

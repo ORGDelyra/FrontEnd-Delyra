@@ -30,12 +30,12 @@
 
     <!-- Mensajes de error/éxito grandes (para crear pedido) -->
     <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-900/30 border border-red-500 text-red-300 rounded-lg flex items-center gap-3">
-      <span class="text-2xl">[X]</span>
+      <span class="text-2xl">⚠️</span>
       <span>{{ mensajeError }}</span>
     </div>
 
     <div *ngIf="mensajeExito" class="mb-6 p-4 bg-green-900/30 border border-[#7dff7a] text-[#7dff7a] rounded-lg flex items-center gap-3">
-      <span class="text-2xl">[OK]</span>
+      <span class="text-2xl">✅</span>
       <span>{{ mensajeExito }}</span>
     </div>
 
@@ -62,7 +62,7 @@
             <div class="flex-1">
               <h3 class="text-[#f3f5ff] font-bold text-lg mb-1">{{ producto.nombre }}</h3>
               <p class="text-[#9aa2c7] text-sm mb-2">{{ producto.descripcion }}</p>
-              <p class="text-[#7dff7a] font-bold text-lg">${{ producto.precio | number:'1.0-0' }}</p>
+              <p class="text-[#7dff7a] font-bold text-lg">{{ producto.precio | monedaColombia }}</p>
             </div>
             <div class="flex items-center gap-2">
               <button (click)="actualizarCantidad(producto, producto.cantidad - 1)" class="w-10 h-10 bg-[#1f2847] text-[#7dff7a] rounded-full flex items-center justify-center hover:bg-[#2a3a5f] transition font-bold">-</button>
@@ -86,38 +86,60 @@
           <div class="space-y-3 mb-6">
             <div class="flex justify-between text-[#9aa2c7]">
               <span>Subtotal ({{ productos.length }} productos)</span>
-              <span class="font-semibold">${{ subtotal | number:'1.0-0' }}</span>
+              <span class="font-semibold">{{ subtotal | monedaColombia }}</span>
             </div>
             <div class="flex justify-between text-[#9aa2c7]">
               <span>Envío</span>
-              <span class="font-semibold">${{ envio | number:'1.0-0' }}</span>
+              <span class="font-semibold">{{ envio | monedaColombia }}</span>
             </div>
             <div class="flex justify-between text-[#9aa2c7]">
-              <span>Servicio</span>
-              <span class="font-semibold">${{ servicio | number:'1.0-0' }}</span>
+              <span>Servicio (5%)</span>
+              <span class="font-semibold">{{ servicio | monedaColombia }}</span>
             </div>
-            <hr class="border-[#1f2847] my-4">
+            <hr class="border-[#1f2847]">
             <div class="flex justify-between text-[#f3f5ff] text-xl font-bold">
               <span>Total</span>
-              <span class="text-[#7dff7a]">${{ total | number:'1.0-0' }}</span>
+              <span class="text-[#7dff7a]">{{ total | monedaColombia }}</span>
             </div>
           </div>
-          <!-- Opciones de entrega -->
-          <div class="mb-6">
-            <h3 class="text-[#f3f5ff] font-bold mb-3">Tipo de entrega</h3>
-            <div class="space-y-2">
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="entrega" value="domicilio" [(ngModel)]="tipoEntrega" (change)="calcularTotal()" class="mr-2 accent-[#7dff7a]">
-                <span class="text-[#9aa2c7]">A domicilio</span>
-              </label>
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="entrega" value="recogida" [(ngModel)]="tipoEntrega" (change)="calcularTotal()" class="mr-2 accent-[#7dff7a]">
-                <span class="text-[#9aa2c7]">Recoger en tienda</span>
-              </label>
+
+          <!-- ========== TIPO DE ENTREGA ========== -->
+          <div class="mb-8">
+            <h3 class="text-[#f3f5ff] font-bold mb-4 text-lg">¿Cómo quieres recibir tu pedido?</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Domicilio -->
+              <button
+                type="button"
+                (click)="tipoEntrega = 'domicilio'; calcularTotal()"
+                [class.ring-2]="tipoEntrega === 'domicilio'"
+                [class.ring-[#b1122d]]="tipoEntrega === 'domicilio'"
+                [class.bg-[#1f2847]]="tipoEntrega === 'domicilio'"
+                [class.bg-[#0b1020]]="tipoEntrega !== 'domicilio'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#b1122d] cursor-pointer">
+                <div class="text-4xl mb-2">🏠</div>
+                <p class="text-[#f3f5ff] font-semibold">A domicilio</p>
+                <p class="text-[#9aa2c7] text-sm mt-1">Entrega en tu casa</p>
+                <p class="text-[#f8bfa8] text-xs mt-2 font-bold">+ $3.000</p>
+              </button>
+
+              <!-- Recogida -->
+              <button
+                type="button"
+                (click)="tipoEntrega = 'recogida'; calcularTotal()"
+                [class.ring-2]="tipoEntrega === 'recogida'"
+                [class.ring-[#b1122d]]="tipoEntrega === 'recogida'"
+                [class.bg-[#1f2847]]="tipoEntrega === 'recogida'"
+                [class.bg-[#0b1020]]="tipoEntrega !== 'recogida'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#b1122d] cursor-pointer">
+                <div class="text-4xl mb-2">🏪</div>
+                <p class="text-[#f3f5ff] font-semibold">Recoger</p>
+                <p class="text-[#9aa2c7] text-sm mt-1">En nuestra tienda</p>
+                <p class="text-[#f8bfa8] text-xs mt-2 font-bold">Gratis</p>
+              </button>
             </div>
 
             <!-- Selector de ubicación con mapa (NUEVO) -->
-            <div *ngIf="tipoEntrega === 'domicilio'" class="mt-4">
+            <div *ngIf="tipoEntrega === 'domicilio'" class="mt-4 animate-in fade-in duration-300">
               <app-selector-ubicacion
                 [direccionInicial]="direccionEntrega"
                 (ubicacionSeleccionada)="onUbicacionSeleccionada($event)">
@@ -125,61 +147,174 @@
             </div>
           </div>
 
-          <!-- Método de pago -->
-          <div class="mb-6">
-            <h3 class="text-[#f3f5ff] font-bold mb-3">Método de pago</h3>
-            <div class="space-y-2">
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pago" value="efectivo" [(ngModel)]="metodoPago" class="mr-2 accent-[#7dff7a]">
-                <span class="text-[#9aa2c7]">Efectivo</span>
-              </label>
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pago" value="tarjeta" [(ngModel)]="metodoPago" class="mr-2 accent-[#7dff7a]">
-                <span class="text-[#9aa2c7]">Tarjeta</span>
-              </label>
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="pago" value="transferencia" [(ngModel)]="metodoPago" class="mr-2 accent-[#7dff7a]">
-                <span class="text-[#9aa2c7]">Transferencia</span>
-              </label>
+          <!-- ========== MÉTODO DE PAGO ========== -->
+          <div class="mb-8">
+            <h3 class="text-[#f3f5ff] font-bold mb-4 text-lg">¿Cómo pagarás?</h3>
+
+            <!-- Opciones para DOMICILIO -->
+            <div *ngIf="tipoEntrega === 'domicilio'" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Mercado Pago -->
+              <button
+                type="button"
+                (click)="metodoPago = 'mercado-pago'"
+                [class.ring-2]="metodoPago === 'mercado-pago'"
+                [class.ring-[#b1122d]]="metodoPago === 'mercado-pago'"
+                [class.bg-[#1f2847]]="metodoPago === 'mercado-pago'"
+                [class.bg-[#0b1020]]="metodoPago !== 'mercado-pago'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#b1122d] cursor-pointer">
+                <div class="text-4xl mb-2">💳</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Mercado Pago</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Tarjeta, Transferencia,<br/>Efectivo</p>
+              </button>
+
+              <!-- Contra Entrega -->
+              <button
+                type="button"
+                (click)="metodoPago = 'contraentrega'"
+                [class.ring-2]="metodoPago === 'contraentrega'"
+                [class.ring-[#f8bfa8]]="metodoPago === 'contraentrega'"
+                [class.bg-[#1f2847]]="metodoPago === 'contraentrega'"
+                [class.bg-[#0b1020]]="metodoPago !== 'contraentrega'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#f8bfa8] cursor-pointer">
+                <div class="text-4xl mb-2">💵</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Contra Entrega</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Pagar al recibir<br/>tu pedido</p>
+              </button>
+
+              <!-- Efectivo Local -->
+              <button
+                type="button"
+                (click)="metodoPago = 'efectivo'"
+                [class.ring-2]="metodoPago === 'efectivo'"
+                [class.ring-[#f8bfa8]]="metodoPago === 'efectivo'"
+                [class.bg-[#1f2847]]="metodoPago === 'efectivo'"
+                [class.bg-[#0b1020]]="metodoPago !== 'efectivo'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#f8bfa8] cursor-pointer">
+                <div class="text-4xl mb-2">💸</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Efectivo</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Método local,<br/>sin línea</p>
+              </button>
+
+              <!-- Tarjeta Local -->
+              <button
+                type="button"
+                (click)="metodoPago = 'tarjeta'"
+                [class.ring-2]="metodoPago === 'tarjeta'"
+                [class.ring-[#b1122d]]="metodoPago === 'tarjeta'"
+                [class.bg-[#1f2847]]="metodoPago === 'tarjeta'"
+                [class.bg-[#0b1020]]="metodoPago !== 'tarjeta'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#b1122d] cursor-pointer">
+                <div class="text-4xl mb-2">🏦</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Tarjeta</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Método local,<br/>sin línea</p>
+              </button>
+
+              <!-- Transferencia -->
+              <button
+                type="button"
+                (click)="metodoPago = 'transferencia'"
+                [class.ring-2]="metodoPago === 'transferencia'"
+                [class.ring-[#b1122d]]="metodoPago === 'transferencia'"
+                [class.bg-[#1f2847]]="metodoPago === 'transferencia'"
+                [class.bg-[#0b1020]]="metodoPago !== 'transferencia'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#b1122d] cursor-pointer">
+                <div class="text-4xl mb-2">📱</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Transferencia</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Con comprobante<br/>requerido</p>
+              </button>
+            </div>
+
+            <!-- Opciones para RECOGIDA EN TIENDA -->
+            <div *ngIf="tipoEntrega === 'recogida'" class="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in fade-in duration-300">
+              <!-- Efectivo en tienda -->
+              <button
+                type="button"
+                (click)="metodoPago = 'efectivo'"
+                [class.ring-2]="metodoPago === 'efectivo'"
+                [class.ring-[#f8bfa8]]="metodoPago === 'efectivo'"
+                [class.bg-[#1f2847]]="metodoPago === 'efectivo'"
+                [class.bg-[#0b1020]]="metodoPago !== 'efectivo'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#f8bfa8] cursor-pointer">
+                <div class="text-4xl mb-2">💸</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Efectivo en tienda</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Pagar al recoger</p>
+              </button>
+
+              <!-- Tarjeta en tienda -->
+              <button
+                type="button"
+                (click)="metodoPago = 'tarjeta'"
+                [class.ring-2]="metodoPago === 'tarjeta'"
+                [class.ring-[#b1122d]]="metodoPago === 'tarjeta'"
+                [class.bg-[#1f2847]]="metodoPago === 'tarjeta'"
+                [class.bg-[#0b1020]]="metodoPago !== 'tarjeta'"
+                class="p-4 border border-[#1f2847] rounded-xl transition duration-200 text-center hover:border-[#b1122d] cursor-pointer">
+                <div class="text-4xl mb-2">💳</div>
+                <p class="text-[#f3f5ff] font-semibold text-sm">Tarjeta en tienda</p>
+                <p class="text-[#9aa2c7] text-xs mt-1">Pagar al recoger</p>
+              </button>
             </div>
           </div>
 
-          <!-- Comprobante de Pago (mostrar si el método es transferencia) -->
-          <div *ngIf="metodoPago === 'transferencia'" class="mb-6 p-4 bg-[#1f2847]/50 border border-[#1f2847] rounded-lg">
+          <!-- Info contextual según método seleccionado -->
+          <div *ngIf="tipoEntrega === 'domicilio' && metodoPago === 'mercado-pago'"
+               class="mb-6 p-4 bg-blue-900/30 border border-blue-500 rounded-xl animate-in fade-in duration-300">
+            <p class="text-blue-300 text-sm">
+              ✅ Pagarás de forma segura con Mercado Pago. Aceptamos tarjetas de crédito, débito, transferencias y efectivo en puntos.
+            </p>
+          </div>
+
+          <div *ngIf="tipoEntrega === 'domicilio' && metodoPago === 'contraentrega'"
+               class="mb-6 p-4 bg-green-900/30 border border-green-500 rounded-xl animate-in fade-in duration-300">
+            <p class="text-green-300 text-sm">
+              ✅ Pagarás en efectivo cuando recibas tu pedido. El domiciliario aceptará el pago.
+            </p>
+          </div>
+
+          <!-- Comprobante de Pago (Transferencia) -->
+          <div *ngIf="tipoEntrega === 'domicilio' && metodoPago === 'transferencia'" class="mb-6 p-4 bg-[#1f2847]/50 border border-[#1f2847] rounded-xl animate-in fade-in duration-300">
             <h3 class="text-[#7dff7a] font-bold mb-3">Comprobante de Pago</h3>
-            <p class="text-[#9aa2c7] text-sm mb-4">Por favor adjunta el comprobante de tu transferencia bancaria</p>
+            <p class="text-[#9aa2c7] text-sm mb-4">Adjunta el comprobante de tu transferencia bancaria</p>
 
             <!-- Vista previa del comprobante -->
-            <div *ngIf="comprobantePago" class="mb-4 p-3 bg-[#0b1020] border border-[#7dff7a] rounded-lg flex items-center gap-3">
-              <span class="text-2xl">[OK]</span>
-              <div>
-                <p class="text-[#7dff7a] font-semibold">Comprobante adjuntado</p>
-                <a *ngIf="comprobantePago" [href]="comprobantePago" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm underline">Ver archivo</a>
+            <div *ngIf="comprobantePago" class="mb-4 p-3 bg-[#0b1020] border border-[#b1122d] rounded-lg flex items-center gap-3">
+              <span class="text-2xl">✅</span>
+              <div class="flex-1">
+                <p class="text-[#f8bfa8] font-semibold text-sm">Comprobante adjuntado</p>
+                <a *ngIf="comprobantePago" [href]="comprobantePago" target="_blank" class="text-[#b1122d] hover:text-[#f8bfa8] text-xs underline">Ver archivo</a>
               </div>
             </div>
 
             <!-- Botón para adjuntar -->
-            <label class="block">
-              <div class="w-full px-4 py-3 bg-[#1f2847] border-2 border-dashed border-[#7dff7a] rounded-lg cursor-pointer hover:bg-[#2a3a5f] transition text-center">
+            <label class="block cursor-pointer">
+              <div class="w-full px-4 py-4 bg-[#1f2847] border-2 border-dashed border-[#b1122d] rounded-lg hover:bg-[#2a3a5f] transition text-center">
                 <div *ngIf="!cargandoComprobante" class="flex items-center justify-center gap-2">
-                  <span class="text-2xl">[+]</span>
-                  <span class="text-[#9aa2c7]">Selecciona el archivo</span>
+                  <span class="text-2xl">📎</span>
+                  <div class="text-left">
+                    <p class="text-[#9aa2c7] text-sm font-medium">Selecciona el archivo</p>
+                    <p class="text-[#9aa2c7] text-xs mt-1">PDF, JPG, PNG, WEBP (máx 5MB)</p>
+                  </div>
                 </div>
                 <div *ngIf="cargandoComprobante" class="flex items-center justify-center gap-2">
-                  <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-[#7dff7a]"></div>
-                  <span class="text-[#7dff7a]">Subiendo...</span>
+                  <div class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#b1122d]"></div>
+                  <span class="text-[#f8bfa8] text-sm font-medium">Subiendo...</span>
                 </div>
               </div>
               <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" (change)="onComprobanteSeleccionado($event)" class="hidden">
             </label>
-            <p class="text-[#9aa2c7] text-xs mt-2">Formatos aceptados: PDF, JPG, PNG, WEBP (máx 5MB)</p>
           </div>
 
+          <!-- Botón principal con gradiente Delyra -->
           <button (click)="procederAlPago()"
-                  [disabled]="cargando || (metodoPago === 'transferencia' && !comprobantePago)"
-                  class="w-full bg-[#7dff7a] hover:bg-[#6ae069] text-[#05060c] py-3 rounded-full font-bold text-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed">
-            <span *ngIf="!cargando">Realizar Pedido</span>
-            <span *ngIf="cargando">Procesando...</span>
+                  [disabled]="cargando || procesandoPago || (tipoEntrega === 'domicilio' && metodoPago === 'transferencia' && !comprobantePago)"
+                  class="w-full bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-full font-bold text-lg transition duration-200 shadow-lg">
+            <span *ngIf="!cargando && !procesandoPago">
+              {{ (tipoEntrega === 'domicilio' && metodoPago === 'mercado-pago') ? 'Proceder al Pago' : 'Realizar Pedido' }}
+            </span>
+            <span *ngIf="cargando || procesandoPago" class="flex items-center justify-center gap-2">
+              <div class="animate-spin rounded-full h-5 w-5 border-t-2 border-white border-opacity-50"></div>
+              Procesando...
+            </span>
           </button>
         </div>
       </div>

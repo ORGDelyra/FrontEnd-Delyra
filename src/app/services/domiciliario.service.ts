@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { Vehicle, CreateVehicleRequest } from '../interfaces/vehicle.interface';
 import { Domicilio, CreateDomicilioRequest } from '../interfaces/domicilio.interface';
 import { Shipment } from '../interfaces/cart.interface';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DomiciliarioService {
 
-  private api = 'https://backend-delyra-production.up.railway.app/api';
+  private api = API_CONFIG.BASE_URL + API_CONFIG.endpoints.auth;
 
   constructor(private http: HttpClient) {}
 

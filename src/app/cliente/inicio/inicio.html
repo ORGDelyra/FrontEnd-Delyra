@@ -1,58 +1,7 @@
-<!-- Barra superior con logo y menú desplegable -->
-<header class="bg-[#04060f] border-b border-[#1f2847] shadow-lg sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <!-- Logo y título -->
-    <div class="flex items-center space-x-2">
-      <img src="/assets/logo.png" alt="Delyra" class="h-10 w-10 rounded-md object-contain" width="40" height="40" loading="lazy" />
-      <span class="text-2xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent font-[Poppins]">Delyra</span>
-    </div>
-
-      <!-- Perfil desplegable en móvil -->
-      <div class="relative md:hidden">
-        <button
-          (click)="toggleMenu()"
-          class="flex items-center gap-2 text-[#f3f5ff] hover:text-[#7dff7a] transition duration-200 font-semibold">
-          <span class="text-2xl">👤</span>
-          <span>Perfil</span>
-        </button>      <!-- Dropdown Menu -->
-      <div *ngIf="menuAbierto" class="absolute right-0 mt-2 w-48 bg-[#0b1020] border border-[#1f2847] rounded-lg shadow-xl py-2 z-50">
-        <a routerLink="/cliente/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
-          👤 Mi Perfil
-        </a>
-        <a routerLink="/carrito" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
-          🛒 Carrito
-        </a>
-        <a routerLink="/cliente/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">
-          📋 Mis Pedidos
-        </a>
-        <hr class="my-2 border-[#1f2847]">
-        <button (click)="cerrarSesion(); cerrarMenu()" class="w-full text-left px-4 py-2 text-red-400 hover:bg-[#2f1518] transition">
-          🚪 Cerrar Sesión
-        </button>
-      </div>
-    </div>
-
-    <!-- Menú en escritorio -->
-    <div class="hidden md:flex items-center space-x-4">
-      <a routerLink="/cliente/perfil" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium transition">Mi Perfil</a>
-      <a routerLink="/carrito" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium flex items-center gap-2 transition">
-        Carrito
-      </a>
-      <a routerLink="/cliente/pedidos" class="text-[#9aa2c7] hover:text-[#7dff7a] font-medium flex items-center gap-2 transition">
-        Pedidos
-      </a>
-    </div>
-  </div>
-</header>
-
 <div class="min-h-screen bg-[#04060f] text-[#f3f5ff]">
   <div class="max-w-7xl mx-auto px-4 py-6">
-    <div class="flex gap-6">
-      <!-- Menú Lateral Compartido -->
-      <app-menu-lateral [menuItems]="menuItems" [onLogout]="cerrarSesion.bind(this)"></app-menu-lateral>
-
-      <!-- Sección central -->
-      <main class="flex-1 w-full">
+    <!-- Sección central -->
+    <main class="w-full">
         <!-- Buscador y categorías -->
         <div class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
           <div class="mb-4">
@@ -61,12 +10,12 @@
                 type="text"
                 [(ngModel)]="terminoBusqueda"
                 (keyup.enter)="buscar()"
-                placeholder="Buscar negocios..."
-                class="flex-1 px-4 py-3 bg-[#0f162d] border border-[#1e2644] rounded-lg focus:ring-2 focus:ring-[#7dff7a] focus:border-transparent text-[#f3f5ff] placeholder-[#9aa2c7]"
+                placeholder="Buscar productos..."
+                class="flex-1 px-4 py-3 bg-[#0f162d] border border-[#1e2644] rounded-lg focus:ring-2 focus:ring-[#b1122d] focus:border-transparent text-[#f3f5ff] placeholder-[#9aa2c7]"
               />
               <button
                 (click)="buscar()"
-                class="bg-[#7dff7a] hover:bg-[#6ae66a] text-[#05060c] px-6 py-3 rounded-lg transition duration-200 font-semibold">
+                class="bg-[#b1122d] hover:bg-[#8b0a1f] text-white px-6 py-3 rounded-lg transition duration-200 font-semibold">
                 Buscar
               </button>
             </div>
@@ -74,21 +23,21 @@
           <div class="flex flex-wrap gap-2">
             <button
               (click)="seleccionarCategoria('Todas')"
-              [class.bg-[#7dff7a]]="categoriaSeleccionada === 'Todas'"
-              [class.text-[#05060c]]="categoriaSeleccionada === 'Todas'"
+              [class.bg-[#b1122d]]="categoriaSeleccionada === 'Todas'"
+              [class.text-white]="categoriaSeleccionada === 'Todas'"
               [class.bg-[#1f2847]]="categoriaSeleccionada !== 'Todas'"
               [class.text-[#9aa2c7]]="categoriaSeleccionada !== 'Todas'"
-              class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#7dff7a]">
+              class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#f8bfa8]">
               Todas
             </button>
             <button
               *ngFor="let cat of categorias"
               (click)="seleccionarCategoria(cat.nombre_categoria)"
-              [class.bg-[#7dff7a]]="categoriaSeleccionada === cat.nombre_categoria"
-              [class.text-[#04060f]]="categoriaSeleccionada === cat.nombre_categoria"
+              [class.bg-[#b1122d]]="categoriaSeleccionada === cat.nombre_categoria"
+              [class.text-white]="categoriaSeleccionada === cat.nombre_categoria"
               [class.bg-[#1f2847]]="categoriaSeleccionada !== cat.nombre_categoria"
               [class.text-[#9aa2c7]]="categoriaSeleccionada !== cat.nombre_categoria"
-              class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#7dff7a]">
+              class="px-4 py-2 rounded-lg transition duration-200 hover:text-[#f8bfa8]">
               {{ cat.nombre_categoria }}
             </button>
           </div>
@@ -96,20 +45,20 @@
 
         <!-- Carrusel de ofertas -->
         <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
-          <div class="bg-linear-to-r from-[#7dff7a] to-[#5dd565] rounded-lg p-8 text-[#04060f] flex items-center justify-between">
+          <div class="bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] rounded-lg p-8 text-white flex items-center justify-between">
             <div class="flex-1">
               <div class="flex items-center space-x-2 mb-3">
-                <span class="text-2xl">★</span>
+                <span class="text-2xl">⭐</span>
                 <b class="text-2xl">OFERTA ESPECIAL</b>
               </div>
-              <p class="text-lg mb-2">Hasta 50% de descuento en panaderías</p>
-              <p class="text-sm opacity-90">Válido hasta el 30 de noviembre</p>
-              <button routerLink="/productos/listar" class="mt-4 bg-[#04060f] text-[#7dff7a] font-bold px-6 py-2 rounded-lg hover:bg-[#0b1020] transition">
+              <p class="text-lg mb-2">Hasta 50% de descuento en productos</p>
+              <p class="text-sm opacity-90">Válido hasta fin de mes</p>
+              <button (click)="verTodosLosProductos()" class="mt-4 bg-white text-[#b1122d] font-bold px-6 py-2 rounded-lg hover:bg-gray-100 transition">
                 Ver Ofertas
               </button>
             </div>
             <div class="text-right">
-              <div class="bg-[#04060f] text-[#7dff7a] rounded-full w-24 h-24 flex flex-col items-center justify-center font-bold">
+              <div class="bg-white text-[#b1122d] rounded-full w-24 h-24 flex flex-col items-center justify-center font-bold">
                 <span class="text-3xl">50%</span>
                 <span class="text-sm">OFF</span>
               </div>
@@ -123,56 +72,187 @@
           <app-mapa-usuarios></app-mapa-usuarios>
         </div>
 
-        <!-- Recomendaciones -->
+        <!-- Productos Destacados -->
         <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6 mb-6">
-          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Recomendaciones para ti</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="border border-[#1f2847] rounded-lg p-4 flex gap-4 bg-[#0f162d]">
-              <div class="w-24 h-24 bg-[#1f2847] rounded-lg flex items-center justify-center text-2xl font-bold text-[#7dff7a]">
-                1
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-2xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent">
+                Productos Destacados
+              </h3>
+              <p class="text-[#9aa2c7] text-sm mt-1">Los mejores productos de nuestros negocios</p>
+            </div>
+            <button 
+              (click)="verTodosLosProductos()"
+              class="bg-[#b1122d] hover:bg-[#8b0a1f] text-white font-bold px-6 py-2 rounded-lg transition duration-200">
+              Ver todos →
+            </button>
+          </div>
+
+          <!-- Loading de productos -->
+          <div *ngIf="cargandoProductos" class="flex justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#b1122d]"></div>
+          </div>
+
+          <!-- Grid de productos destacados -->
+          <div *ngIf="!cargandoProductos && productosDestacados.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div 
+              *ngFor="let producto of productosDestacados"
+              class="bg-[#0f162d] border border-[#1f2847] rounded-xl overflow-hidden hover:border-[#b1122d] hover:shadow-lg hover:shadow-[#b1122d]/20 transition duration-300 group">
+              
+              <!-- Imagen -->
+              <div class="h-40 bg-[#1f2847] overflow-hidden relative">
+                <img
+                  *ngIf="producto.images && producto.images.length > 0"
+                  [src]="producto.images[0].url"
+                  [alt]="producto.nombre"
+                  class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                  (error)="$any($event.target).src='https://via.placeholder.com/400x300?text=Sin+Imagen'"
+                >
+                <div *ngIf="!producto.images || producto.images.length === 0"
+                     class="w-full h-full flex items-center justify-center text-4xl text-[#9aa2c7]">
+                  📦
+                </div>
               </div>
-              <div class="flex-1">
-                <b class="text-lg block mb-1 text-[#f3f5ff]">Panadería La Delicia</b>
-                <p class="text-[#9aa2c7] text-sm mb-2">Pan fresco y almojábanas todos los días</p>
-                <button routerLink="/productos/listar" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg text-sm transition font-semibold">
-                  Ver Negocio
+
+              <!-- Contenido -->
+              <div class="p-4 flex flex-col gap-2">
+                <h4 class="font-bold text-[#f3f5ff] line-clamp-2 group-hover:text-[#f8bfa8] transition text-sm">
+                  {{ producto.nombre }}
+                </h4>
+                <p class="text-xs text-[#9aa2c7] line-clamp-1">
+                  {{ producto.descripcion || 'Sin descripción' }}
+                </p>
+
+                <!-- Precio -->
+                <div class="flex items-center justify-between pt-2 border-t border-[#1f2847]">
+                  <p class="text-lg font-bold text-[#b1122d]">
+                    {{ producto.precio | monedaColombia }}
+                  </p>
+                  <span class="text-xs text-[#9aa2c7] bg-[#1f2847] px-2 py-1 rounded">
+                    Stock: {{ producto.stock || producto.cantidad || '∞' }}
+                  </span>
+                </div>
+
+                <!-- Botón agregar -->
+                <button 
+                  (click)="abrirModalCantidad(producto)"
+                  class="w-full bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] hover:opacity-90 text-white font-bold py-2 rounded-lg transition duration-200 text-sm mt-2">
+                  🛒 Agregar
                 </button>
               </div>
             </div>
-            <div class="border border-[#1f2847] rounded-lg p-4 flex gap-4 bg-[#0f162d]">
-              <div class="w-24 h-24 bg-[#1f2847] rounded-lg flex items-center justify-center text-2xl font-bold text-[#7dff7a]">
-                2
-              </div>
-              <div class="flex-1">
-                <b class="text-lg block mb-1 text-[#f3f5ff]">Café Aroma</b>
-                <p class="text-[#9aa2c7] text-sm mb-2">Café especial y postres artesanales</p>
-                <button routerLink="/productos/listar" class="bg-[#7dff7a] hover:bg-[#6ae069] text-[#04060f] px-4 py-2 rounded-lg text-sm transition font-semibold">
-                  Ver Negocio
-                </button>
-              </div>
-            </div>
+          </div>
+
+          <!-- Sin productos -->
+          <div *ngIf="!cargandoProductos && productosDestacados.length === 0" class="text-center py-12">
+            <p class="text-[#9aa2c7]">No hay productos disponibles por el momento</p>
           </div>
         </section>
 
         <!-- Categorías populares -->
         <section class="bg-[#0b1020] border border-[#1f2847] shadow-lg rounded-lg p-6">
-          <h3 class="text-xl font-bold text-[#7dff7a] mb-4">Categorías Populares</h3>
+          <h3 class="text-xl font-bold bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent mb-4">Categorías Populares</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
-              <span class="font-semibold text-[#f3f5ff]">Panaderías</span>
+            <button (click)="seleccionarCategoria('Panaderías')" class="bg-gradient-to-br from-[#1f2847] to-[#0f162d] hover:border-[#b1122d] border border-[#1f2847] p-4 rounded-lg transition text-center">
+              <span class="font-semibold text-[#f3f5ff]">🥐 Panaderías</span>
             </button>
-            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
-              <span class="font-semibold text-[#f3f5ff]">Comidas rápidas</span>
+            <button (click)="seleccionarCategoria('Comidas rápidas')" class="bg-gradient-to-br from-[#1f2847] to-[#0f162d] hover:border-[#b1122d] border border-[#1f2847] p-4 rounded-lg transition text-center">
+              <span class="font-semibold text-[#f3f5ff]">🍔 Comidas rápidas</span>
             </button>
-            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
-              <span class="font-semibold text-[#f3f5ff]">Cafeterías</span>
+            <button (click)="seleccionarCategoria('Cafeterías')" class="bg-gradient-to-br from-[#1f2847] to-[#0f162d] hover:border-[#b1122d] border border-[#1f2847] p-4 rounded-lg transition text-center">
+              <span class="font-semibold text-[#f3f5ff]">☕ Cafeterías</span>
             </button>
-            <button routerLink="/productos/listar" class="bg-[#0f162d] hover:bg-[#1f2847] p-4 rounded-lg transition text-center border border-[#1f2847]">
-              <span class="font-semibold text-[#f3f5ff]">Ferreterías</span>
+            <button (click)="seleccionarCategoria('Ferreterías')" class="bg-gradient-to-br from-[#1f2847] to-[#0f162d] hover:border-[#b1122d] border border-[#1f2847] p-4 rounded-lg transition text-center">
+              <span class="font-semibold text-[#f3f5ff]">🔨 Ferreterías</span>
             </button>
           </div>
         </section>
       </main>
+  </div>
+
+  <!-- Modal de cantidad -->
+  <div *ngIf="mostrarModalCantidad" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-[#0b1020] border border-[#b1122d] rounded-xl shadow-2xl w-full max-w-sm p-5 animate-in fade-in duration-300">
+      <!-- Encabezado -->
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-[#f3f5ff]">Seleccionar cantidad</h3>
+        <button 
+          (click)="cerrarModalCantidad()"
+          class="text-[#9aa2c7] hover:text-[#f3f5ff] transition text-xl">
+          ✕
+        </button>
+      </div>
+
+      <!-- Imagen y nombre del producto -->
+      <div *ngIf="productoSeleccionado" class="mb-4">
+        <div class="h-32 bg-[#1f2847] rounded-lg mb-3 overflow-hidden flex items-center justify-center">
+          <img 
+            *ngIf="productoSeleccionado.images && productoSeleccionado.images.length > 0"
+            [src]="productoSeleccionado.images[0].url"
+            alt="Producto"
+            class="w-full h-full object-cover"
+            (error)="$any($event.target).src='https://via.placeholder.com/400x300?text=Sin+Imagen'"
+          >
+          <div *ngIf="!productoSeleccionado.images || productoSeleccionado.images.length === 0"
+               class="text-5xl text-[#9aa2c7]">
+            📦
+          </div>
+        </div>
+        <h4 class="text-base font-bold text-[#f3f5ff] mb-1">{{ productoSeleccionado.nombre }}</h4>
+        <p class="text-[#9aa2c7] text-xs mb-2 line-clamp-2">{{ productoSeleccionado.descripcion || 'Sin descripción' }}</p>
+      </div>
+
+      <!-- Selector de cantidad -->
+      <div class="bg-[#0f162d] rounded-lg p-4 mb-4">
+        <p class="text-[#9aa2c7] text-xs mb-3 text-center">¿Cuántos deseas agregar?</p>
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <button 
+            (click)="decrementarCantidad()"
+            [disabled]="cantidadSeleccionada <= 1"
+            [class.opacity-50]="cantidadSeleccionada <= 1"
+            [class.cursor-not-allowed]="cantidadSeleccionada <= 1"
+            class="w-10 h-10 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] rounded font-bold text-lg transition">
+            −
+          </button>
+          <input 
+            type="number" 
+            [(ngModel)]="cantidadSeleccionada"
+            min="1"
+            [max]="obtenerStockDisponible()"
+            class="w-16 text-center text-xl font-bold bg-[#1f2847] border border-[#b1122d] rounded py-1 text-[#f3f5ff]">
+          <button 
+            (click)="incrementarCantidad()"
+            [disabled]="!puedeIncrementar()"
+            [class.opacity-50]="!puedeIncrementar()"
+            [class.cursor-not-allowed]="!puedeIncrementar()"
+            class="w-10 h-10 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] rounded font-bold text-lg transition">
+            +
+          </button>
+        </div>
+        <p class="text-xs text-[#9aa2c7] text-center mb-3">Stock disponible: {{ obtenerStockDisponible() === Infinity ? '∞' : obtenerStockDisponible() }}</p>
+
+        <!-- Precio total -->
+        <div class="border-t border-[#1f2847] pt-3">
+          <p class="text-[#9aa2c7] text-xs mb-1">Precio total:</p>
+          <p *ngIf="productoSeleccionado" class="text-2xl font-bold text-[#b1122d]">
+            {{ (productoSeleccionado.precio * cantidadSeleccionada) | monedaColombia }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex gap-2 pt-2">
+        <button 
+          (click)="cerrarModalCantidad()"
+          class="flex-1 bg-[#1f2847] hover:bg-[#2a3a5f] text-[#f3f5ff] font-bold py-2 rounded transition text-sm">
+          Cancelar
+        </button>
+        <button 
+          (click)="confirmarAgregarAlCarrito()"
+          class="flex-1 bg-gradient-to-r from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] hover:opacity-90 text-white font-bold py-2 rounded transition text-sm">
+          Agregar ({{ cantidadSeleccionada }})
+        </button>
+      </div>
     </div>
   </div>
 </div>

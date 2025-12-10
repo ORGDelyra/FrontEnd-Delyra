@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { VendedorService } from '../../services/vendedor.service';
+import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Product } from '../../interfaces/product.interface';
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, MonedaColombianaPipe],
   templateUrl: './productos.html',
   styleUrl: './productos.css',
 })

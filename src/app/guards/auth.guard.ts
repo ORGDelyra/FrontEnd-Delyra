@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
     console.log(`  Admin Route: ${isAdminRoute}`);
 
     // Evitar redirecciones infinitas
-    if (state.url === '/inicio-sesion' || state.url === '/seleccionar-rol' || state.url === '/seleccionar-registro') {
+    if (state.url === '/inicio-sesion' || state.url === '/bienvenida' || state.url === '/seleccionar-registro') {
       console.log(`  Ruta de autenticación permitida sin token\n`);
       return true;
     }
