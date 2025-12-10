@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, NgIf } from '@angular/common';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-perfil',
@@ -12,6 +13,11 @@ import { ImageUploadService } from '../../services/image-upload.service';
   styleUrl: './perfil.css',
 })
 export class PerfilVendedor implements OnInit {
+    getImagenPerfil(user: any): string {
+      const img = user?.images?.find((i: any) => i.type === 'profile');
+      return img ? img.url : '';
+    }
+  imagenPerfil: string = '';
 
   form: FormGroup;
   mensajeExito: string = '';
@@ -25,7 +31,8 @@ export class PerfilVendedor implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private imageUploadService: ImageUploadService
+    private imageUploadService: ImageUploadService,
+    private userService: UserService
   ) {
     this.form = this.fb.group({
       primer_nombre: ['', Validators.required],
@@ -39,16 +46,27 @@ export class PerfilVendedor implements OnInit {
   }
 
   ngOnInit() {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      this.usuario = JSON.parse(userStr);
-      this.cargarDatos();
-      // Buscar profile_url en diferentes propiedades
-      this.fotoPerfil = this.usuario.profile_url || this.usuario.foto_perfil || '';
-      console.log('👤 Usuario cargado:', this.usuario);
-      console.log('📸 Foto de perfil:', this.fotoPerfil);
-    }
-    this.desactivarFormulario();
+    this.cargarPerfil();
+  }
+
+  cargarPerfil() {
+    this.userService.getPerfilUsuario().subscribe(
+      res => {
+        this.usuario = res.usuario || res.user || res;
+        this.cargarDatos();
+        // Buscar imagen de perfil en images, luego en profile_url y foto_perfil
+        this.imagenPerfil = (this.usuario.images?.find((img: any) => img.type === 'profile')?.url)
+          || this.usuario.profile_url
+          || this.usuario.foto_perfil
+          || '';
+        localStorage.setItem('user', JSON.stringify(this.usuario));
+        this.desactivarFormulario();
+      },
+      err => {
+        console.error('Error al consultar perfil:', err);
+        this.mensajeError = 'No se pudo cargar el perfil';
+      }
+    );
   }
 
   toggleModoEdicion() {
@@ -90,27 +108,23 @@ export class PerfilVendedor implements OnInit {
         return;
       }
 
-      console.log('📸 Subiendo foto de perfil a Cloudinary...');
       const response = await this.imageUploadService.uploadImage(file, 'perfil');
-      console.log('✅ Foto subida exitosamente:', response.secure_url);
-
-      // Actualizar la URL de la foto localmente
       this.fotoPerfil = response.secure_url;
-
-      // Actualizar el objeto usuario en memoria y localStorage
-      if (this.usuario) {
-        this.usuario.profile_url = response.secure_url;
-        localStorage.setItem('user', JSON.stringify(this.usuario));
-      }
-
-      this.mensajeExito = '✅ Foto de perfil actualizada correctamente';
-      this.cargandoFoto = false;
-
-      // Limpiar mensaje después de 3 segundos
-      setTimeout(() => this.mensajeExito = '', 3000);
-
+      // Guardar en el backend
+      this.userService.actualizarFotoPerfil(response.secure_url).subscribe({
+        next: () => {
+          this.mensajeExito = 'Foto de perfil actualizada';
+          this.cargandoFoto = false;
+          // Refrescar perfil para mostrar la imagen actualizada
+          this.cargarPerfil();
+          setTimeout(() => this.mensajeExito = '', 3000);
+        },
+        error: (err) => {
+          this.mensajeError = 'Error al guardar la foto en el backend';
+          this.cargandoFoto = false;
+        }
+      });
     } catch (e: any) {
-      console.error('❌ Error al subir foto:', e);
       this.mensajeError = 'Error al subir la imagen' + (e?.message ? ': ' + e.message : '');
       this.cargandoFoto = false;
     }
@@ -137,14 +151,34 @@ export class PerfilVendedor implements OnInit {
     }
     this.cargando = true;
     const datos = this.form.getRawValue();
-    setTimeout(() => {
-      this.mensajeExito = 'Perfil actualizado correctamente';
-      this.mensajeError = '';
+    // Solo enviar campos modificados
+    const datosModificados: any = {};
+    Object.keys(datos).forEach(key => {
+      if (datos[key] !== this.usuario[key]) {
+        datosModificados[key] = datos[key];
+      }
+    });
+    if (Object.keys(datosModificados).length === 0) {
+      this.mensajeError = 'No hay cambios para guardar';
       this.cargando = false;
-      this.modoEdicion = false;
-      this.desactivarFormulario();
-      setTimeout(() => this.mensajeExito = '', 3000);
-    }, 1000);
+      return;
+    }
+    // Llamar al servicio y guardar el usuario actualizado
+    this.userService.actualizarPerfil(datosModificados).subscribe({
+      next: (response: any) => {
+        this.mensajeExito = 'Perfil actualizado correctamente';
+        this.mensajeError = '';
+        this.cargando = false;
+        this.modoEdicion = false;
+        // Refrescar perfil para mostrar datos actualizados
+        this.cargarPerfil();
+        setTimeout(() => this.mensajeExito = '', 3000);
+      },
+      error: (error: any) => {
+        this.mensajeError = error.error?.mensaje || 'Error al actualizar el perfil';
+        this.cargando = false;
+      }
+    });
   }
 
   get f() { return this.form.controls; }

@@ -14,6 +14,11 @@ import { ProfileUploadComponent } from '../../components/profile-upload/profile-
   styleUrl: './perfil.css',
 })
 export class PerfilCliente implements OnInit {
+    getImagenPerfil(user: any): string {
+      const img = user?.images?.find((i: any) => i.type === 'profile');
+      return img ? img.url : '';
+    }
+  imagenPerfil: string = '';
 
   form: FormGroup;
   mensajeExito: string = '';
@@ -42,13 +47,28 @@ export class PerfilCliente implements OnInit {
   }
 
   ngOnInit() {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      this.usuario = JSON.parse(userStr);
-      this.cargarDatos();
-      this.fotoPerfil = this.usuario.profile_url || this.usuario.foto_perfil || '';
-    }
-    this.desactivarFormulario();
+    // Consultar el perfil actualizado desde el backend
+    this.cargarPerfil();
+  }
+
+  cargarPerfil() {
+    this.userService.getPerfilUsuario().subscribe(
+      res => {
+        this.usuario = res.usuario || res.user || res;
+        this.cargarDatos();
+        // Buscar imagen de perfil en images, luego en profile_url y foto_perfil
+        this.imagenPerfil = (this.usuario.images?.find((img: any) => img.type === 'profile')?.url)
+          || this.usuario.profile_url
+          || this.usuario.foto_perfil
+          || '';
+        localStorage.setItem('user', JSON.stringify(this.usuario));
+        this.desactivarFormulario();
+      },
+      err => {
+        console.error('Error al consultar perfil:', err);
+        this.mensajeError = 'No se pudo cargar el perfil';
+      }
+    );
   }
 
   toggleModoEdicion() {
@@ -66,20 +86,14 @@ export class PerfilCliente implements OnInit {
   onProfileImageUploaded(imageUrl: string) {
     this.cargandoFoto = true;
     this.fotoPerfil = imageUrl;
-    
     // Guardar en el backend
     this.userService.actualizarFotoPerfil(imageUrl).subscribe({
       next: (response) => {
         console.log('✅ Foto de perfil guardada en el backend:', response);
-        
-        // Actualizar localStorage
-        if (this.usuario) {
-          this.usuario.profile_url = imageUrl;
-          localStorage.setItem('user', JSON.stringify(this.usuario));
-        }
-        
         this.mensajeExito = '✅ Foto de perfil actualizada correctamente';
         this.cargandoFoto = false;
+        // Refrescar perfil para mostrar la imagen actualizada
+        this.cargarPerfil();
         setTimeout(() => this.mensajeExito = '', 3000);
       },
       error: (error) => {
@@ -118,16 +132,16 @@ export class PerfilCliente implements OnInit {
 
       const response = await this.imageUploadService.uploadImage(file, 'perfil');
       this.fotoPerfil = response.secure_url;
-      
+
       // Guardar en el backend
       this.userService.actualizarFotoPerfil(response.secure_url).subscribe({
         next: (backendResponse) => {
           console.log('✅ Foto guardada en backend:', backendResponse);
-          
+
           // Actualizar localStorage
           this.usuario.profile_url = response.secure_url;
           localStorage.setItem('user', JSON.stringify(this.usuario));
-          
+
           this.mensajeExito = '✅ Foto de perfil actualizada correctamente';
           this.cargandoFoto = false;
           setTimeout(() => this.mensajeExito = '', 3000);
@@ -139,7 +153,7 @@ export class PerfilCliente implements OnInit {
           setTimeout(() => this.mensajeError = '', 3000);
         }
       });
-      
+
     } catch (e: any) {
       this.mensajeError = 'Error al validar la imagen' + (e?.message ? ': ' + e.message : '');
       this.cargandoFoto = false;
@@ -168,14 +182,41 @@ export class PerfilCliente implements OnInit {
 
     this.cargando = true;
     const datos = this.form.getRawValue();
-    setTimeout(() => {
-      this.mensajeExito = 'Perfil actualizado correctamente';
-      this.mensajeError = '';
+    // Solo enviar campos modificados
+    const datosModificados: any = {};
+    Object.keys(datos).forEach(key => {
+      if (datos[key] !== this.usuario[key]) {
+        datosModificados[key] = datos[key];
+      }
+    });
+    if (Object.keys(datosModificados).length === 0) {
+      this.mensajeError = 'No hay cambios para guardar';
       this.cargando = false;
-      this.modoEdicion = false;
-      this.desactivarFormulario();
-      setTimeout(() => this.mensajeExito = '', 3000);
-    }, 1000);
+      return;
+    }
+    // Log de depuración: mostrar ID y token
+    const userStr = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    const userId = userStr ? JSON.parse(userStr).id : null;
+    console.log('[DEPURACIÓN] ID usuario:', userId);
+    console.log('[DEPURACIÓN] Token:', token);
+    this.userService.actualizarPerfil(datosModificados).subscribe({
+      next: (response) => {
+        this.mensajeExito = 'Perfil actualizado correctamente';
+        this.mensajeError = '';
+        this.cargando = false;
+        this.modoEdicion = false;
+        // Guardar el usuario actualizado que devuelve el backend
+        this.usuario = response.user || response.usuario || response;
+        localStorage.setItem('user', JSON.stringify(this.usuario));
+        this.desactivarFormulario();
+        setTimeout(() => this.mensajeExito = '', 3000);
+      },
+      error: (error) => {
+        this.mensajeError = error.error?.mensaje || 'Error al actualizar el perfil';
+        this.cargando = false;
+      }
+    });
   }
 
   get f() { return this.form.controls; }
