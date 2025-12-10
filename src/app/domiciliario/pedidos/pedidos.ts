@@ -64,7 +64,10 @@ export class PedidosDomiciliario implements OnInit {
   }
 
   marcarComoEntregado() {
-    if (!this.pedidoSeleccionado) return;
+    if (!this.pedidoSeleccionado) {
+      console.warn('No hay pedido seleccionado para marcar como entregado');
+      return;
+    }
 
     const data: any = {};
     if (this.codigoConfirmacion) {
@@ -74,8 +77,14 @@ export class PedidosDomiciliario implements OnInit {
       data.comentario = this.comentario;
     }
 
+    console.log('➡️ Enviando petición para marcar como entregado:', {
+      pedidoId: this.pedidoSeleccionado,
+      data
+    });
+
     this.pedidosService.marcarComoEntregado(this.pedidoSeleccionado, data).subscribe({
       next: (res: any) => {
+        console.log('✅ Pedido marcado como entregado:', res);
         this.mensajeExito = res.mensaje || 'Pedido marcado como entregado';
         this.pedidoSeleccionado = null;
         this.codigoConfirmacion = '';
@@ -84,6 +93,7 @@ export class PedidosDomiciliario implements OnInit {
         setTimeout(() => this.mensajeExito = '', 3000);
       },
       error: (err: any) => {
+        console.error('❌ Error al marcar como entregado:', err);
         this.mensajeError = err.error?.mensaje || 'Error al marcar como entregado';
         setTimeout(() => this.mensajeError = '', 5000);
       }
