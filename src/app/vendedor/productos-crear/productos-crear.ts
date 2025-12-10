@@ -65,7 +65,7 @@ export class CrearProductoVendedor implements OnInit {
 
   cargarCategorias() {
     console.log('🔄 Intentando cargar categorías...');
-    console.log('🌐 URL del endpoint:', 'http://127.0.0.1:8000/api/category');
+    console.log('🌐 URL del endpoint:', 'https://backend-delyra-production.up.railway.app/api/category');
 
     this.vendedorService.obtenerCategorias().subscribe({
       next: (response: any) => {

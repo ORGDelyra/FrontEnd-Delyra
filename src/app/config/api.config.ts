@@ -9,7 +9,7 @@
 
 export const API_CONFIG = {
   // URL base del backend
-  BASE_URL: 'http://localhost:8000',
+  BASE_URL: 'https://backend-delyra-production.up.railway.app',
 
   // Endpoints
   endpoints: {
