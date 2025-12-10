@@ -3,8 +3,9 @@
     <!-- Contenido principal -->
     <main class="overflow-auto">
         <!-- Mensaje de error -->
-        <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {{ mensajeError }}
+        <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded flex items-center gap-3">
+          <span>❌</span>
+          <span>{{ mensajeError || 'No se pudieron cargar las estadísticas. Verifica la conexión o intenta más tarde.' }}</span>
         </div>
 
     <!-- Estadísticas -->
@@ -19,7 +20,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-600 text-sm mb-1">Total Usuarios</p>
-              <p class="text-3xl font-bold text-purple-700">{{ estadisticas.totalUsuarios }}</p>
+              <p class="text-3xl font-bold text-purple-700">{{ estadisticas.totalUsuarios > 0 ? estadisticas.totalUsuarios : 'Sin datos' }}</p>
             </div>
             <div class="text-4xl">👥</div>
           </div>
@@ -29,7 +30,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-600 text-sm mb-1">Total Pedidos</p>
-              <p class="text-3xl font-bold text-blue-700">{{ estadisticas.totalPedidos }}</p>
+              <p class="text-3xl font-bold text-blue-700">{{ estadisticas.totalPedidos > 0 ? estadisticas.totalPedidos : 'Sin datos' }}</p>
             </div>
             <div class="text-4xl">📦</div>
           </div>
@@ -39,7 +40,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-600 text-sm mb-1">Total Productos</p>
-              <p class="text-3xl font-bold text-green-700">{{ estadisticas.totalProductos }}</p>
+              <p class="text-3xl font-bold text-green-700">{{ estadisticas.totalProductos > 0 ? estadisticas.totalProductos : 'Sin datos' }}</p>
             </div>
             <div class="text-4xl">🛍️</div>
           </div>
@@ -49,7 +50,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-600 text-sm mb-1">Total Sucursales</p>
-              <p class="text-3xl font-bold text-orange-700">{{ estadisticas.totalSucursales }}</p>
+              <p class="text-3xl font-bold text-orange-700">{{ estadisticas.totalSucursales > 0 ? estadisticas.totalSucursales : 'Sin datos' }}</p>
             </div>
             <div class="text-4xl">🏪</div>
           </div>
@@ -59,23 +60,29 @@
       <!-- Distribución de usuarios por rol -->
       <div class="bg-white shadow-lg rounded-lg p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Usuarios por Rol</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div *ngIf="obtenerUsuariosPorRolArray().length > 0; else sinUsuariosRol" class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div *ngFor="let item of obtenerUsuariosPorRolArray()" class="bg-gray-50 rounded-lg p-4">
             <p class="text-gray-600 text-sm mb-1">{{ item.nombre }}</p>
             <p class="text-2xl font-bold text-purple-700">{{ item.cantidad }}</p>
           </div>
         </div>
+        <ng-template #sinUsuariosRol>
+          <div class="text-center text-gray-500 py-4">No hay datos de usuarios por rol.</div>
+        </ng-template>
       </div>
 
       <!-- Pedidos por estado -->
       <div class="bg-white shadow-lg rounded-lg p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Pedidos por Estado</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div *ngIf="obtenerPedidosPorEstadoArray().length > 0; else sinPedidosEstado" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div *ngFor="let item of obtenerPedidosPorEstadoArray()" class="bg-gray-50 rounded-lg p-4">
             <p class="text-gray-600 text-sm mb-1">{{ item.nombre }}</p>
             <p class="text-2xl font-bold text-blue-700">{{ item.cantidad }}</p>
           </div>
         </div>
+        <ng-template #sinPedidosEstado>
+          <div class="text-center text-gray-500 py-4">No hay datos de pedidos por estado.</div>
+        </ng-template>
       </div>
 
       <!-- Menú de gestión -->
