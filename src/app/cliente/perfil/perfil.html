@@ -27,6 +27,8 @@
           <div class="w-32 h-32 rounded-full bg-[#1f2847] border-4 border-[#7dff7a] flex items-center justify-center mb-4 overflow-hidden">
             <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil" class="w-full h-full object-cover">
             <span *ngIf="!fotoPerfil" class="text-5xl">👤</span>
+              <img *ngIf="usuario && getImagenPerfil(usuario)" [src]="getImagenPerfil(usuario)" alt="Foto de perfil" class="w-full h-full object-cover">
+              <span *ngIf="!usuario || !getImagenPerfil(usuario)" class="text-5xl">👤</span>
           </div>
 
           <!-- Botón cargar foto -->

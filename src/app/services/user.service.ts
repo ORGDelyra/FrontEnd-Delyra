@@ -7,6 +7,14 @@ import { API_CONFIG } from '../config/api.config';
   providedIn: 'root'
 })
 export class UserService {
+    /**
+     * Obtiene el perfil del usuario autenticado usando el endpoint /api/user/profile
+     */
+    getPerfilUsuario(): Observable<any> {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: 'Bearer ' + token, Accept: 'application/json' };
+      return this.http.get(API_CONFIG.BASE_URL + '/api/user/profile', { headers });
+    }
   private apiUrl = API_CONFIG.BASE_URL + API_CONFIG.endpoints.user;
 
   constructor(private http: HttpClient) {}
@@ -29,7 +37,9 @@ export class UserService {
    * Actualiza datos del perfil del usuario
    */
   actualizarPerfil(datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/profile`, datos);
+    const userStr = localStorage.getItem('user');
+    const userId = userStr ? JSON.parse(userStr).id : null;
+    return this.http.put(`${this.apiUrl}/${userId}`, datos);
   }
 
   /**
