@@ -1,6 +1,3 @@
-  obtenerChatsRecientesSoporte(): Observable<any[]> {
-    return this.http.get<any[]>(`${API_CONFIG.BASE_URL}/chat/soporte/recientes`, this.getHeaders());
-  }
 // ...existing imports...
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
