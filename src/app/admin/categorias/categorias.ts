@@ -24,7 +24,7 @@ export class CategoriasAdmin implements OnInit {
 
   // Formulario
   formCategoria = {
-    nombre: '',
+    nombre_categoria: '',
     descripcion: ''
   };
 
@@ -57,7 +57,7 @@ export class CategoriasAdmin implements OnInit {
     this.modoEdicion = false;
     this.categoriaSeleccionada = null;
     this.formCategoria = {
-      nombre: '',
+      nombre_categoria: '',
       descripcion: ''
     };
     this.mostrarModal = true;
@@ -67,14 +67,14 @@ export class CategoriasAdmin implements OnInit {
     this.modoEdicion = true;
     this.categoriaSeleccionada = categoria;
     this.formCategoria = {
-      nombre: categoria.nombre || '',
+      nombre_categoria: categoria.nombre_categoria || '',
       descripcion: categoria.descripcion || ''
     };
     this.mostrarModal = true;
   }
 
   guardarCategoria() {
-    if (!this.formCategoria.nombre.trim()) {
+    if (!this.formCategoria.nombre_categoria.trim()) {
       this.mensajeError = 'El nombre es requerido';
       return;
     }
@@ -134,8 +134,8 @@ export class CategoriasAdmin implements OnInit {
       return this.categorias;
     }
     const busqueda = this.terminoBusqueda.toLowerCase();
-    return this.categorias.filter(c => 
-      c.nombre?.toLowerCase().includes(busqueda) ||
+    return this.categorias.filter(c =>
+      c.nombre_categoria?.toLowerCase().includes(busqueda) ||
       c.descripcion?.toLowerCase().includes(busqueda)
     );
   }

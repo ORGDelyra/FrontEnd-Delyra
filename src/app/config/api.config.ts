@@ -9,15 +9,15 @@
  */
 
 // Configuración fija de backend (prod)
-const BASE_BACKEND ='https://backend-delyra-production.up.railway.app';
-//'http://127.0.0.1:8000';// Desarrollo local
+const BASE_BACKEND =
+//'https://backend-delyra-production.up.railway.app';
+'http://192.168.1.6:8000';// Desarrollo local
 
 
 export const API_CONFIG = {
   // URL base del backend
   // Usa siempre la URL completa del backend
-   BASE_URL: 'https://backend-delyra-production.up.railway.app',
- // BASE_URL: 'http://127.0.0.1:8000',  DESARROLLO LOCAL
+  BASE_URL: 'http://192.168.1.6:8000', // DESARROLLO LOCAL
   endpoints: {
     auth: '/api',
     user: '/api/user',

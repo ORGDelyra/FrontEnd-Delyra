@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 py-8 px-4">
+<div class="min-h-screen bg-linear-to-br from-purple-50 to-indigo-50 py-8 px-4">
   <div class="max-w-5xl mx-auto">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
@@ -25,7 +25,7 @@
     <!-- Búsqueda -->
     <div class="bg-white shadow-lg rounded-lg p-4 mb-6">
       <label class="block text-gray-700 font-medium mb-2">Buscar</label>
-      <input type="text" 
+      <input type="text"
              [(ngModel)]="terminoBusqueda"
              placeholder="Nombre o descripción..."
              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
@@ -40,7 +40,7 @@
       <div *ngIf="!cargando" class="divide-y divide-gray-200">
         <div *ngFor="let categoria of categoriasFiltradas" class="p-6 hover:bg-gray-50 flex justify-between items-center">
           <div class="flex-1">
-            <h3 class="text-lg font-bold text-gray-800 mb-1">{{ categoria.nombre }}</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-1">{{ categoria.nombre_categoria }}</h3>
             <p class="text-gray-600 text-sm" *ngIf="categoria.descripcion">{{ categoria.descripcion }}</p>
             <p class="text-gray-400 text-xs mt-2">ID: {{ categoria.id }}</p>
           </div>
@@ -65,27 +65,27 @@
   <div *ngIf="mostrarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
       <h3 class="text-xl font-bold mb-4">{{ modoEdicion ? 'Editar Categoría' : 'Nueva Categoría' }}</h3>
-      
+
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-2">Nombre *</label>
-        <input type="text" [(ngModel)]="formCategoria.nombre" 
-               class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+         <input type="text" [(ngModel)]="formCategoria.nombre_categoria"
+           class="w-full px-4 py-2 border border-gray-300 rounded-lg">
       </div>
 
       <div class="mb-4">
         <label class="block text-gray-700 font-medium mb-2">Descripción</label>
-        <textarea [(ngModel)]="formCategoria.descripcion" 
+        <textarea [(ngModel)]="formCategoria.descripcion"
                   rows="3"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
       </div>
 
       <div class="flex gap-2">
-        <button (click)="guardarCategoria()" 
+        <button (click)="guardarCategoria()"
                 [disabled]="cargando"
                 class="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition">
           {{ modoEdicion ? 'Actualizar' : 'Crear' }}
         </button>
-        <button (click)="mostrarModal = false" 
+        <button (click)="mostrarModal = false"
                 class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">
           Cancelar
         </button>

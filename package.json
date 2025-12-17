@@ -26,10 +26,7 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
-    "@capacitor/android": "^7.4.4",
-    "@capacitor/cli": "^7.4.4",
-    "@capacitor/core": "^7.4.4",
-    "@capacitor/push-notifications": "^5.1.2",
+
     "@mercadopago/sdk-js": "^0.0.3",
     "@tailwindcss/postcss": "^4.1.17",
     "leaflet": "^1.9.4",

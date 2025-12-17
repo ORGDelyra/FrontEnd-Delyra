@@ -1,3 +1,7 @@
+  obtenerChatsRecientesSoporte(): Observable<any[]> {
+    return this.http.get<any[]>(`${API_CONFIG.BASE_URL}/chat/soporte/recientes`, this.getHeaders());
+  }
+// ...existing imports...
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -27,8 +31,20 @@ export class AdminService {
   }
 
   // ========== USUARIOS ==========
-  obtenerUsuarios(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.api}/user`, this.getHeaders());
+  obtenerUsuarios(filtro?: any): Observable<any> {
+    let params = '';
+    if (filtro && Object.keys(filtro).length > 0) {
+      params = '?' + Object.entries(filtro)
+        .filter(([k, v]) => v !== undefined && v !== null && v !== '')
+        .map(([k, v]) => {
+          if (k === 'per_page' || k === 'page') {
+            return `${k}=${encodeURIComponent(String(v))}`;
+          }
+          return `filter[${k}]=${encodeURIComponent(String(v))}`;
+        })
+        .join('&');
+    }
+    return this.http.get<any>(`${this.api}/user${params}`, this.getHeaders());
   }
 
   obtenerUsuarioPorId(id: number): Observable<User> {
@@ -147,6 +163,9 @@ export class AdminService {
       conteo[estado] = (conteo[estado] || 0) + 1;
     });
     return conteo;
+  }
+  obtenerChatsRecientesSoporte(): Observable<any[]> {
+    return this.http.get<any[]>(`${API_CONFIG.BASE_URL}/chat/soporte/recientes`, this.getHeaders());
   }
 }
 

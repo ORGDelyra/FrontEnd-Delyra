@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar';
 import { MantenimientoComponent } from './components/mantenimiento/mantenimiento';
 import { MantenimientoService } from './services/mantenimiento.service';
-import { PushNotificationService } from './services/push-notification.service';
 import { ToastComponent } from './components/toast/toast';
 import { filter } from 'rxjs/operators';
 
@@ -35,7 +34,6 @@ export class App implements OnInit {
   constructor(
     private router: Router,
     private mantenimientoService: MantenimientoService,
-    private pushService: PushNotificationService
   ) {
     // Escuchar cambios de ruta para mostrar/ocultar navbar
     this.router.events.pipe(
@@ -46,9 +44,6 @@ export class App implements OnInit {
   }
 
   ngOnInit() {
-    // Inicializar notificaciones push y conectar el toast visual
-    this.pushService.setToastComponent(() => this.toast);
-    this.pushService.initPush();
     // Escuchar cambios en el estado de mantenimiento
     this.mantenimientoService.enMantenimiento$.subscribe(enMant => {
       this.enMantenimiento = enMant;

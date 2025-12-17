@@ -1,0 +1,16 @@
+.ayuda-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 2rem;
+  text-align: center;
+}
+.ayuda-container h2 {
+  color: #b1122d;
+}
+.ayuda-container a {
+  color: #b1122d;
+  text-decoration: underline;
+}

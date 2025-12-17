@@ -1,39 +1,6 @@
-<div class="chat-container">
-  <div class="chat-header">
-    <button class="btn-volver" (click)="volverATienda()">←</button>
-    <div class="header-info">
-      <h2>💬 Chat con {{ nombreTienda }}</h2>
-      <p class="estado">En línea</p>
-    </div>
-  </div>
-
-  <div class="mensajes-container">
-    <div class="mensaje" *ngFor="let msg of mensajes" [class.mensaje-cliente]="msg.emisor === 'cliente'" [class.mensaje-vendedor]="msg.emisor === 'vendedor'">
-      <div class="mensaje-contenido">
-        <p>{{ msg.contenido }}</p>
-        <span class="mensaje-hora">{{ msg.timestamp | date:'short' }}</span>
-      </div>
-    </div>
-
-    <div class="mensaje-vacio" *ngIf="mensajes.length === 0">
-      <p>👋 Inicia la conversación con el vendedor</p>
-    </div>
-  </div>
-
-  <div class="input-container">
-    <input
-      type="text"
-      [(ngModel)]="nuevoMensaje"
-      placeholder="Escribe tu mensaje..."
-      (keyup.enter)="enviarMensaje()"
-      class="input-mensaje"
-    >
-    <button class="btn-enviar" (click)="enviarMensaje()" [disabled]="!nuevoMensaje.trim()">
-      Enviar 📤
-    </button>
-  </div>
-
-  <div class="chat-info">
-    <p>⚠️ Sistema de chat en desarrollo. Funcionalidad completa próximamente.</p>
-  </div>
-</div>
+<app-chat
+  [userId]="userId"
+  [userRol]="'cliente'"
+  [idPedido]="sucursalId ?? undefined"
+  tipoChat="pedido">
+</app-chat>
