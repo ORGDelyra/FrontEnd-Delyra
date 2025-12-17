@@ -8,16 +8,15 @@
  * al backend mediante el archivo vercel.json (rewrites)
  */
 
-// Configuración fija de backend (prod)
-const BASE_BACKEND =
-//'https://backend-delyra-production.up.railway.app';
-'http://192.168.1.6:8000';// Desarrollo local
+
+// Configuración fija de backend (producción)
+const BASE_BACKEND = 'https://backend-delyra-production.up.railway.app';
 
 
 export const API_CONFIG = {
   // URL base del backend
   // Usa siempre la URL completa del backend
-  BASE_URL: 'http://192.168.1.6:8000', // DESARROLLO LOCAL
+  BASE_URL: 'https://backend-delyra-production.up.railway.app', // PRODUCCIÓN
   endpoints: {
     auth: '/api',
     user: '/api/user',
