@@ -1,0 +1,19 @@
+.min-h-screen { min-height: 100vh; }
+.bg-gradient-to-br { background: linear-gradient(to bottom right, #faf5ff, #e0e7ff); }
+.max-w-5xl { max-width: 64rem; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(76, 29, 149, 0.1); }
+.rounded-lg { border-radius: 0.75rem; }
+.p-4 { padding: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.font-bold { font-weight: bold; }
+.text-purple-700 { color: #6d28d9; }
+.text-lg { font-size: 1.125rem; }
+.font-semibold { font-weight: 600; }
+.bg-white { background: #fff; }
+.cursor-pointer { cursor: pointer; }
+.hover\:bg-purple-50:hover { background: #f5f3ff; }
+.bg-purple-100 { background: #ede9fe; }
+.text-xs { font-size: 0.75rem; }
+.text-gray-500 { color: #6b7280; }
+.text-center { text-align: center; }
+.py-20 { padding-top: 5rem; padding-bottom: 5rem; }

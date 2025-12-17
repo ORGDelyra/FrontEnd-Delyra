@@ -1,0 +1,26 @@
+<div class="chat-container">
+  <div class="mensajes" #scrollMensajes>
+    <div *ngFor="let msg of mensajes; let i = index" [ngClass]="{'mio': msg.id_remitente === userId, 'otro': msg.id_remitente !== userId}">
+      <div class="contenido">
+        <span *ngIf="msg.contenido">{{ msg.contenido }}</span>
+        <img *ngIf="msg.imagen_url" [src]="msg.imagen_url" class="img-chat" />
+      </div>
+      <div class="meta">
+        <span>{{ msg.created_at | date:'short' }}</span>
+        <span *ngIf="msg.emisor_rol">({{ msg.emisor_rol }})</span>
+      </div>
+    </div>
+  </div>
+  <form (ngSubmit)="enviarMensaje()" class="form-chat" enctype="multipart/form-data">
+    <input [(ngModel)]="nuevoMensaje" name="mensaje" placeholder="Escribe un mensaje..." autocomplete="off" />
+    <input type="file" accept="image/*" (change)="onImagenSeleccionada($event)" />
+    <select [(ngModel)]="tipoImagen" name="tipoImagen">
+      <option *ngFor="let tipo of tiposImagen" [value]="tipo.value">{{ tipo.label }}</option>
+    </select>
+    <button type="submit">Enviar</button>
+  </form>
+  <div *ngIf="imagenPreview" class="preview-img">
+    <p>Vista previa de la imagen:</p>
+    <img [src]="imagenPreview" class="img-chat" />
+  </div>
+</div>

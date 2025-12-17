@@ -1,19 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar';
 import { MantenimientoComponent } from './components/mantenimiento/mantenimiento';
 import { MantenimientoService } from './services/mantenimiento.service';
+import { ToastComponent } from './components/toast/toast';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, NavbarComponent, MantenimientoComponent],
+  imports: [RouterOutlet, CommonModule, NavbarComponent, MantenimientoComponent, ToastComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
+  @ViewChild('toast') toast!: ToastComponent;
   protected title = 'FrontendDelyra';
   protected mostrarNavbar = false;
   protected enMantenimiento = false;
@@ -31,7 +33,7 @@ export class App implements OnInit {
 
   constructor(
     private router: Router,
-    private mantenimientoService: MantenimientoService
+    private mantenimientoService: MantenimientoService,
   ) {
     // Escuchar cambios de ruta para mostrar/ocultar navbar
     this.router.events.pipe(

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ChatComponent } from '../../components/chat/chat.component';
 
 interface Message {
   id?: number;
@@ -15,13 +16,14 @@ interface Message {
 @Component({
   selector: 'app-chat-cliente',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ChatComponent],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
 })
 export class ChatCliente implements OnInit {
 
   sucursalId: number | null = null;
+  userId: number = 1; // TODO: Reemplazar por el id real del usuario logueado
   mensajes: Message[] = [];
   nuevoMensaje: string = '';
   cargando: boolean = false;

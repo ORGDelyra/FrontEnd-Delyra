@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Delyra</string>
-    <string name="title_activity_main">Delyra</string>
-    <string name="package_name">com.delyra.app</string>
-    <string name="custom_url_scheme">com.delyra.app</string>
-</resources>

@@ -2,4 +2,5 @@
 <ng-container *ngIf="!enMantenimiento">
   <app-navbar *ngIf="mostrarNavbar"></app-navbar>
   <router-outlet></router-outlet>
+  <app-toast #toast></app-toast>
 </ng-container>

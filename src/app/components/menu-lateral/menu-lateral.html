@@ -1,7 +1,7 @@
 <!-- Menú lateral expandible/colapsable -->
 <aside
   *ngIf="menuAbierto"
-  class="w-64 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] shadow-lg rounded-lg h-fit sticky top-24 transition-all duration-300 z-30">
+  class="w-64 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] shadow-lg rounded-lg h-screen sticky top-0 transition-all duration-300 z-30 overflow-y-auto">
 
   <!-- Botón cerrar -->
   <button
@@ -42,7 +42,8 @@
 <button
   *ngIf="!menuAbierto"
   (click)="toggleMenu()"
-  class="fixed left-4 top-24 z-40 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] text-[#04060f] hover:text-[#8b0000] p-3 rounded-lg shadow-lg transition"
+  class="fixed left-4 top-4 sm:top-4 z-40 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] text-[#04060f] hover:text-[#8b0000] p-3 rounded-lg shadow-lg transition w-12 h-12 flex items-center justify-center"
+  style="max-width:48px;max-height:48px;"
   title="Abrir menú">
   <span class="text-2xl">☰</span>
 </button>

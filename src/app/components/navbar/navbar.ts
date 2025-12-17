@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -20,7 +20,7 @@ export class NavbarComponent implements OnInit {
   menuLateralAbierto = false;
   menuItems: MenuItem[] = [];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, @Inject(Router) private router: Router) {}
 
   ngOnInit(): void {
     // Verificar autenticación al cargar
@@ -63,14 +63,10 @@ export class NavbarComponent implements OnInit {
     switch (this.rol) {
       case 'cliente':
         this.menuItems = [
-          { icon: '🏠', label: 'Inicio', route: '/cliente/inicio' },
           { icon: '🛍️', label: 'Productos', route: '/productos/listar' },
           { icon: '👤', label: 'Mi Perfil', route: '/cliente/perfil' },
-          { icon: '🛒', label: 'Carrito', route: '/carrito/listar' },
           { icon: '📋', label: 'Mis Pedidos', route: '/cliente/pedidos' },
-          { icon: '♥', label: 'Favoritos' },
-          { icon: '💬', label: 'Chat' },
-          { icon: '⚙️', label: 'Configuración' },
+          { icon: '💬', label: 'Chat', route: '/cliente/chat-soporte' },
           { icon: '❓', label: 'Ayuda' }
         ];
         break;
@@ -92,7 +88,6 @@ export class NavbarComponent implements OnInit {
           { icon: '🚙', label: 'Mi Vehículo', route: '/domiciliario/vehiculo' },
           { icon: '📊', label: 'Estadísticas' },
           { icon: '💬', label: 'Chat' },
-          { icon: '⚙️', label: 'Configuración' },
           { icon: '❓', label: 'Ayuda' }
         ];
         break;
@@ -104,7 +99,6 @@ export class NavbarComponent implements OnInit {
           { icon: '📦', label: 'Productos', route: '/admin/productos' },
           { icon: '📋', label: 'Pedidos', route: '/admin/pedidos' },
           { icon: '🏪', label: 'Sucursales', route: '/admin/sucursales' },
-          { icon: '⚙️', label: 'Configuración' }
         ];
         break;
       default:

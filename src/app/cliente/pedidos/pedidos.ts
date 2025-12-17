@@ -1,18 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PedidosService } from '../../services/pedidos.service';
 import { MonedaColombianaPipe } from '../../pipes/moneda-colombiana.pipe';
 import { Cart } from '../../interfaces/cart.interface';
+import { ChatComponent } from '../../components/chat/chat.component';
 
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [RouterModule, CommonModule, MonedaColombianaPipe],
+  imports: [RouterModule, CommonModule, MonedaColombianaPipe, ChatComponent],
   templateUrl: './pedidos.html',
   styleUrl: './pedidos.css',
 })
 export class PedidosCliente implements OnInit {
+      getUserId(pedido: any): number {
+        return Number(pedido.id_cliente ?? pedido.id_usuario ?? 0);
+      }
+    mostrarChatDomiciliario(pedido: Cart): boolean {
+      // Estados en los que el chat está activo
+      const estadosActivos = ['en_preparacion', 'listo', 'en_camino', 'confirmado'];
+      if (pedido.domiciliario && pedido.estado_pedido && estadosActivos.includes(pedido.estado_pedido)) {
+        return true;
+      }
+      // Si está entregado o recogido, permitir chat solo si han pasado menos de 24h
+      if ((pedido.estado_pedido === 'entregado' || pedido.estado_pedido === 'recogido') && pedido.domiciliario && pedido.updated_at) {
+        const fechaEntrega = new Date(pedido.updated_at);
+        const ahora = new Date();
+        const horas = (ahora.getTime() - fechaEntrega.getTime()) / (1000 * 60 * 60);
+        return horas < 24;
+      }
+      return false;
+    }
+  chatPedidoId: number | null = null;
 
   pedidos: Cart[] = [];
   cargando: boolean = false;
@@ -21,7 +42,7 @@ export class PedidosCliente implements OnInit {
   mensajeExito: string = '';
 
   constructor(
-    private router: Router,
+    @Inject(Router) private router: Router,
     private pedidosService: PedidosService
   ) {}
 

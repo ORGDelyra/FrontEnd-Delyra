@@ -21,6 +21,7 @@ import { InicioCliente } from './cliente/inicio/inicio';
 import { PerfilCliente } from './cliente/perfil/perfil';
 import { PedidosCliente } from './cliente/pedidos/pedidos';
 import { ChatCliente } from './cliente/chat/chat';
+import { ChatSoporteCliente } from './cliente/chat-soporte';
 
 /* Productos y carrito (compartidos) */
 import { ListarProductos } from './productos/listar/listar';
@@ -56,6 +57,13 @@ import { ChatDomiciliario } from './domiciliario/chat/chat';
 import { InicioAdmin } from './admin/inicio/inicio';
 import { UsuariosAdmin } from './admin/usuarios/usuarios';
 import { CategoriasAdmin } from './admin/categorias/categorias';
+import { ChatAdmin } from './admin/chat-admin/chat-admin';
+
+/* ================================
+   AYUDA Y CONFIGURACIÓN (CLIENTE)
+================================ */
+import { AyudaComponent } from './cliente/ayuda/ayuda';
+// ...eliminado ConfiguracionComponent...
 
 
 
@@ -77,7 +85,9 @@ export const routes: Routes = [
   { path: 'cliente/inicio', component: InicioCliente, canActivate: [AuthGuard] },
   { path: 'cliente/perfil', component: PerfilCliente, canActivate: [AuthGuard] },
   { path: 'cliente/pedidos', component: PedidosCliente, canActivate: [AuthGuard] },
-  { path: 'cliente/chat/:id', component: ChatCliente, canActivate: [AuthGuard] }, // Chat con vendedor
+   { path: 'cliente/chat/:id', component: ChatCliente, canActivate: [AuthGuard] }, // Chat con vendedor
+   { path: 'cliente/chat-soporte', component: ChatSoporteCliente, canActivate: [AuthGuard] }, // Chat con soporte
+   { path: 'cliente/ayuda', component: AyudaComponent, canActivate: [AuthGuard] }, // Ayuda
 
   /* Productos y carrito */
   { path: 'productos/listar', component: ListarProductos },
@@ -108,6 +118,7 @@ export const routes: Routes = [
    { path: 'admin/inicio', component: InicioAdmin },
    { path: 'admin/usuarios', component: UsuariosAdmin },
    { path: 'admin/categorias', component: CategoriasAdmin },
+   { path: 'admin/chat-soporte', component: ChatAdmin },
 
   /* Default */
   { path: '', redirectTo: 'bienvenida', pathMatch: 'full' }

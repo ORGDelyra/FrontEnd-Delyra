@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ChatComponent } from '../../components/chat/chat.component';
 
 @Component({
   selector: 'app-chat-domiciliario',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, ChatComponent],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
 })
@@ -14,6 +15,7 @@ export class ChatDomiciliario implements OnInit {
   mensajes: any[] = [];
   nuevoMensaje: string = '';
   cargando: boolean = false;
+  userId: number = 1; // TODO: Reemplazar por el id real del usuario logueado
 
   constructor(private router: Router) {}
 

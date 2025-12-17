@@ -52,7 +52,11 @@ export class UsuariosAdmin implements OnInit {
   cargarUsuarios() {
     this.cargando = true;
     this.mensajeError = '';
-    this.adminService.obtenerUsuarios().subscribe({
+    let filtro: any = {};
+    if (this.filtroRol) {
+      filtro.id_rol = this.filtroRol;
+    }
+    this.adminService.obtenerUsuarios(filtro).subscribe({
       next: (usuarios: User[]) => {
         this.usuarios = usuarios;
         this.cargando = false;
@@ -113,7 +117,7 @@ export class UsuariosAdmin implements OnInit {
   }
 
   guardarUsuario() {
-    if (!this.formUsuario.primer_nombre || !this.formUsuario.primer_apellido || 
+    if (!this.formUsuario.primer_nombre || !this.formUsuario.primer_apellido ||
         !this.formUsuario.telefono || !this.formUsuario.correo || !this.formUsuario.cuenta_bancaria) {
       this.mensajeError = 'Completa todos los campos requeridos';
       return;
@@ -199,7 +203,7 @@ export class UsuariosAdmin implements OnInit {
 
     if (this.terminoBusqueda.trim()) {
       const busqueda = this.terminoBusqueda.toLowerCase();
-      filtrados = filtrados.filter(u => 
+      filtrados = filtrados.filter(u =>
         u.primer_nombre.toLowerCase().includes(busqueda) ||
         u.primer_apellido.toLowerCase().includes(busqueda) ||
         u.correo.toLowerCase().includes(busqueda) ||
