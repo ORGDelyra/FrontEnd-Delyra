@@ -1,0 +1,4 @@
+/* Estilos básicos para la lista de ofertas del negocio */
+ul { list-style: none; padding: 0; }
+li { background: #fff; }
+.btn { min-width: 80px; }

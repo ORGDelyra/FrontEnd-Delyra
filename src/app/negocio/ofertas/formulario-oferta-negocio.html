@@ -1,0 +1,32 @@
+<form (ngSubmit)="onSubmit()" #ofertaForm="ngForm" class="space-y-4">
+  <div>
+    <label>Título</label>
+    <input type="text" [(ngModel)]="oferta.titulo" name="titulo" required class="input input-bordered w-full" />
+  </div>
+  <div>
+    <label>Descripción</label>
+    <textarea [(ngModel)]="oferta.descripcion" name="descripcion" required class="textarea textarea-bordered w-full"></textarea>
+  </div>
+  <div>
+    <label>Requisitos</label>
+    <textarea [(ngModel)]="oferta.requisitos" name="requisitos" class="textarea textarea-bordered w-full"></textarea>
+  </div>
+  <div>
+    <label>Tipo de puesto</label>
+    <input type="text" [(ngModel)]="oferta.tipo_puesto" name="tipo_puesto" required class="input input-bordered w-full" />
+  </div>
+  <div>
+    <label>Salario</label>
+    <input type="number" [(ngModel)]="oferta.salario" name="salario" class="input input-bordered w-full" />
+  </div>
+  <div>
+    <label>Estado</label>
+    <select [(ngModel)]="oferta.estado" name="estado" required class="select select-bordered w-full">
+      <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+    </select>
+  </div>
+  <div class="flex gap-2">
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="button" (click)="cancelar.emit()" class="btn btn-secondary">Cancelar</button>
+  </div>
+</form>

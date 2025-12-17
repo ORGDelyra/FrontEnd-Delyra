@@ -1,0 +1,4 @@
+/* Estilos básicos para la lista pública de ofertas */
+ul { list-style: none; padding: 0; }
+li { background: #fff; }
+.input { margin-bottom: 1rem; }

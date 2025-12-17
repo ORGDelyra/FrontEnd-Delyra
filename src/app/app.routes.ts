@@ -63,7 +63,8 @@ import { ChatAdmin } from './admin/chat-admin/chat-admin';
    AYUDA Y CONFIGURACIÓN (CLIENTE)
 ================================ */
 import { AyudaComponent } from './cliente/ayuda/ayuda';
-// ...eliminado ConfiguracionComponent...
+import { ListarOfertasNegocioComponent } from './negocio/ofertas/listar-ofertas-negocio';
+import { ListarOfertasPublicoComponent } from './ofertas/listar-ofertas-publico';
 
 
 
@@ -119,6 +120,10 @@ export const routes: Routes = [
    { path: 'admin/usuarios', component: UsuariosAdmin },
    { path: 'admin/categorias', component: CategoriasAdmin },
    { path: 'admin/chat-soporte', component: ChatAdmin },
+
+  /* Ofertas */
+   { path: 'negocio/ofertas', component: ListarOfertasNegocioComponent, canActivate: [AuthGuard] },
+   { path: 'ofertas', component: ListarOfertasPublicoComponent },
 
   /* Default */
   { path: '', redirectTo: 'bienvenida', pathMatch: 'full' }

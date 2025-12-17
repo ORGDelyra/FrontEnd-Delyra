@@ -64,6 +64,7 @@ export class NavbarComponent implements OnInit {
       case 'cliente':
         this.menuItems = [
           { icon: '🛍️', label: 'Productos', route: '/productos/listar' },
+          { icon: '💼', label: 'Ofertas Laborales', route: '/ofertas' },
           { icon: '👤', label: 'Mi Perfil', route: '/cliente/perfil' },
           { icon: '📋', label: 'Mis Pedidos', route: '/cliente/pedidos' },
           { icon: '💬', label: 'Chat', route: '/cliente/chat-soporte' },
@@ -76,7 +77,8 @@ export class NavbarComponent implements OnInit {
           { icon: '👤', label: 'Mi Perfil', route: '/vendedor/perfil' },
           { icon: '🏪', label: 'Mi Sucursal', route: '/vendedor/sucursal' },
           { icon: '📦', label: 'Mis Productos', route: '/vendedor/productos' },
-          { icon: '📋', label: 'Pedidos', route: '/vendedor/pedidos' }
+          { icon: '📋', label: 'Pedidos', route: '/vendedor/pedidos' },
+          { icon: '💼', label: 'Mis Ofertas Laborales', route: '/negocio/ofertas' }
         ];
         break;
       case 'domiciliario':

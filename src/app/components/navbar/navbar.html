@@ -3,7 +3,7 @@
     <!-- Logo y título siempre visible -->
     <div class="flex items-center gap-3">
       <img src="/assets/logo.png" alt="Delyra" class="h-10 w-auto rounded-md object-contain" width="40" height="40" />
-      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-tr from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent">
+      <h1 class="text-3xl md:text-4xl font-bold bg-linear-to-tr from-[#0f1a2e] via-[#b1122d] to-[#f8bfa8] bg-clip-text text-transparent">
         Delyra
       </h1>
     </div>
@@ -19,7 +19,7 @@
       </button>
 
       <!-- Panel menú lateral desplegable -->
-      <div *ngIf="menuLateralAbierto" class="fixed left-0 top-[120px] w-64 bg-gradient-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] shadow-xl rounded-r-lg z-50 transition-all duration-300">
+      <div *ngIf="menuLateralAbierto" class="fixed left-0 top-30 w-64 bg-linear-to-b from-[#f5f5f5] to-[#b1122d] border border-[#d4a5a5] shadow-xl rounded-r-lg z-50 transition-all duration-300">
         <!-- Botón cerrar -->
         <button
           (click)="cerrarMenuLateral()"
@@ -77,6 +77,7 @@
             <a routerLink="/cliente/perfil" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">👤 Mi Perfil</a>
             <a routerLink="/carrito/listar" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">🛒 Carrito</a>
             <a routerLink="/cliente/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📋 Mis Pedidos</a>
+            <a routerLink="/ofertas" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">💼 Ofertas Laborales</a>
           </ng-container>
 
           <ng-container *ngSwitchCase="'vendedor'">
@@ -84,6 +85,7 @@
             <a routerLink="/vendedor/sucursal" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">🏪 Mi Sucursal</a>
             <a routerLink="/vendedor/productos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📦 Mis Productos</a>
             <a routerLink="/vendedor/pedidos" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">📋 Pedidos</a>
+            <a routerLink="/negocio/ofertas" (click)="cerrarMenu()" class="block px-4 py-2 text-[#f3f5ff] hover:bg-[#1f2847] hover:text-[#7dff7a] transition">💼 Mis Ofertas Laborales</a>
           </ng-container>
 
           <ng-container *ngSwitchCase="'domiciliario'">
@@ -110,6 +112,7 @@
             <a routerLink="/cliente/perfil" class="nav-btn-sm">👤 Perfil</a>
             <a routerLink="/carrito/listar" class="nav-btn-sm">🛒 Carrito</a>
             <a routerLink="/cliente/pedidos" class="nav-btn-sm">📋 Pedidos</a>
+            <a routerLink="/ofertas" class="nav-btn-sm">💼 Ofertas Laborales</a>
           </ng-container>
 
           <ng-container *ngSwitchCase="'vendedor'">
@@ -117,6 +120,7 @@
             <a routerLink="/vendedor/sucursal" class="nav-btn-sm">🏪 Sucursal</a>
             <a routerLink="/vendedor/productos" class="nav-btn-sm">📦 Productos</a>
             <a routerLink="/vendedor/pedidos" class="nav-btn-sm">📋 Pedidos</a>
+            <a routerLink="/negocio/ofertas" class="nav-btn-sm">💼 Mis Ofertas Laborales</a>
           </ng-container>
 
           <ng-container *ngSwitchCase="'domiciliario'">

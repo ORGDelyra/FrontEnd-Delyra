@@ -1,0 +1,17 @@
+<div *ngIf="cargando">Cargando ofertas...</div>
+<div *ngIf="error">{{ error }}</div>
+<div *ngIf="!cargando && !error">
+  <h2 class="text-xl font-bold mb-4">Ofertas laborales</h2>
+  <input type="text" [(ngModel)]="termino" placeholder="Buscar oferta, puesto o descripción..." class="input input-bordered w-full mb-4" />
+  <div *ngIf="ofertasFiltradas.length === 0">No se encontraron ofertas.</div>
+  <ul *ngIf="ofertasFiltradas.length > 0">
+    <li *ngFor="let oferta of ofertasFiltradas" class="mb-4 p-4 border rounded">
+      <div class="font-semibold">{{ oferta.titulo }}</div>
+      <div>{{ oferta.tipo_puesto }}</div>
+      <div class="text-sm text-gray-500">{{ oferta.fecha_publicacion | date:'short' }}</div>
+      <div class="mt-2">{{ oferta.descripcion }}</div>
+      <div *ngIf="oferta.salario">Salario: {{ oferta.salario | currency:'COP' }}</div>
+      <div class="text-xs text-gray-400">Estado: {{ oferta.estado }}</div>
+    </li>
+  </ul>
+</div>
